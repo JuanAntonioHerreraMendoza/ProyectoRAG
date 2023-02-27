@@ -5,6 +5,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { AuthContext } from "../context/AuthContext";
 import ReporteForm from "./ReporteForm";
 import Camara from "../components/Camara";
+import Reportes from "./Reportes";
 
 function Home({ navigation }) {
   const { userInfo, isLoading, logout } = useContext(AuthContext);
@@ -34,6 +35,11 @@ export default function HomeScreen() {
         options={{
           drawerItemStyle: { height: 0 },
         }}
+      />
+        <Drawer.Screen
+        name="Reportes"
+        component={Reportes}
+        options={{headerTitle: "Mis reportes",headerTitleAlign:"center"}}
       />
     </Drawer.Navigator>
   );

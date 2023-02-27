@@ -78,15 +78,6 @@ export default function Camara({ navigation, route }) {
               }}
             />
             <ButtonCamera
-              title=""
-              icon="retweet"
-              onPress={() => {
-                setType(
-                  type === CameraType.back ? CameraType.front : CameraType.back
-                );
-              }}
-            />
-            <ButtonCamera
               onPress={() =>
                 setFlash(
                   flash === Camera.Constants.FlashMode.off

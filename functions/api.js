@@ -12,6 +12,11 @@ export const loginuser = async (user) => {
   return await res.json();
 };
 
+export const getReportes= async () =>{
+  const res = await fetch(`${API}reportes`);
+  return await res.json();  
+}
+
 export const saveReporte = async (reporte) =>{
   console.log(JSON.stringify(reporte))
   const res = await fetch(`${API}newReporte`, {

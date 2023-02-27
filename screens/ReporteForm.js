@@ -15,27 +15,12 @@ import MapView, { Marker } from "react-native-maps";
 import { Button } from "@rneui/themed";
 
 const ReporteForm = ({ navigation, route }) => {
-  const [ubicacion, setUbicacion] = useState(null);
-  const [foto, setFoto] = useState(null);
+  const date = new Date();
+  const [direc, setDirec] = useState(null);
   const [descrip, setDescripcion] = useState(null);
   const [mapVisible, setmapVisible] = useState(false);
-
   const [location, setLocation] = useState(null);
   const [newRegion, setNewRegion] = useState(null);
-
-  const [reporte, setReporte] = useState({
-    fecha: "",
-    direccion: "",
-    descripcion: "",
-    evidencia: "",
-    status: "",
-    idreportador: "",
-  });
-
-  const handleChange = async(name, value) => {
-    setReporte({ ...reporte, [name]: value });
-    console.log(name + " " + value);
-  };
 
   useEffect(() => {
     (async () => {
@@ -58,11 +43,23 @@ const ReporteForm = ({ navigation, route }) => {
     console.log(location);
     setmapVisible(false);
   };
-  const enviarDatos = async () => {
-    const date = new Date();
-    handleChange("evidencia",route.params?.uri)
-    handleChange("fecha", date);
-    console.log(reporte);
+
+  const enviarDatos = () => {
+    let reporte = {
+      fecha: date,
+      direccion: direc,
+      descripcion: descrip,
+      ubicacion: location,
+      evidencia: route.params.uri,
+      status: "check",
+      idreportador: "1",
+    };
+    Alert.alert("Reporte generado");
+    setNewRegion(null);
+    route.params.uri = "";
+    descrip = "";
+    direc = "";
+    navigation.navigate("Home");
   };
 
   return (
@@ -89,13 +86,12 @@ const ReporteForm = ({ navigation, route }) => {
           }}
         >
           <TextInput
-            placeholder="Ubicacion"
+            placeholder="Direccion"
             placeholderTextColor={"#ffffff"}
             style={styles.input}
-            onEndEditing={(text) => {
-              handleChange("direccion", text);
+            onChangeText={(text) => {
+              setDirec(text);
             }}
-            value={location ? location.latitude + " " + location.longitude : ""}
           ></TextInput>
           <ButtonCamera icon="location" onPress={() => setmapVisible(true)} />
         </View>
@@ -125,10 +121,15 @@ const ReporteForm = ({ navigation, route }) => {
           placeholderTextColor={"#ffffff"}
           style={styles.inputArea}
           onChangeText={(text) => {
-            handleChange("descripcion", text);
+            setDescripcion(text);
           }}
         />
-        <TouchableOpacity style={styles.buttonSave} onPress={()=>{enviarDatos()}}>
+        <TouchableOpacity
+          style={styles.buttonSave}
+          onPress={() => {
+            enviarDatos();
+          }}
+        >
           <Text style={styles.buttonText}>Enviar Reporte</Text>
         </TouchableOpacity>
       </View>
