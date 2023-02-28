@@ -16,6 +16,11 @@ import { Button } from "@rneui/themed";
 
 const ReporteForm = ({ navigation, route }) => {
   const date = new Date();
+  let day = date.getDate();
+  let month = date.getMonth() + 1;
+  let year = date.getFullYear();
+  const fecha = `${day}-0${month}-${year}`;
+
   const [direc, setDirec] = useState(null);
   const [descrip, setDescripcion] = useState(null);
   const [mapVisible, setmapVisible] = useState(false);
@@ -46,7 +51,7 @@ const ReporteForm = ({ navigation, route }) => {
 
   const enviarDatos = () => {
     let reporte = {
-      fecha: date,
+      fecha: fecha,
       direccion: direc,
       descripcion: descrip,
       ubicacion: location,

@@ -17,6 +17,11 @@ export const getReportes= async () =>{
   return await res.json();  
 }
 
+export const getReporte= async (id) =>{
+  const res = await fetch(`${API}reporte/${id}`);
+  return await res.json();
+}
+
 export const saveReporte = async (reporte) =>{
   console.log(JSON.stringify(reporte))
   const res = await fetch(`${API}newReporte`, {

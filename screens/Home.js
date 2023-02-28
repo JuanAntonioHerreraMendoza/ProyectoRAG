@@ -6,6 +6,7 @@ import { AuthContext } from "../context/AuthContext";
 import ReporteForm from "./ReporteForm";
 import Camara from "../components/Camara";
 import Reportes from "./Reportes";
+import ReporteDetail from "../components/Reportes/ReporteDetail";
 
 function Home({ navigation }) {
   const { userInfo, isLoading, logout } = useContext(AuthContext);
@@ -36,10 +37,17 @@ export default function HomeScreen() {
           drawerItemStyle: { height: 0 },
         }}
       />
-        <Drawer.Screen
+      <Drawer.Screen
         name="Reportes"
         component={Reportes}
-        options={{headerTitle: "Mis reportes",headerTitleAlign:"center"}}
+        options={{ headerTitle: "Mis reportes", headerTitleAlign: "center" }}
+      />
+      <Drawer.Screen
+        name="ReporteDetail"
+        component={ReporteDetail}
+        options={{
+          drawerItemStyle: { height: 0 },
+        }}
       />
     </Drawer.Navigator>
   );
