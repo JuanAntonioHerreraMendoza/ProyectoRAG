@@ -7,25 +7,25 @@ import {
   TouchableOpacity,
   Alert,
 } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState , useContext} from "react";
 import ButtonCamera from "../components/ButtonCamera";
 import { Modal } from "../components/Modal";
 import { getCurrentLocation } from "../functions/locationMap";
+import { AuthContext } from "../context/AuthContext";
 import MapView, { Marker } from "react-native-maps";
 import { Button } from "@rneui/themed";
+import { saveReporte } from "../functions/api";
 
 const ReporteForm = ({ navigation, route }) => {
   const date = new Date();
-  let day = date.getDate();
-  let month = date.getMonth() + 1;
-  let year = date.getFullYear();
-  const fecha = `${day}-0${month}-${year}`;
 
   const [direc, setDirec] = useState(null);
   const [descrip, setDescripcion] = useState(null);
   const [mapVisible, setmapVisible] = useState(false);
   const [location, setLocation] = useState(null);
   const [newRegion, setNewRegion] = useState(null);
+
+  const { userInfo } = useContext(AuthContext);
 
   useEffect(() => {
     (async () => {
@@ -49,22 +49,23 @@ const ReporteForm = ({ navigation, route }) => {
     setmapVisible(false);
   };
 
-  const enviarDatos = () => {
+  const enviarDatos = async() => {
     let reporte = {
-      fecha: fecha,
+      fecha: date,
       direccion: direc,
       descripcion: descrip,
       ubicacion: location,
-      evidencia: route.params.uri,
-      status: "check",
-      idreportador: "1",
+      evidencia: "Foto",
+      status: "Revision",
+      idreportador: userInfo.id
     };
+    await saveReporte(reporte);
     Alert.alert("Reporte generado");
     setNewRegion(null);
     route.params.uri = "";
-    descrip = "";
-    direc = "";
-    navigation.navigate("Home");
+    setDescripcion("");
+    setDirec("");
+    navigation.navigate("Reportes");
   };
 
   return (
@@ -94,6 +95,7 @@ const ReporteForm = ({ navigation, route }) => {
             placeholder="Direccion"
             placeholderTextColor={"#ffffff"}
             style={styles.input}
+            value={direc}
             onChangeText={(text) => {
               setDirec(text);
             }}
@@ -125,6 +127,7 @@ const ReporteForm = ({ navigation, route }) => {
           placeholder="Ingrese una pequeña descripcion"
           placeholderTextColor={"#ffffff"}
           style={styles.inputArea}
+          value={descrip}
           onChangeText={(text) => {
             setDescripcion(text);
           }}

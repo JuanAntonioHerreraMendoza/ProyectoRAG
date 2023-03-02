@@ -1,14 +1,21 @@
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
-import React from "react";
+import React,{useState,useEffect} from "react";
 import {useNavigation} from "@react-navigation/native";
 
 const ReporteItem = ({ reporte,handleDelete}) => {
-    const navigation=useNavigation();
+  const [fecha, setFecha] = useState("");
+
+  useEffect(() => {
+    setFecha(reporte["fecha"].substr(0, 10)); 
+  }, []); 
+  
+  const navigation=useNavigation();
+    
 
   return (
     <View style={styles.itemContainer}>
       <TouchableOpacity onPress={()=> navigation.navigate('ReporteDetail',{id:reporte.idreporte})} >
-        <Text style={styles.itemTitle}>{reporte.fecha}</Text>
+        <Text style={styles.itemTitle}>Reporte hecho el {fecha}</Text>
         <Text style={styles.itemTitle}>{reporte.direccion}</Text>
       </TouchableOpacity>
       <Text style={reporte.status==='Revision' ? styles.itemStatusRev : (reporte.status==='Aceptado' ? styles.itemStatusAceptado : styles.itemStatusRechazado)}>{reporte.status}</Text>

@@ -19,6 +19,7 @@ import Camara from "../components/Camara";
 import Reportes from "./Reportes";
 import ReporteDetail from "../components/Reportes/ReporteDetail";
 import menuImage from "../components/menuImage";
+import Settings from "./Settings";
 
 function Home({ navigation }) {
   const { userInfo, isLoading, logout } = useContext(AuthContext);
@@ -43,18 +44,49 @@ export default function HomeScreen() {
         drawerStyle: { backgroundColor: "#222f3e" },
         drawerLabelStyle: { color: "white" },
       }}
-      drawerContent={(props)=>menuImage(props,logout,userInfo)}
+      drawerContent={(props) => menuImage(props, logout, userInfo)}
     >
-      <Drawer.Screen name="Inicio" component={Home} options={{ headerTitle: "Inicio",headerTintColor:"white",headerStyle:{backgroundColor:"#222f3e"},headerTitleStyle:{color:"white"}}}/>
+      <Drawer.Screen
+        name="Inicio"
+        component={Home}
+        options={{
+          headerTitle: "Inicio",
+          headerTintColor: "white",
+          headerStyle: { backgroundColor: "#222f3e" },
+          headerTitleStyle: { color: "white" },
+        }}
+      />
       <Drawer.Screen
         name="Reporte"
         component={ReporteForm}
-        options={{ headerTitle: "Crear reporte",headerTintColor:"white",headerStyle:{backgroundColor:"#222f3e"},headerTitleStyle:{color:"white"}}}
+        options={{
+          headerTitle: "Crear reporte",
+          headerTintColor: "white",
+          headerStyle: { backgroundColor: "#222f3e" },
+          headerTitleStyle: { color: "white" },
+        }}
       />
       <Drawer.Screen
         name="Reportes"
         component={Reportes}
-        options={{ headerTitle: "Mis reportes", headerTitleAlign: "center",headerTintColor:"white",headerStyle:{backgroundColor:"#222f3e"},headerTitleStyle:{color:"white"}}}
+        options={{
+          headerTitle: "Mis reportes",
+          headerTitleAlign: "center",
+          headerTintColor: "white",
+          headerStyle: { backgroundColor: "#222f3e" },
+          headerTitleStyle: { color: "white" },
+        }}
+      />
+      <Drawer.Screen
+        name="Configuracion"
+        component={Settings}
+        options={{
+          headerTitle: "Configuracion",
+          headerTitleAlign: "center",
+          headerTintColor: "white",
+          headerStyle: { backgroundColor: "#222f3e" },
+          headerTitleStyle: { color: "white" },
+        }}
       />
       <Drawer.Screen
         name="ReporteDetail"
