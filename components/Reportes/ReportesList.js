@@ -19,7 +19,6 @@ const ReportesList = () => {
 
   const renderItem = ({ item }) => {
     return <>
-    <Text>{item.idpersona}</Text>
     <ReporteItem reporte={item}></ReporteItem>
     </>
   };
@@ -39,7 +38,7 @@ const ReportesList = () => {
       <FlatList
         style={{ width: "100%" }}
         data={reportes}
-        keyExtractor={(item) => item.idreporte + ""}
+        keyExtractor={(item) => item.idreporte }
         renderItem={renderItem}
         refreshControl={
           <RefreshControl
