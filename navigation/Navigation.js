@@ -22,7 +22,7 @@ function Navigation() {
             component={SplashScreen}
             options={{ headerShown: false }}
           />
-        ) : userInfo.id ? (
+        ) : userInfo.idusuarios ? (
           <Stack.Screen
             name="Index"
             component={Home}

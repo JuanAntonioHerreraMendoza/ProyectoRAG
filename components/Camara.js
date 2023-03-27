@@ -104,15 +104,15 @@ export default function Camara({ navigation, route }) {
             }}
           >
             <ButtonCamera
-              title="Re-take"
+              title="Tomar de nuevo"
               onPress={() => setImage(null)}
               icon="retweet"
             />
-            <ButtonCamera title="Save" onPress={savePicture} icon="check" />
+            <ButtonCamera title="Guardar" onPress={savePicture} icon="check" />
           </View>
         ) : (
           <ButtonCamera
-            title="Take a picture"
+            title="Capturar"
             onPress={takePicture}
             icon="camera"
           />

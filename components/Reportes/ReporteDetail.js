@@ -46,9 +46,9 @@ const ReporteDetail = ({ route, navigation }) => {
       </View>
       <View>
         <Button
-          title="Go back"
+          title="Regresar"
           onPress={() => {
-            navigation.navigate("Reportes");
+            navigation.goBack();
           }}
         />
       </View>

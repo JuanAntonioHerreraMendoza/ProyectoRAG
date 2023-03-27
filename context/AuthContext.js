@@ -13,13 +13,13 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (user) => {
     setIsLoading(true);
-    if (user.pass === "" || user.user === "") {
+    if (user.contraseña === "" || user.usuario === "") {
       setIsLoading(false);
       Alert.alert("Rellene ambos campos");
     } else {
       try {
         let userInfo = await loginuser(user);
-        if (userInfo.id === undefined) {
+        if (userInfo.idusuarios === undefined) {
           Alert.alert("Usuario o contraseña incorrecto");
           setIsLoading(false);
         } else {
@@ -46,9 +46,16 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  function sleep(time) {
+    return new Promise((resolve) => setTimeout(resolve, time));
+  }
+
   const isLoggedIn = async () => {
     try {
       setSplashLoading(true);
+      sleep(1500).then(()=>{
+        setSplashLoading(false);
+      })
 
       let userInfo = await AsyncStorage.getItem("userInfo");
       userInfo = JSON.parse(userInfo);
@@ -56,8 +63,6 @@ export const AuthProvider = ({ children }) => {
       if (userInfo) {
         setUserInfo(userInfo);
       }
-
-      setSplashLoading(false);
     } catch (e) {
       setSplashLoading(false);
       console.log(`is logged in error ${e}`);

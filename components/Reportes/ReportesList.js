@@ -1,5 +1,5 @@
-import { StyleSheet, View, FlatList, RefreshControl } from "react-native";
-import React, { useEffect, useState, useContext} from "react";
+import { StyleSheet, View, FlatList, RefreshControl, Text } from "react-native";
+import React, { useEffect, useState, useContext } from "react";
 import { AuthContext } from "../../context/AuthContext";
 import { getReportes } from "../../functions/api";
 import { useIsFocused } from "@react-navigation/native";
@@ -13,12 +13,15 @@ const ReportesList = () => {
   const { userInfo } = useContext(AuthContext);
 
   const loadReportes = async () => {
-    const data = await getReportes(userInfo.id);
+    const data = await getReportes(userInfo.idpersonafk.idpersona);
     setReportes(data);
   };
 
   const renderItem = ({ item }) => {
-    return <ReporteItem reporte={item}></ReporteItem>;
+    return <>
+    <Text>{item.idpersona}</Text>
+    <ReporteItem reporte={item}></ReporteItem>
+    </>
   };
 
   const onRefresh = React.useCallback(async () => {
@@ -32,7 +35,7 @@ const ReportesList = () => {
   }, [isFocused]);
 
   return (
-    <View>
+    <View style={styles.container}>
       <FlatList
         style={{ width: "100%" }}
         data={reportes}
@@ -53,4 +56,9 @@ const ReportesList = () => {
 
 export default ReportesList;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#1E262E",
+  },
+});

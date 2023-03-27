@@ -6,102 +6,51 @@ import {
   ImageBackground,
   Image,
   TouchableOpacity,
+  StyleSheet,
 } from "react-native";
-import {
-  createDrawerNavigator,
-  DrawerContentScrollView,
-  DrawerItemList,
-} from "@react-navigation/drawer";
 import { NavigationContainer } from "@react-navigation/native";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { AuthContext } from "../context/AuthContext";
-import ReporteForm from "./ReporteForm";
-import Camara from "../components/Camara";
-import Reportes from "./Reportes";
-import ReporteDetail from "../components/Reportes/ReporteDetail";
-import menuImage from "../components/menuImage";
-import Settings from "./Settings";
+import Ionicons from "react-native-vector-icons/Ionicons";
+import ReportesStack from "../navigation/ReportesStack";
+import HomeStackScreen from "../navigation/HomeStack";
+import SettingsStack from "../navigation/SettingsStack";
 
-function Home({ navigation }) {
-  const { userInfo, isLoading, logout } = useContext(AuthContext);
 
-  return (
-    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-      <Text>Bienvenido {userInfo.nombre}</Text>
-      <Button title="Cerrar sesion" onPress={logout} />
-    </View>
-  );
-}
-
-const Drawer = createDrawerNavigator();
+const Tab = createBottomTabNavigator();
 
 export default function HomeScreen() {
-  const { userInfo, logout } = useContext(AuthContext);
 
   return (
-    <Drawer.Navigator
-      initialRouteName="Inicio"
-      screenOptions={{
-        drawerStyle: { backgroundColor: "#222f3e" },
-        drawerLabelStyle: { color: "white" },
-      }}
-      drawerContent={(props) => menuImage(props, logout, userInfo)}
+    <Tab.Navigator 
+      screenOptions={({ route }) => ({
+        tabBarIcon: ({ focused, color, size }) => {
+          let iconName;
+
+          if (route.name === "Home") {
+            iconName = focused
+              ? "home"
+              : "home-outline";
+          } else if (route.name === "Opciones") {
+            iconName = focused ? "settings" : "settings-outline";
+          } else if (route.name === "Reportes") {
+            iconName = focused ? "ios-list" : "ios-list-outline";
+          }
+
+          return <Ionicons name={iconName} size={size} color={color} />;
+        },
+        tabBarActiveTintColor: "#00B2FF",
+        tabBarLabelStyle:{fontSize:12},
+        tabBarInactiveTintColor: "white",
+        tabBarStyle:{
+          backgroundColor:"#464646"
+          //"#818E9C"
+        }
+      })}
     >
-      <Drawer.Screen
-        name="Inicio"
-        component={Home}
-        options={{
-          headerTitle: "Inicio",
-          headerTintColor: "white",
-          headerStyle: { backgroundColor: "#222f3e" },
-          headerTitleStyle: { color: "white" },
-        }}
-      />
-      <Drawer.Screen
-        name="Reporte"
-        component={ReporteForm}
-        options={{
-          headerTitle: "Crear reporte",
-          headerTintColor: "white",
-          headerStyle: { backgroundColor: "#222f3e" },
-          headerTitleStyle: { color: "white" },
-        }}
-      />
-      <Drawer.Screen
-        name="Reportes"
-        component={Reportes}
-        options={{
-          headerTitle: "Mis reportes",
-          headerTitleAlign: "center",
-          headerTintColor: "white",
-          headerStyle: { backgroundColor: "#222f3e" },
-          headerTitleStyle: { color: "white" },
-        }}
-      />
-      <Drawer.Screen
-        name="Configuracion"
-        component={Settings}
-        options={{
-          headerTitle: "Configuracion",
-          headerTitleAlign: "center",
-          headerTintColor: "white",
-          headerStyle: { backgroundColor: "#222f3e" },
-          headerTitleStyle: { color: "white" },
-        }}
-      />
-      <Drawer.Screen
-        name="ReporteDetail"
-        component={ReporteDetail}
-        options={{
-          drawerItemStyle: { height: 0 },
-        }}
-      />
-      <Drawer.Screen
-        name="Camara"
-        component={Camara}
-        options={{
-          drawerItemStyle: { height: 0 },
-        }}
-      />
-    </Drawer.Navigator>
+      <Tab.Screen name="Home" component={HomeStackScreen} options={{headerShown:false,title:"Inicio",}}/>
+      <Tab.Screen name="Reportes" component={ReportesStack} options={{headerShown:false}}/>
+      <Tab.Screen name="Opciones" component={SettingsStack} options={{headerShown:false}}/>
+    </Tab.Navigator>
   );
 }

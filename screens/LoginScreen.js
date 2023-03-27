@@ -7,6 +7,7 @@ import {
 } from "react-native";
 import React, { useContext, useState } from "react";
 import Spinner from "react-native-loading-spinner-overlay";
+import Ionicons from "react-native-vector-icons/Ionicons";
 
 import { AuthContext } from "../context/AuthContext";
 
@@ -14,8 +15,8 @@ const LoginScreen = ({ navigation }) => {
   const { isLoading, login } = useContext(AuthContext);
 
   const [user, setUser] = useState({
-    user: "",
-    pass: "",
+    usuario: "",
+    contraseña: "",
   });
 
   const handleChange = (name, value) => setUser({ ...user, [name]: value });
@@ -23,18 +24,21 @@ const LoginScreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <Spinner visible={isLoading} />
+      <Text style={styles.text}>Supervision Ciudadana</Text>
+      <Text style={styles.text} >SuCi</Text>
+      <Ionicons style={{marginBottom:30}} name={"shield-outline"} size={150} color={"#E1EC2F"} />
       <TextInput
         style={styles.input}
-        placeholder="Usuario"
+        placeholder="Correo"
         placeholderTextColor="#ffffff"
-        onChangeText={(text) => handleChange("user", text)}
+        onChangeText={(text) => handleChange("usuario", text)}
       />
       <TextInput
         style={styles.input}
         placeholder="Contraseña"
         placeholderTextColor="#ffffff"
         secureTextEntry
-        onChangeText={(text) => handleChange("pass", text)}
+        onChangeText={(text) => handleChange("contraseña", text)}
       />
       <TouchableOpacity
         style={styles.buttonSave}
@@ -54,27 +58,32 @@ const styles = new StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#20187C",
+    backgroundColor: "#1E262E",
   },
+  text:{
+    color:"white",
+    fontSize:28,
+  }
+  ,
   input: {
     width: "80%",
     fontSize: 14,
     marginBottom: 10,
     borderWidth: 1,
-    borderColor: "#10ac84",
+    borderColor: "#E1EC2F",
     height: 35,
     color: "#ffffff",
     padding: 5,
     textalign: "center",
-    borderRadius: 5,
+    borderRadius: 8,
   },
   buttonSave: {
     paddingTop: 10,
     paddingBottom: 10,
-    borderRadius: 5,
-    marginBottom: 10,
+    borderRadius: 15,
     backgroundColor: "#10ac84",
     width: "80%",
+    marginVertical:20
   },
   buttonText: {
     color: "#ffffff",
