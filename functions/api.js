@@ -1,4 +1,4 @@
-const API = "http://192.168.1.70:8080/" //"http://172.20.10.2:8080/";
+const API = "http://192.168.1.75:8080/" //"http://172.20.10.2:8080/";
 
 export const loginuser = async (user) => {
   const res = await fetch(`${API}usuarios/login`, {
