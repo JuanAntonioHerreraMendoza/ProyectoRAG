@@ -11,12 +11,28 @@ export const AuthProvider = ({ children }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [splashLoading, setSplashLoading] = useState(false);
 
+  const validarEmail=(user)=>{
+    let re = /\S+@\S+\.\S+/;
+    let regex = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im;
+
+    if (re.test(user.usuario) || regex.test(user.usuario)) {
+      return true;
+    } 
+    else{
+      return false;
+    }
+  }
+
   const login = async (user) => {
     setIsLoading(true);
     if (user.contraseña === "" || user.usuario === "") {
       setIsLoading(false);
       Alert.alert("Rellene ambos campos");
-    } else {
+    } else if(!validarEmail(user)){
+      setIsLoading(false);
+      Alert.alert("Email incorrecto")
+    }
+    else {
       try {
         let userInfo = await loginuser(user);
         if (userInfo.idusuarios === undefined) {

@@ -1,4 +1,4 @@
-const API = "http://192.168.1.70:8080/";
+const API = "http://192.168.1.70:8080/" //"http://172.20.10.2:8080/";
 
 export const loginuser = async (user) => {
   const res = await fetch(`${API}usuarios/login`, {
@@ -24,7 +24,7 @@ export const getReporte= async (id) =>{
 
 export const saveReporte = async (reporte) =>{
   console.log(JSON.stringify(reporte))
-  const res = await fetch(`${API}newReporte`, {
+  const res = await fetch(`${API}/reportes/newReporte`, {
     method: "POST",
     headers: {
       Accept: "application/json",
