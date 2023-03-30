@@ -35,3 +35,16 @@ export const saveReporte = async (reporte) =>{
   return console.log(res);
 }
 
+export const saveUsuario = async (usuario) =>{
+  console.log(JSON.stringify(usuario))
+  const res = await fetch(`${API}usuarios/usuarioR`, {
+    method: "POST",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(usuario),
+  });
+  return await res.json();
+}
+
