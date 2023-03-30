@@ -6,6 +6,7 @@ import {
   StyleSheet,
 } from "react-native";
 import React, { useContext, useState } from "react";
+import {useNavigation} from "@react-navigation/native";
 import Spinner from "react-native-loading-spinner-overlay";
 import Ionicons from "react-native-vector-icons/Ionicons";
 
@@ -17,6 +18,8 @@ const LoginScreen = () => {
   const [emailValidate, setemailValidate] = useState(false);
   const [inputsValidate, setinputsValidate] = useState(false);
   const [loginValidate, setloginValidate] = useState(false);
+
+  const navigation=useNavigation();
 
   const [user, setUser] = useState({
     usuario: "",
@@ -113,6 +116,17 @@ const LoginScreen = () => {
       >
         <Text style={styles.buttonText}>Iniciar sesión</Text>
       </TouchableOpacity>
+      <TouchableOpacity style={styles.buttonGoogle}>
+        <Text style={styles.buttonText}>Aqui va lo de google</Text>
+      </TouchableOpacity>
+      <View style={{flexDirection:"row",width:"80%",justifyContent:"space-between"}}>
+      <TouchableOpacity onPress={()=>{navigation.navigate("Registro")}}>
+        <Text style={{color:"white"}}>Registrarse</Text>
+      </TouchableOpacity>
+      <TouchableOpacity>
+        <Text style={{color:"white"}}>Olvide mi contraseña</Text>
+      </TouchableOpacity>
+      </View>
     </View>
   );
 };
@@ -133,8 +147,8 @@ const styles = new StyleSheet.create({
     width: "80%",
     fontSize: 14,
     marginBottom: 10,
-    borderWidth: 1,
-    borderColor: "#E1EC2F",
+    borderWidth: 2,
+    borderColor: "gray",
     height: 35,
     color: "#ffffff",
     padding: 5,
@@ -142,17 +156,24 @@ const styles = new StyleSheet.create({
     borderRadius: 8,
   },
   buttonSave: {
-    paddingTop: 10,
+    paddingTop: 5,
     paddingBottom: 10,
     borderRadius: 15,
-    backgroundColor: "#10ac84",
+    backgroundColor: "#105293",
     width: "80%",
-    marginVertical: 20,
+    marginVertical: 10,
+  },
+  buttonGoogle: {
+    paddingTop: 5,
+    paddingBottom: 10,
+    borderRadius: 15,
+    backgroundColor: "#105293",
+    width: "80%",
+    marginBottom:15
   },
   buttonText: {
     color: "#ffffff",
     textAlign: "center",
-    fontStyle: "italic",
     fontSize: 16,
   },
   wrapperIcon: {
