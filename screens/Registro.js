@@ -7,16 +7,22 @@ import {
   ScrollView,
   StatusBar,
 } from "react-native";
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { Picker } from "@react-native-picker/picker";
 import { CheckBox } from "@rneui/themed";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { saveUsuario } from "../functions/api";
+import { AuthContext } from "../context/AuthContext";
+import { useNavigation } from "@react-navigation/native";
 
 const Registro = () => {
+  const [inputsValidate, setinputsValidate] = useState(false);
+  const [emailValidate, setemailValidate] = useState(false);
+  const [passValidate, setpassValidate] = useState(false);
   const [seePass, setSeePass] = useState(true);
   const [checked, setChecked] = useState(0);
   const [checkedTerms, setCheckedTerms] = useState(false);
+  const [messageE, setMessageE] = useState("");
   const [persona, setPersona] = useState({
     nombres: "",
     apellidop: "",
@@ -30,19 +36,64 @@ const Registro = () => {
     correo: "",
     activo: true,
     numSuspenciones: 0,
-    tipousuariofk:{}
+    tipousuariofk: {},
   });
   const [tipoUser, setTipoUser] = useState({
-    idtipousuario: 1,
-    tipousuario: "civico",
+    idtipousuario: "",
   });
 
   const [user, setUser] = useState({
     usuario: "",
     contraseña: "",
-    idpersonafk:{
-    }
+    idpersonafk: {},
   });
+
+  const validarEmail = (user) => {
+    let re = /\S+@\S+\.\S+/;
+    let regex = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im;
+
+    if (re.test(user.usuario) || regex.test(user.usuario)) {
+      return true;
+    }
+  };
+  const validarContraseña = (value) => {
+    const isNonWhiteSpace = /^\S*$/;
+    if (!isNonWhiteSpace.test(value)) {
+      return "La contraseña no puede tener espacios.";
+    }
+
+    const isContainsUppercase = /^(?=.*[A-Z]).*$/;
+    if (!isContainsUppercase.test(value)) {
+      return "La contraseña debe tener al menos una letra mayuscula";
+    }
+
+    const isContainsLowercase = /^(?=.*[a-z]).*$/;
+    if (!isContainsLowercase.test(value)) {
+      return "La contraseña debe tener al menos una letra minuscula";
+    }
+
+    const isContainsNumber = /^(?=.*[0-9]).*$/;
+    if (!isContainsNumber.test(value)) {
+      return "La contraseña debe tener al menos un digito";
+    }
+
+    const isValidLength = /^.{8,16}$/;
+    if (!isValidLength.test(value)) {
+      return "La longitud de la contraseña debe esta entre 8 y 16 caracteres";
+    }
+
+    const isContainsSymbol =
+      /^(?=.*[~`!@#$%^&*()--+={}\[\]|\\:;"'<>,.?/_₹]).*$/;
+    if (!isContainsSymbol.test(value)) {
+      return "La contraseña debe tener al menos un caracter especial";
+    }
+
+    return null;
+  };
+  const validarInputs = (persona, user) => {
+    if (Object.values(persona).includes("") || Object.values(user).includes(""))
+      return true;
+  };
 
   const handleChangeP = (name, value) => {
     setPersona({ ...persona, [name]: value });
@@ -51,10 +102,31 @@ const Registro = () => {
     setUser({ ...user, [name]: value });
   };
 
-  const handleSubmmit = (usuario,persona,tipousuario) => {
-    persona.tipousuariofk=tipousuario;
-    usuario.idpersonafk=persona;
-    saveUsuario(usuario);
+  const handleSubmmit = (usuario, persona, tipousuario) => {
+    setemailValidate(false);
+    setpassValidate(false);
+    setinputsValidate(false);
+
+    if (validarInputs(usuario, persona)) {
+      return setinputsValidate(true);
+    }
+    if (!validarEmail(usuario)) {
+      setemailValidate(true);
+      let checkPass = validarContraseña(usuario.contraseña);
+      if (checkPass) {
+        setMessageE(checkPass);
+        setpassValidate(true);
+        return;
+      }
+      return;
+    }
+    checked === 0
+      ? (tipousuario.idtipousuario = "1")
+      : (tipousuario.idtipousuario = "2");
+    persona.tipousuariofk = tipousuario;
+    usuario.idpersonafk = persona;
+    //saveUsuario(usuario);
+    //login(user);
   };
 
   return (
@@ -92,6 +164,11 @@ const Registro = () => {
           />
         </View>
         <View style={styles.form}>
+          {inputsValidate ? (
+            <Text style={styles.warningText}>Rellene todos los campos</Text>
+          ) : (
+            <></>
+          )}
           <TextInput
             style={styles.input}
             placeholder="Nombres"
@@ -114,6 +191,7 @@ const Registro = () => {
             style={styles.input}
             placeholder="Edad"
             keyboardType="numeric"
+            maxLength={2}
             placeholderTextColor={"white"}
             onChangeText={(text) => handleChangeP("edad", text)}
           />
@@ -139,6 +217,7 @@ const Registro = () => {
             style={styles.input}
             placeholder="Telefono"
             keyboardType="numeric"
+            maxLength={10}
             placeholderTextColor={"white"}
             onChangeText={(text) => handleChangeP("telefono", text)}
           />
@@ -146,9 +225,15 @@ const Registro = () => {
             style={styles.input}
             placeholder="Numero de cuenta"
             keyboardType="numeric"
+            maxLength={11}
             placeholderTextColor={"white"}
-            onChangeText={(text) => handleChangeP("numCuenta", text)}
+            onChangeText={(text) => handleChangeP("numcuenta", text)}
           />
+          {emailValidate ? (
+            <Text style={styles.warningText}>Formato de email incorrecto</Text>
+          ) : (
+            <></>
+          )}
           <TextInput
             style={styles.input}
             placeholder="Correo"
@@ -158,6 +243,11 @@ const Registro = () => {
               handleChangeU("usuario", text);
             }}
           />
+          {passValidate ? (
+            <Text style={styles.warningText}>{messageE}</Text>
+          ) : (
+            <></>
+          )}
           <View
             style={{
               flexDirection: "row",
@@ -190,8 +280,9 @@ const Registro = () => {
             title="De acuerdo"
           />
           <TouchableOpacity
-            onPress={() => handleSubmmit(user,persona,tipoUser)}
-            style={styles.buttonSave}
+            onPress={() => handleSubmmit(user, persona, tipoUser)}
+            disabled={!checkedTerms}
+            style={checkedTerms ? styles.buttonSave : styles.buttonSaveD}
           >
             <Text style={styles.buttonText}>Registrarme</Text>
           </TouchableOpacity>
@@ -241,6 +332,14 @@ const styles = new StyleSheet.create({
     paddingBottom: 10,
     borderRadius: 15,
     backgroundColor: "#105293",
+    width: "80%",
+    marginVertical: 10,
+  },
+  buttonSaveD: {
+    paddingTop: 5,
+    paddingBottom: 10,
+    borderRadius: 15,
+    backgroundColor: "gray",
     width: "80%",
     marginVertical: 10,
   },

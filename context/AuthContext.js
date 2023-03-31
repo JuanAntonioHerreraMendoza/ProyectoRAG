@@ -13,25 +13,13 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (user) => {
     setIsLoading(true);
-    if (user.contraseña === "" || user.usuario === "") {
+    let userInfo = await loginuser(user);
+    if (userInfo === undefined) {
       setIsLoading(false);
-      return false;
-    }
-    else {
-      try {
-        let userInfo = await loginuser(user);
-        if (userInfo.idusuarios === undefined) {
-          setIsLoading(false);
-          return false;
-        } else {
-          setUserInfo(userInfo);
-          AsyncStorage.setItem("userInfo", JSON.stringify(userInfo));
-          setIsLoading(false);
-        }
-      } catch (error) {
-        Alert.alert(error);
-        setIsLoading(false);
-      }
+    } else {
+      setUserInfo(userInfo);
+      AsyncStorage.setItem("userInfo", JSON.stringify(userInfo));
+      setIsLoading(false);
     }
   };
 
@@ -54,9 +42,9 @@ export const AuthProvider = ({ children }) => {
   const isLoggedIn = async () => {
     try {
       setSplashLoading(true);
-      sleep(1500).then(()=>{
+      sleep(1500).then(() => {
         setSplashLoading(false);
-      })
+      });
 
       let userInfo = await AsyncStorage.getItem("userInfo");
       userInfo = JSON.parse(userInfo);

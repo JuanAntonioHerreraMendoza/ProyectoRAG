@@ -47,7 +47,7 @@ export function Home({ navigation }) {
       }}
     >
       <Text style={{ color: "white",fontSize:20,paddingTop:10 }}>Bienvenido {userInfo.idpersonafk.nombres}</Text>
-      <FlatList
+      {/* <FlatList
         style={{ width: "100%" }}
         data={reportes}
         keyExtractor={(item) => item.idreporte + ""}
@@ -60,7 +60,7 @@ export function Home({ navigation }) {
             progressBackgroundColor="0a3d62"
           />
         }
-      />
+      /> */}
       <TouchableOpacity
         style={styles.locationB}
         onPress={() => {

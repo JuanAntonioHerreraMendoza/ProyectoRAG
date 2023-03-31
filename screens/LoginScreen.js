@@ -22,6 +22,7 @@ const LoginScreen = () => {
   const navigation=useNavigation();
 
   const [user, setUser] = useState({
+    idusuarios:0,
     usuario: "",
     contraseña: "",
   });
@@ -39,7 +40,7 @@ const LoginScreen = () => {
     if (user.usuario === "" || user.contraseña === "") return true;
   };
 
-  const handleSubmmit = (user) => {
+  const handleSubmmit = async (user) => {
     setinputsValidate(false);
     setemailValidate(false);
     if (validarInputs(user)) {
@@ -48,10 +49,10 @@ const LoginScreen = () => {
     if (!validarEmail(user)) {
       return setemailValidate(true);
     }
-    if (login(user)) {
-      return setloginValidate(true);
+    let u=await login(user)
+    if(u===undefined){
+      return setloginValidate(true)
     }
-    login(user);
   };
 
   const handleChange = (name, value) => setUser({ ...user, [name]: value });
