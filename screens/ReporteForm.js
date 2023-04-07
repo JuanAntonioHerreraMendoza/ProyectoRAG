@@ -7,18 +7,18 @@ import {
   TouchableOpacity,
   Alert,
 } from "react-native";
-import React, { useEffect, useState , useContext} from "react";
+import React, { useEffect, useState, useContext } from "react";
 import ButtonCamera from "../components/ButtonCamera";
 import { Modal } from "../components/Modal";
 import { getCurrentLocation } from "../functions/locationMap";
 import { AuthContext } from "../context/AuthContext";
 import MapView, { Marker } from "react-native-maps";
 import { Button } from "@rneui/themed";
-import { saveReporte } from "../functions/api";
+import { saveReporte, uploadImage } from "../functions/api";
 
 const ReporteForm = ({ navigation, route }) => {
   const date = new Date();
-
+  const [inputsValidate, setinputsValidate] = useState(false);
   const [direc, setDirec] = useState(null);
   const [descrip, setDescripcion] = useState(null);
   const [mapVisible, setmapVisible] = useState(false);
@@ -42,6 +42,9 @@ const ReporteForm = ({ navigation, route }) => {
     }
   }, [route.params?.uri]);
 
+  const validarInputs = (reporte) => {
+    if (direc === null || descrip === null || location == null) return true;
+  };
   const confirmLocation = () => {
     setLocation(newRegion);
     Alert.alert("Se registro la ubicacion");
@@ -49,23 +52,35 @@ const ReporteForm = ({ navigation, route }) => {
     setmapVisible(false);
   };
 
-  const enviarDatos = async() => {
-    let reporte = {
-      fecha: date,
-      direccion: direc,
-      descripcion: descrip,
-      ubicacion: location,
-      evidencia: "Foto",
-      status: "Revision",
-      idreportador: userInfo.id
-    };
-    await saveReporte(reporte);
-    Alert.alert("Reporte generado");
-    setNewRegion(null);
-    route.params.uri = "";
-    setDescripcion("");
-    setDirec("");
-    navigation.navigate("Reportes");
+  const enviarDatos = async () => {
+    setinputsValidate(false);
+    let localUri = route?.params.uri;
+    if (localUri === null) {
+      return Alert.alert("Tome una imagen");
+    } else {
+      let filename = localUri.split("/").pop();
+      let reporte = {
+        fecha: date,
+        direccion: direc,
+        descripcion: descrip,
+        ubicacion: location.latitude + "," + location.longitude,
+        evidencia: filename,
+        estatus: "Revision",
+        idreportadorfk: userInfo.idpersonafk.idpersona,
+        tipousuariofk: userInfo.tipousuariofk.idtipousuario,
+      };
+      if (validarInputs(reporte)) {
+        return setinputsValidate(true);
+      }
+      await saveReporte(reporte);
+      await uploadImage(localUri);
+      Alert.alert("Reporte generado");
+      setNewRegion(null);
+      route.params.uri = "";
+      setDescripcion("");
+      setDirec("");
+      navigation.navigate("Reportes");
+    }
   };
 
   return (
@@ -84,6 +99,11 @@ const ReporteForm = ({ navigation, route }) => {
           }}
           style={styles.imagen}
         ></Image>
+        {inputsValidate ? (
+          <Text style={styles.warningText}>Rellene todos los campos</Text>
+        ) : (
+          <></>
+        )}
         <View
           style={{
             flexDirection: "row",
@@ -185,10 +205,16 @@ const styles = new StyleSheet.create({
     paddingBottom: 20,
     flex: 1,
     alignItems: "center",
-    backgroundColor: "#20187C",
+    backgroundColor: "#1E262E",
   },
   title: {
-    backgroundColor: "#20187C",
+    backgroundColor: "#1E262E",
+  },
+  warningText: {
+    color: "red",
+    fontSize: 15,
+    marginTop: 0,
+    marginBottom: 10,
   },
   text: {
     paddingVertical: 20,
@@ -201,7 +227,7 @@ const styles = new StyleSheet.create({
     fontSize: 14,
     marginBottom: 10,
     borderWidth: 1,
-    borderColor: "#10ac84",
+    borderColor: "gray",
     height: 35,
     color: "#ffffff",
     padding: 5,
@@ -213,7 +239,7 @@ const styles = new StyleSheet.create({
     fontSize: 14,
     marginBottom: 10,
     borderWidth: 1,
-    borderColor: "#10ac84",
+    borderColor: "gray",
     height: 35,
     color: "#ffffff",
     padding: 5,
@@ -229,7 +255,7 @@ const styles = new StyleSheet.create({
     paddingBottom: 10,
     borderRadius: 5,
     marginBottom: 10,
-    backgroundColor: "#10ac84",
+    backgroundColor: "#105293",
     width: "80%",
   },
   buttonText: {

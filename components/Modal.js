@@ -17,5 +17,6 @@ export const Modal = ({isVisible, setVisible, children}) => {
 const styles = StyleSheet.create({
   overlay: {
     width: "100%",
+    backgroundColor:"#1E262E"
   },
 });

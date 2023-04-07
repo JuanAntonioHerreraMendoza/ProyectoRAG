@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "my-app",
-    "slug": "my-app",
+    "name": "supervisionsuci",
+    "slug": "myapp",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -11,6 +11,7 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
+    "scheme":"com.supervisionsuci.supervisionsuci",
     "updates": {
       "fallbackToCacheTimeout": 0
     },
@@ -18,14 +19,16 @@
       "**/*"
     ],
     "ios": {
+      "bundleIdentifier": "com.supervisionsuci.supervisionsuci",
       "supportsTablet": true
     },
     "android": {
+      "package": "com.supervisionsuci.supervisionsuci",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
       },
-      "permissions":[
+      "permissions": [
         "LOCATION",
         "ACCESS_COARSE_LOCATION",
         "ACCESS_FINE_LOCATION"
@@ -33,6 +36,11 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "f2518a2d-12ef-4853-a8da-51712e24ab67"
+      }
     }
   }
 }

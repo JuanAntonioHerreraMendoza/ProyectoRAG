@@ -39,7 +39,7 @@ export default function Camara({ navigation, route }) {
         alert("Foto registrada");
         console.log("saved successfully");
         navigation.navigate({
-          name: "Reporte",
+          name: "ReporteForm",
           params: { uri: image },
           merge: true,
         });
@@ -74,7 +74,7 @@ export default function Camara({ navigation, route }) {
               title=""
               icon="cross"
               onPress={() => {
-                navigation.navigate("Reporte");
+                navigation.navigate("ReporteForm");
               }}
             />
             <ButtonCamera

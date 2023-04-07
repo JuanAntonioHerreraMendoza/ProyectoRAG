@@ -9,7 +9,6 @@ const ReportesList = () => {
   const [reportes, setReportes] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
   const isFocused = useIsFocused();
-
   const { userInfo } = useContext(AuthContext);
 
   const loadReportes = async () => {

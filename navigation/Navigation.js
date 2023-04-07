@@ -8,6 +8,8 @@ import Login from "../screens/LoginScreen";
 import Home from "../screens/Home";
 import SplashScreen from "../components/SplashScreen";
 import Registro from "../screens/Registro";
+import RecuperarContraseña from "../screens/RecuperarContraseña";
+import CambioContraseña from "../screens/CambioContraseña";
 
 const Stack = createNativeStackNavigator();
 
@@ -39,6 +41,16 @@ function Navigation() {
             <Stack.Screen
               name="Registro"
               component={Registro}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="RecuperarContraseña"
+              component={RecuperarContraseña}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="CambioContraseña"
+              component={CambioContraseña}
               options={{ headerShown: false }}
             />
           </>

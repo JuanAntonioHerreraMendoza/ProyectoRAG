@@ -1,3 +1,5 @@
+import { Alert } from "react-native";
+
 const API = "http://192.168.1.75:8080/" //"http://172.20.10.2:8080/";
 
 export const loginuser = async (user) => {
@@ -18,13 +20,12 @@ export const getReportes= async (id) =>{
 }
 
 export const getReporte= async (id) =>{
-  const res = await fetch(`${API}reporte/${id}`);
+  const res = await fetch(`${API}reportes/rep?id=${id}`);
   return await res.json();
 }
 
 export const saveReporte = async (reporte) =>{
-  console.log(JSON.stringify(reporte))
-  const res = await fetch(`${API}/reportes/newReporte`, {
+  const res = await fetch(`${API}reportes`, {
     method: "POST",
     headers: {
       Accept: "application/json",
@@ -32,11 +33,34 @@ export const saveReporte = async (reporte) =>{
     },
     body: JSON.stringify(reporte),
   });
-  return console.log(res);
+  return await res.json();
+}
+
+export const cambiarContraseña = async (user,codigo) =>{
+  const res = await fetch(`${API}usuarios/editarContraseña?pass=${user.contraseña}`, {
+    method: "PUT",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(codigo),
+  });
+  return await res.json();
+}
+
+export const cambiarNumeroCuenta = async (user,numero) =>{
+  const res = await fetch(`${API}usuarios/editarNumCuenta?numero=${numero}`, {
+    method: "PUT",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(user),
+  });
+  return await res.json();
 }
 
 export const saveUsuario = async (usuario) =>{
-  console.log(JSON.stringify(usuario))
   const res = await fetch(`${API}usuarios/usuarioR`, {
     method: "POST",
     headers: {
@@ -46,5 +70,29 @@ export const saveUsuario = async (usuario) =>{
     body: JSON.stringify(usuario),
   });
   return await res.json();
+}
+
+export const uploadImage= async(image)=>{
+  let localUri = image;
+  if(localUri===null){
+    return Alert.alert("Seleccione una imagen")
+  }else{
+
+    let filename=localUri.split('/').pop();
+    let match=/\.(\w+)$/.exec(filename);
+    let type=match?`image/${match[1]}`:'image'
+
+    let formData= new FormData()
+    formData.append('file',{uri:localUri,name:filename,type})
+    console.log(formData)
+    const res=await fetch(`${API}images`,{
+      method:'POST',
+      body:formData,
+      header:{
+        'content-type':'multipart/form-data'
+      }
+    })
+    return ;
+  }
 }
 

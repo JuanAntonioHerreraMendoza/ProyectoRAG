@@ -6,23 +6,32 @@ import {
   TouchableOpacity,
   ScrollView,
   StatusBar,
+  Button,
+  Image,
+  Alert,
 } from "react-native";
-import { useState, useContext } from "react";
-import { Picker } from "@react-native-picker/picker";
+import { useState, useContext, useEffect } from "react";
 import { CheckBox } from "@rneui/themed";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import { saveUsuario } from "../functions/api";
+import { saveUsuario, uploadImage } from "../functions/api";
 import { AuthContext } from "../context/AuthContext";
 import { useNavigation } from "@react-navigation/native";
+import * as ImagePicker from "expo-image-picker";
+
+//web: 46543387206-l1kci17tb7hgddi43fn6odt4ua08jvfd.apps.googleusercontent.com
+//ios: 46543387206-smelvtc1l97odmfa8gtk1qmrv6psq72g.apps.googleusercontent.com
+//android: 46543387206-emjkj7pqrcro2cdf21u2st03n73769id.apps.googleusercontent.com
 
 const Registro = () => {
   const [inputsValidate, setinputsValidate] = useState(false);
   const [emailValidate, setemailValidate] = useState(false);
   const [passValidate, setpassValidate] = useState(false);
+  const [imageValidate, setimageValidate] = useState(false);
   const [seePass, setSeePass] = useState(true);
   const [checked, setChecked] = useState(0);
   const [checkedTerms, setCheckedTerms] = useState(false);
   const [messageE, setMessageE] = useState("");
+  const [image, setImage] = useState(null);
   const [persona, setPersona] = useState({
     nombres: "",
     apellidop: "",
@@ -106,9 +115,13 @@ const Registro = () => {
     setemailValidate(false);
     setpassValidate(false);
     setinputsValidate(false);
+    setimageValidate(true);
 
     if (validarInputs(usuario, persona)) {
       return setinputsValidate(true);
+    }
+    if (image === null) {
+      return setimageValidate(true);
     }
     if (!validarEmail(usuario)) {
       setemailValidate(true);
@@ -125,8 +138,24 @@ const Registro = () => {
       : (tipousuario.idtipousuario = "2");
     persona.tipousuariofk = tipousuario;
     usuario.idpersonafk = persona;
-    //saveUsuario(usuario);
-    //login(user);
+    uploadImage(image);
+    saveUsuario(usuario);
+    login(user);
+  };
+
+  const pickImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 0.5,
+    });
+
+    if (!result.canceled) {
+      setImage(result.assets[0].uri);
+    } else {
+      Alert.alert("No se selecciono una foto");
+    }
   };
 
   return (
@@ -169,6 +198,26 @@ const Registro = () => {
           ) : (
             <></>
           )}
+          <View
+            style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
+          >
+            <TouchableOpacity onPress={pickImage} style={styles.buttonSave}>
+              <Text style={styles.buttonText}>Seleccionar imagen...</Text>
+            </TouchableOpacity>
+            {image && (
+              <Image
+                source={{ uri: image }}
+                style={{ width: 200, height: 200 }}
+              />
+            )}
+            {imageValidate ? (
+              <Text style={styles.warningText}>
+                Seleccione una imagen para validar su registro
+              </Text>
+            ) : (
+              <></>
+            )}
+          </View>
           <TextInput
             style={styles.input}
             placeholder="Nombres"

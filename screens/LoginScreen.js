@@ -5,24 +5,38 @@ import {
   TouchableOpacity,
   StyleSheet,
 } from "react-native";
-import React, { useContext, useState } from "react";
-import {useNavigation} from "@react-navigation/native";
+import React, { useContext, useState, useEffect } from "react";
+import * as WebBrowser from "expo-web-browser";
+import * as Google from "expo-auth-session/providers/google";
+import { useNavigation } from "@react-navigation/native";
 import Spinner from "react-native-loading-spinner-overlay";
 import Ionicons from "react-native-vector-icons/Ionicons";
 
 import { AuthContext } from "../context/AuthContext";
 
+WebBrowser.maybeCompleteAuthSession();
+
 const LoginScreen = () => {
   const { isLoading, login } = useContext(AuthContext);
+  const [accesToken, setAccesToken] = useState(null);
+  const [userG, setUserG] = useState(null);
+  const [request, response, promptAsync] = Google.useIdTokenAuthRequest({
+    clientId:
+      "46543387206-l1kci17tb7hgddi43fn6odt4ua08jvfd.apps.googleusercontent.com",
+    iosClientId:
+      "46543387206-smelvtc1l97odmfa8gtk1qmrv6psq72g.apps.googleusercontent.com",
+    androidClientId:
+      "46543387206-emjkj7pqrcro2cdf21u2st03n73769id.apps.googleusercontent.com",
+  });
   const [seePass, setSeePass] = useState(true);
   const [emailValidate, setemailValidate] = useState(false);
   const [inputsValidate, setinputsValidate] = useState(false);
   const [loginValidate, setloginValidate] = useState(false);
 
-  const navigation=useNavigation();
+  const navigation = useNavigation();
 
   const [user, setUser] = useState({
-    idusuarios:0,
+    idusuarios: 0,
     usuario: "",
     contraseña: "",
   });
@@ -49,13 +63,51 @@ const LoginScreen = () => {
     if (!validarEmail(user)) {
       return setemailValidate(true);
     }
-    let u=await login(user)
-    if(u===undefined){
-      return setloginValidate(true)
+    let u = await login(user);
+    if (u === undefined) {
+      return setloginValidate(true);
     }
   };
 
   const handleChange = (name, value) => setUser({ ...user, [name]: value });
+
+  useEffect(() => {
+    if (response?.type === "success") {
+      console.log(response)
+      setAccesToken(response.authentication.accessToken);
+      accesToken && fetchUserGInfo();
+    }
+  }, [response, accesToken]);
+
+  const fetchUserGInfo = async () => {
+    let response = await fetch("https://www.googleapis.com/userinfo/v2/me", {
+      headers: {
+        Authorization: Bearer`${accesToken}`,
+      },
+    });
+    const useInfo = await response.json();
+    console.log(useInfo);
+    setUserG(useInfo);
+  };
+
+  const ShowUserInfo = () => {
+    if (userG) {
+      return (
+        <View
+          style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
+        >
+          <Text style={{ fontSize: 35, fontWeight: "bold", marginBottom: 20 }}>
+            Welcome
+          </Text>
+          <Image
+            source={{ uri: userG.picture }}
+            style={{ width: 100, height: 100, borderRadius: 50 }}
+          />
+          <Text style={{ fontSize: 20, fontWeight: "bold" }}>{userG.name}</Text>
+        </View>
+      );
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -68,6 +120,7 @@ const LoginScreen = () => {
         size={150}
         color={"#E1EC2F"}
       />
+      {userG && <ShowUserInfo />}
       {emailValidate ? (
         <Text style={styles.warningText}>Formato de email incorrecto</Text>
       ) : (
@@ -117,16 +170,34 @@ const LoginScreen = () => {
       >
         <Text style={styles.buttonText}>Iniciar sesión</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.buttonGoogle}>
+      <TouchableOpacity
+        style={styles.buttonGoogle}
+        disabled={!request}
+        onPress={() => {
+          promptAsync();
+        }}
+      >
         <Text style={styles.buttonText}>Aqui va lo de google</Text>
       </TouchableOpacity>
-      <View style={{flexDirection:"row",width:"80%",justifyContent:"space-between"}}>
-      <TouchableOpacity onPress={()=>{navigation.navigate("Registro")}}>
-        <Text style={{color:"white"}}>Registrarse</Text>
-      </TouchableOpacity>
-      <TouchableOpacity>
-        <Text style={{color:"white"}}>Olvide mi contraseña</Text>
-      </TouchableOpacity>
+      <View
+        style={{
+          flexDirection: "row",
+          width: "80%",
+          justifyContent: "space-between",
+        }}
+      >
+        <TouchableOpacity
+          onPress={() => {
+            navigation.navigate("Registro");
+          }}
+        >
+          <Text style={{ color: "white" }}>Registrarse</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => {
+            navigation.navigate("RecuperarContraseña");
+          }}>
+          <Text style={{ color: "white" }}>Olvide mi contraseña</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -170,7 +241,7 @@ const styles = new StyleSheet.create({
     borderRadius: 15,
     backgroundColor: "#105293",
     width: "80%",
-    marginBottom:15
+    marginBottom: 15,
   },
   buttonText: {
     color: "#ffffff",

@@ -13,6 +13,7 @@ const ReporteDetail = ({ route, navigation }) => {
   const loadReporte = async () => {
     const data = await getReporte(route.params.id);
     setReporte(data);
+    console.log(data)
     setFecha(data["fecha"].substr(0, 10));
   };
 
@@ -35,13 +36,13 @@ const ReporteDetail = ({ route, navigation }) => {
         <View style={styles.container}>
         <Text style={styles.font}>{reporte["descripcion"]}</Text>
         </View>
-        <Text style={styles.fontTitle}>Status</Text>
+        <Text style={styles.fontTitle}>Estatus</Text>
         <View style={styles.container}>
-        <Text style={styles.font}>{reporte["status"]}</Text>
+        <Text style={styles.font}>{reporte["estatus"]}</Text>
         </View>
         <Text style={styles.fontTitle}>Evidencia</Text>
         <View style={styles.container}>
-        <Image source={{uri:"https://reactjs.org/logo-og.png"}} style={styles.imagen}/>
+        <Image source={{uri:"http://192.168.1.75:8080/images?file="+reporte.evidencia}} alt="react logo" style={styles.imagen}/>
         </View>
       </View>
       <View>
