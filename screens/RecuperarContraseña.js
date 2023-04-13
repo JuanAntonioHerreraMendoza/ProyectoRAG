@@ -5,11 +5,31 @@ import {
   TouchableOpacity,
   TextInput,
 } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
+import { enviarCorreo } from "../functions/api";
+import { validarEmail } from "../functions/Validaciones";
 
 const RecuperarContraseña = () => {
   const navigation = useNavigation();
+  const [correo, setCorreo] = useState("");
+  const [emailValidate, setEmailValidete] = useState(false);
+  const [inputValidate, setInputValidate] = useState(false);
+
+  const confirmarCorreo = (correo) => {
+    setInputValidate(false);
+    setEmailValidete(false);
+
+    if (correo === "") {
+      return setInputValidate(true);
+    }
+    if (!validarEmail(correo)) {
+      return setEmailValidete(true);
+    }
+    //enviarCorreo(correo);
+    navigation.navigate("CambioContraseña", { correo: { correo } });
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Recuperar contraseña</Text>
@@ -17,8 +37,28 @@ const RecuperarContraseña = () => {
         Escriba su correo a continuacion para poder enviarle un codigo y
         recupere su contraseña
       </Text>
-      <TextInput style={styles.input} />
-      <TouchableOpacity style={styles.buttonSave} onPress={()=>{navigation.navigate("CambioContraseña")}}>
+      {inputValidate ? (
+        <Text style={styles.warningText}>Rellene el campo de correo</Text>
+      ) : (
+        <></>
+      )}
+      {emailValidate ? (
+        <Text style={styles.warningText}>
+          No es el formato de correo correcto
+        </Text>
+      ) : (
+        <></>
+      )}
+      <TextInput
+        style={styles.input}
+        onChangeText={(text) => setCorreo(text)}
+      />
+      <TouchableOpacity
+        style={styles.buttonSave}
+        onPress={() => {
+          confirmarCorreo(correo);
+        }}
+      >
         <Text style={styles.buttonText}>Confirmar correo</Text>
       </TouchableOpacity>
     </View>

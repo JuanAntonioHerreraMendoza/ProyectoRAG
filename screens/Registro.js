@@ -13,16 +13,12 @@ import {
 import { useState, useContext, useEffect } from "react";
 import { CheckBox } from "@rneui/themed";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import { saveUsuario, uploadImage } from "../functions/api";
-import { AuthContext } from "../context/AuthContext";
-import { useNavigation } from "@react-navigation/native";
+import { saveConductor, saveUsuario, uploadImage } from "../functions/api";
 import * as ImagePicker from "expo-image-picker";
-
-//web: 46543387206-l1kci17tb7hgddi43fn6odt4ua08jvfd.apps.googleusercontent.com
-//ios: 46543387206-smelvtc1l97odmfa8gtk1qmrv6psq72g.apps.googleusercontent.com
-//android: 46543387206-emjkj7pqrcro2cdf21u2st03n73769id.apps.googleusercontent.com
+import { useNavigation } from "@react-navigation/native";
 
 const Registro = () => {
+  const navigation = useNavigation();
   const [inputsValidate, setinputsValidate] = useState(false);
   const [emailValidate, setemailValidate] = useState(false);
   const [passValidate, setpassValidate] = useState(false);
@@ -55,6 +51,13 @@ const Registro = () => {
     usuario: "",
     contraseña: "",
     idpersonafk: {},
+  });
+
+  const [conductor, setConductor] = useState({
+    noLicencia: "",
+    tipoLicencia: "",
+    tarjetaCirculacion: "",
+    numplacas: "",
   });
 
   const validarEmail = (user) => {
@@ -102,20 +105,27 @@ const Registro = () => {
   const validarInputs = (persona, user) => {
     if (Object.values(persona).includes("") || Object.values(user).includes(""))
       return true;
+    if (checked === 1) {
+      if (Object.values(conductor).includes("")) {
+        return true;
+      }
+    }
   };
-
   const handleChangeP = (name, value) => {
     setPersona({ ...persona, [name]: value });
   };
   const handleChangeU = (name, value) => {
     setUser({ ...user, [name]: value });
   };
+  const handleChangeC = (name, value) => {
+    setConductor({ ...conductor, [name]: value });
+  };
 
-  const handleSubmmit = (usuario, persona, tipousuario) => {
+  const handleSubmmit = async (usuario, persona, tipousuario) => {
     setemailValidate(false);
     setpassValidate(false);
     setinputsValidate(false);
-    setimageValidate(true);
+    setimageValidate(false);
 
     if (validarInputs(usuario, persona)) {
       return setinputsValidate(true);
@@ -138,9 +148,15 @@ const Registro = () => {
       : (tipousuario.idtipousuario = "2");
     persona.tipousuariofk = tipousuario;
     usuario.idpersonafk = persona;
-    uploadImage(image);
-    saveUsuario(usuario);
-    login(user);
+    //uploadImage(image);
+    await saveUsuario(usuario);
+    if ((checked === 1)) {
+      console.log(conductor);
+      await saveConductor(conductor, persona.nombres);
+    }
+    navigation.navigate("Login");
+    //login(user);
+
   };
 
   const pickImage = async () => {
@@ -201,7 +217,7 @@ const Registro = () => {
           <View
             style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
           >
-            <TouchableOpacity onPress={pickImage} style={styles.buttonSave}>
+            <TouchableOpacity onPress={pickImage} style={styles.buttonImg}>
               <Text style={styles.buttonText}>Seleccionar imagen...</Text>
             </TouchableOpacity>
             {image && (
@@ -321,6 +337,48 @@ const Registro = () => {
               </TouchableOpacity>
             </View>
           </View>
+          {checked === 1 ? (
+            <>
+              <TextInput
+                style={styles.input}
+                placeholder="Numero de licencia"
+                keyboardType="numeric"
+                maxLength={11}
+                placeholderTextColor={"white"}
+                onChangeText={(text) => {
+                  handleChangeC("noLicencia", text);
+                }}
+              />
+              <TextInput
+                style={styles.input}
+                placeholder="Tipo de licencia"
+                maxLength={1}
+                placeholderTextColor={"white"}
+                onChangeText={(text) => {
+                  handleChangeC("tipoLicencia", text);
+                }}
+              />
+              <TextInput
+                style={styles.input}
+                placeholder="Tarjeta de circulacion"
+                keyboardType="numeric"
+                placeholderTextColor={"white"}
+                onChangeText={(text) => {
+                  handleChangeC("tarjetaCirculacion", text);
+                }}
+              />
+              <TextInput
+                style={styles.input}
+                placeholder="Placas"
+                placeholderTextColor={"white"}
+                onChangeText={(text) => {
+                  handleChangeC("numplacas", text);
+                }}
+              />
+            </>
+          ) : (
+            <></>
+          )}
           <CheckBox
             containerStyle={{ backgroundColor: "#1E262E" }}
             center
@@ -382,6 +440,14 @@ const styles = new StyleSheet.create({
     borderRadius: 15,
     backgroundColor: "#105293",
     width: "80%",
+    marginVertical: 10,
+  },
+  buttonImg: {
+    paddingTop: 5,
+    paddingBottom: 10,
+    borderRadius: 15,
+    backgroundColor: "#105293",
+    width: 200,
     marginVertical: 10,
   },
   buttonSaveD: {

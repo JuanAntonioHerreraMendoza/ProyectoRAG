@@ -6,11 +6,20 @@ import {
   TouchableOpacity,
 } from "react-native";
 import React, { useState } from "react";
+import { useNavigation } from "@react-navigation/native";
 import { cambiarContraseña } from "../functions/api";
+import { validarContraseña } from "../functions/Validaciones";
+import { Alert } from "react-native";
+import Ionicons from "react-native-vector-icons/Ionicons";
 
-const CambioContraseña = () => {
-    
+const CambioContraseña = ({ route }) => {
+  const navigation = useNavigation();
+  const [messageE, setmessageE] = useState("");
+  const [messageErrorC, setMessageErrorC] = useState("");
+  const [seePass, setSeePass] = useState(true);
+
   const [user, setUser] = useState({
+    correo: route.params.correo,
     contraseña: "",
   });
   const [codigo, setCodigo] = useState({
@@ -22,9 +31,24 @@ const CambioContraseña = () => {
   const handleChangeC = (name, value) =>
     setCodigo({ ...codigo, [name]: value });
 
-  const handleSubmmit = async (user, codigo) => {
-    await cambiarContraseña(user, codigo);
-};
+  const handleSubmmit = (user, codigo) => {
+    setmessageE("");
+    setMessageErrorC("");
+    if (codigo.codigo === "") {
+      return setmessageE("Rellene el campo");
+    }
+    let checkPass = validarContraseña(user.contraseña);
+    if (checkPass) {
+      return setMessageErrorC(checkPass);
+    }
+    cambiarContraseña(user, codigo).then((status) => {
+      if (status === 200) {
+        navigation.navigate("Login");
+      } else {
+        Alert.alert("Codigo incorrecto");
+      }
+    });
+  };
 
   return (
     <View style={styles.container}>
@@ -33,23 +57,46 @@ const CambioContraseña = () => {
         Escriba el codigo que se le envio a su correo asi como su nueva
         contraseña
       </Text>
+      {messageE === "" ? (
+        <></>
+      ) : (
+        <Text style={styles.warningText}>{messageE}</Text>
+      )}
       <TextInput
         style={styles.input}
         placeholder="Codigo"
-        keyboardType="numeric"
         placeholderTextColor={"white"}
         onChangeText={(text) => handleChangeC("codigo", text)}
       />
-      <TextInput
-        style={styles.input}
-        placeholder="Nueva Contraseña"
-        placeholderTextColor={"white"}
-        onChangeText={(text) => handleChange("contraseña", text)}
-      />
+      {messageErrorC === "" ? (
+        <></>
+      ) : (
+        <Text style={styles.warningText}>{messageErrorC}</Text>
+      )}
+      <View
+        style={{ flexDirection: "row", borderColor: "white", borderWidth: 0.1 }}
+      >
+        <TextInput
+          style={styles.input}
+          placeholder="Nueva Contraseña"
+          placeholderTextColor={"white"}
+          secureTextEntry={seePass}
+          onChangeText={(text) => handleChange("contraseña", text)}
+        />
+        <View style={styles.wrapperIcon}>
+          <TouchableOpacity onPress={() => setSeePass(!seePass)}>
+            {seePass ? (
+              <Ionicons name={"eye-outline"} size={30} color="white" />
+            ) : (
+              <Ionicons name={"eye-off-outline"} size={30} color="white" />
+            )}
+          </TouchableOpacity>
+        </View>
+      </View>
       <TouchableOpacity
         style={styles.buttonSave}
         onPress={() => {
-          handleSubmmit(user,codigo);
+          handleSubmmit(user, codigo);
         }}
       >
         <Text style={styles.buttonText}>Cambiar contraseña</Text>
@@ -106,6 +153,12 @@ const styles = new StyleSheet.create({
     fontSize: 15,
     marginTop: 0,
     marginBottom: 10,
+  },
+  wrapperIcon: {
+    position: "absolute",
+    right: 0,
+    top: -4,
+    padding: 7,
   },
 });
 

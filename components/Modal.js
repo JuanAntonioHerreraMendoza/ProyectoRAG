@@ -7,7 +7,6 @@ export const Modal = ({isVisible, setVisible, children}) => {
     <Overlay
       isVisible={isVisible}
       overlayStyle={styles.overlay}
-      onBackdropPress={() => setVisible(false)}
     >
       {children}
     </Overlay>  

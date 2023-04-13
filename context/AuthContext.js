@@ -1,13 +1,14 @@
 import react, { createContext, useState, useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-import { loginuser } from "../functions/api";
+import { getConductor, loginuser } from "../functions/api";
 import { Alert } from "react-native";
 
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [userInfo, setUserInfo] = useState({});
+  const [Conductor, setConductor] = useState({})
   const [isLoading, setIsLoading] = useState(false);
   const [splashLoading, setSplashLoading] = useState(false);
 
@@ -23,10 +24,13 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+
   const logout = () => {
     try {
       AsyncStorage.removeItem("userInfo");
+      AsyncStorage.removeItem("userConductor");
       setUserInfo({});
+      setConductor({});
       setIsLoading(false);
       console.log("Logout correcto");
     } catch (error) {
@@ -64,7 +68,7 @@ export const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider
-      value={{ isLoading, userInfo, splashLoading, login, logout }}
+      value={{ isLoading, userInfo, splashLoading, login, logout}}
     >
       {children}
     </AuthContext.Provider>

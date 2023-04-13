@@ -5,13 +5,13 @@ import ReportesList from "../components/Reportes/ReportesList";
 import ReporteDetail from "../components/Reportes/ReporteDetail";
 
 
-const HomeStack = createNativeStackNavigator();
+const ReporteStack = createNativeStackNavigator();
 
 export default function ReportesStackScreen() {
   return (
-    <HomeStack.Navigator>
-      <HomeStack.Screen name="ReportesList" component={ReportesList} options={{headerTintColor:"white",headerStyle:{backgroundColor:"#222f3e"}}}/>
-      <HomeStack.Screen name="ReporteDetail" component={ReporteDetail} options={{headerTintColor:"white",headerStyle:{backgroundColor:"#222f3e"}}}/>
-    </HomeStack.Navigator>
+    <ReporteStack.Navigator>
+      <ReporteStack.Screen name="ReportesList" component={ReportesList}  options={{ headerTitle:"Reportes",headerTintColor:"white",headerStyle:{backgroundColor:"#222f3e"}}}/>
+      <ReporteStack.Screen name="ReporteDetail" component={ReporteDetail} options={{headerTitle:"Detalles",headerTintColor:"white",headerStyle:{backgroundColor:"#222f3e"}}}/>
+    </ReporteStack.Navigator>
   );
 }

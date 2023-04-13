@@ -14,10 +14,14 @@ import { getCurrentLocation } from "../functions/locationMap";
 import { AuthContext } from "../context/AuthContext";
 import MapView, { Marker } from "react-native-maps";
 import { Button } from "@rneui/themed";
+import { SelectList } from "react-native-dropdown-select-list";
+import Ionicons from "react-native-vector-icons/Ionicons";
 import { saveReporte, uploadImage } from "../functions/api";
+import { SafeAreaView } from "react-native";
 
 const ReporteForm = ({ navigation, route }) => {
   const date = new Date();
+  const [selected, setSelected] = useState([]);
   const [inputsValidate, setinputsValidate] = useState(false);
   const [direc, setDirec] = useState(null);
   const [descrip, setDescripcion] = useState(null);
@@ -26,6 +30,13 @@ const ReporteForm = ({ navigation, route }) => {
   const [newRegion, setNewRegion] = useState(null);
 
   const { userInfo } = useContext(AuthContext);
+
+  const data = [
+    { key: "1", value: "Mal estacionado"},
+    { key: "2", value: "Golpe de vehiculos" },
+    { key: "3", value: "Auto sin luces" },
+    { key: "4", value: "Auto pasandose un semaforo en rojo" },
+  ];
 
   useEffect(() => {
     (async () => {
@@ -84,7 +95,7 @@ const ReporteForm = ({ navigation, route }) => {
   };
 
   return (
-    <>
+    <SafeAreaView style={{flex:1}}>
       <View style={styles.title}>
         <Text style={styles.text}>
           Ingrese los datos para que pueda ser generado su reporte
@@ -143,6 +154,20 @@ const ReporteForm = ({ navigation, route }) => {
             onPress={() => navigation.navigate("Camara")}
           />
         </View>
+        <SelectList
+          setSelected={(val) => setSelected(val)}
+          data={data}
+          save="value"
+          placeholder="Tipo de infraccion"
+          inputStyles={{color:"white",width:"72%"}}
+          boxStyles={{marginBottom:10,height:40,color:"white"}}
+          dropdownStyles={{width:300,marginBottom:15}}
+          dropdownTextStyles={{color:"white"}}
+          search={false}
+          notFoundText="No se encontro similitud"
+          searchicon={<Ionicons name="search-outline" color={"white"} size={16}/>}
+          arrowicon={<Ionicons name="chevron-down-outline" color={"white"} size={16} />}
+        />
         <TextInput
           placeholder="Ingrese una pequeña descripcion"
           placeholderTextColor={"#ffffff"}
@@ -196,7 +221,7 @@ const ReporteForm = ({ navigation, route }) => {
           </View>
         </View>
       </Modal>
-    </>
+    </SafeAreaView>
   );
 };
 

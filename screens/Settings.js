@@ -8,7 +8,14 @@ import { Button } from "@rneui/themed";
 import { ScrollView } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import AwesomeAlert from "react-native-awesome-alerts";
-import { cambiarContraseña, cambiarNumeroCuenta } from "../functions/api";
+import {
+  cambiarContraseña,
+  cambiarNumeroCuenta,
+  enviarCorreo,
+  getConductor,
+} from "../functions/api";
+import { Alert } from "react-native";
+import { validarContraseña } from "../functions/Validaciones";
 
 const Settings = () => {
   const { logout, userInfo } = useContext(AuthContext);
@@ -20,15 +27,28 @@ const Settings = () => {
   const [infoVisible, setinfoVisible] = useState(false);
   const [NumCModalVisible, setNumCModalVisible] = useState(false);
   const [contraseñaMVisible, setcontraseñaMVisible] = useState(false);
+  const [conductor, setConductor] = useState({});
   const [numCuenta, setnumCuenta] = useState("");
   const [contraseña, setContraseña] = useState("");
   const [codigo, setCodigo] = useState({ codigo: "" });
+  const [code, setCode] = useState("");
+  const [messageE, setMessageE] = useState("");
+  const [messageErrorC, setmessageErrorC] = useState("");
 
   let usuario = { usuario: userInfo.usuario, contraseña: contraseña };
 
+  useEffect(() => {
+    obtenerDatos();
+  }, []);
+
+  const obtenerDatos = async () => {
+    const data = await getConductor(userInfo.idpersonafk);
+    setConductor(data);
+  };
+
   return (
     <View style={styles.container}>
-      <View style={{ alignItems:"center" }}>
+      <View style={{ alignItems: "center" }}>
         <Image
           source={{
             uri: "https://i.pinimg.com/originals/6f/57/76/6f57760966a796644b8cfb0fbc449843.png",
@@ -42,7 +62,9 @@ const Settings = () => {
             " " +
             userInfo.idpersonafk.apellidom}
         </Text>
-        <Text style={styles.fontTitle}>Numero de cuenta: {userInfo.idpersonafk.numcuenta}</Text>
+        <Text style={styles.fontTitle}>
+          Numero de cuenta: {userInfo.idpersonafk.numcuenta}
+        </Text>
       </View>
       <TouchableOpacity
         style={styles.button}
@@ -95,6 +117,26 @@ const Settings = () => {
             <View style={styles.containerInfo}>
               <Text style={styles.font}>{userInfo.idpersonafk.numcuenta}</Text>
             </View>
+            {conductor.noLicencia === null ? (
+              <></>
+            ) : (
+              <>
+                <Text style={styles.fontTitle}>Numero de licencia</Text>
+                <View style={styles.containerInfo}>
+                  <Text style={styles.font}>{conductor.noLicencia}</Text>
+                </View>
+                <Text style={styles.fontTitle}>Tarjeta de circulacion</Text>
+                <View style={styles.containerInfo}>
+                  <Text style={styles.font}>
+                    {conductor.tarjetaCirculacion}
+                  </Text>
+                </View>
+                <Text style={styles.fontTitle}>Placas</Text>
+                <View style={styles.containerInfo}>
+                  <Text style={styles.font}>{conductor.numplacas}</Text>
+                </View>
+              </>
+            )}
             <View style={styles.viewMap}>
               <Button
                 title={"Cerrar"}
@@ -120,6 +162,7 @@ const Settings = () => {
             <Text style={styles.fontTitle}>
               Escriba el nuevo numero de cuenta para realizar la actualizacion
             </Text>
+            <Text style={styles.warningText}>{messageE}</Text>
             <TextInput
               placeholder="Nuevo numero de cuenta"
               placeholderTextColor={"white"}
@@ -136,15 +179,22 @@ const Settings = () => {
               containerStyle={styles.containerSaveMapBtn}
               buttonStyle={styles.saveMapBtn}
               onPress={() => {
-                setNumCModalVisible(false);
-                setshowAlert(true);
+                if (numCuenta === "") {
+                  setMessageE("Rellene el campo");
+                } else {
+                  setNumCModalVisible(false);
+                  setshowAlert(true);
+                }
               }}
             />
             <Button
               title={"Cancelar"}
               containerStyle={styles.containerCancelMapBtn}
               buttonStyle={styles.cancelMapBtn}
-              onPress={() => setNumCModalVisible(false)}
+              onPress={() => {
+                setMessageE("");
+                setNumCModalVisible(false);
+              }}
             />
           </View>
         </View>
@@ -164,6 +214,7 @@ const Settings = () => {
               Se le envio un correo con un codigo,porfavor escribalo a
               continuacion
             </Text>
+            <Text style={styles.warningText}>{messageE}</Text>
             <TextInput
               placeholder="Codigo"
               placeholderTextColor={"white"}
@@ -173,6 +224,7 @@ const Settings = () => {
               }}
             />
             <Text style={styles.fontTitle}>Escriba su nueva contraseña</Text>
+            <Text style={styles.warningText}>{messageErrorC}</Text>
             <View
               style={{
                 flexDirection: "row",
@@ -208,15 +260,26 @@ const Settings = () => {
               containerStyle={styles.containerSaveMapBtn}
               buttonStyle={styles.saveMapBtn}
               onPress={() => {
-                setcontraseñaMVisible(false);
-                setshowAlertContraseñaConfrim(true);
+                if (codigo.codigo === "") {
+                  setMessageE("Rellene el campo");
+                }
+                let checkPass = validarContraseña(contraseña);
+                if (checkPass) {
+                  setmessageErrorC(checkPass);
+                } else {
+                  setcontraseñaMVisible(false);
+                  setshowAlertContraseñaConfrim(true);
+                }
               }}
             />
             <Button
               title={"Cancelar"}
               containerStyle={styles.containerCancelMapBtn}
               buttonStyle={styles.cancelMapBtn}
-              onPress={() => setcontraseñaMVisible(false)}
+              onPress={() => {
+                setMessageE("");
+                setmessageErrorC("");
+                setcontraseñaMVisible(false)}}
             />
           </View>
         </View>
@@ -246,19 +309,24 @@ const Settings = () => {
         messageStyle={{ color: "white", textAlign: "center" }}
         onCancelPressed={() => {
           setshowAlert(false);
+          setMessageE("");
         }}
         onConfirmPressed={() => {
-          cambiarNumeroCuenta(usuario, numCuenta).then(() =>
-            setshowAlert(false)
-          );
+          cambiarNumeroCuenta(usuario, numCuenta).then(() => {
+            setMessageE("");
+            setshowAlert(false);
+          });
         }}
-        onDismiss={logout}
+        onDismiss={() => {
+          setMessageE("");
+          logout;
+        }}
       />
       <AwesomeAlert
         show={showAlertContraseña}
         showProgress={false}
         title="¿Estas seguro de cambiar tu contraseña?"
-        message="Al confirmar se le enviara un correo con un codigo para realizar el cambio"
+        message="Al confirmar se te enviara un correo con un codigo para realizar el cambio"
         closeOnTouchOutside={true}
         closeOnHardwareBackPress={false}
         showCancelButton={true}
@@ -275,6 +343,7 @@ const Settings = () => {
           setshowAlertContraseña(false);
         }}
         onConfirmPressed={() => {
+          enviarCorreo(userInfo.usuario);
           setshowAlertContraseña(false);
         }}
         onDismiss={() => {
@@ -300,13 +369,23 @@ const Settings = () => {
         messageStyle={{ color: "white", textAlign: "center" }}
         onCancelPressed={() => {
           setshowAlert(false);
+          setMessageE("");
+          setmessageErrorC("");
         }}
-        onConfirmPressed={() => {
-          cambiarContraseña(usuario, codigo).then(() =>
-            setshowAlertContraseñaConfrim(false)
-          );
+        onConfirmPressed={async () => {
+          cambiarContraseña(usuario, codigo).then((status) => {
+            setCode(status);
+            setshowAlertContraseñaConfrim(false);
+          });
         }}
-        onDismiss={logout}
+        onDismiss={() => {
+          if (code === 200) {
+            logout();
+          } else {
+            Alert.alert("Codigo incorrecto");
+            setcontraseñaMVisible(true)
+          }
+        }}
       />
     </View>
   );
@@ -393,5 +472,10 @@ const styles = StyleSheet.create({
     height: 200,
     borderRadius: 20,
     marginVertical: 20,
+  },
+  warningText: {
+    color: "red",
+    fontSize: 15,
+    marginTop: 0,
   },
 });
