@@ -49,12 +49,14 @@ const Settings = () => {
   return (
     <View style={styles.container}>
       <View style={{ alignItems: "center" }}>
+        <TouchableOpacity>
         <Image
           source={{
             uri: "https://i.pinimg.com/originals/6f/57/76/6f57760966a796644b8cfb0fbc449843.png",
           }}
           style={styles.image}
         />
+        </TouchableOpacity>
         <Text style={styles.fontTitle}>
           {userInfo.idpersonafk.nombres +
             " " +
@@ -63,7 +65,7 @@ const Settings = () => {
             userInfo.idpersonafk.apellidom}
         </Text>
         <Text style={styles.fontTitle}>
-          Numero de cuenta: {userInfo.idpersonafk.numcuenta}
+          Correo: {userInfo.idpersonafk.correo}
         </Text>
       </View>
       <TouchableOpacity
@@ -113,10 +115,23 @@ const Settings = () => {
             <View style={styles.containerInfo}>
               <Text style={styles.font}>{userInfo.idpersonafk.correo}</Text>
             </View>
-            <Text style={styles.fontTitle}>Numero de cuenta</Text>
+            <Text style={styles.fontTitle}>Titular de la cuenta</Text>
+            <View style={styles.containerInfo}>
+              <Text style={styles.font}>{userInfo.idpersonafk.titularCuenta}</Text>
+            </View>
+            <Text style={styles.fontTitle}>Banco</Text>
+            <View style={styles.containerInfo}>
+              <Text style={styles.font}>{userInfo.idpersonafk.banco}</Text>
+            </View>
+            <Text style={styles.fontTitle}>Numero de cuenta bancaria</Text>
             <View style={styles.containerInfo}>
               <Text style={styles.font}>{userInfo.idpersonafk.numcuenta}</Text>
             </View>
+            <Text style={styles.fontTitle}>Clave Interbancaria</Text>
+            <View style={styles.containerInfo}>
+              <Text style={styles.font}>{userInfo.idpersonafk.claveInterB}</Text>
+            </View>
+            
             {conductor.noLicencia === null ? (
               <></>
             ) : (
@@ -154,7 +169,7 @@ const Settings = () => {
           setNumCModalVisible(true);
         }}
       >
-        <Text style={styles.buttonText}>Cambiar num de cuenta</Text>
+        <Text style={styles.buttonText}>Cambiar cuenta bancaria</Text>
       </TouchableOpacity>
       <Modal isVisible={NumCModalVisible} setVisible={setNumCModalVisible}>
         <View>

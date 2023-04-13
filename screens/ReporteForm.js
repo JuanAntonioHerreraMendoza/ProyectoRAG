@@ -44,6 +44,7 @@ const ReporteForm = ({ navigation, route }) => {
       if (response.status) {
         setNewRegion(response.location);
         console.log(response.location);
+        console.log(response.direccion[0].name)
       }
     })();
   }, []);

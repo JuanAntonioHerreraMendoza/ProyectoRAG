@@ -28,6 +28,7 @@ const Registro = () => {
   const [checkedTerms, setCheckedTerms] = useState(false);
   const [messageE, setMessageE] = useState("");
   const [image, setImage] = useState(null);
+  
   const [persona, setPersona] = useState({
     nombres: "",
     apellidop: "",
@@ -341,38 +342,10 @@ const Registro = () => {
             <>
               <TextInput
                 style={styles.input}
-                placeholder="Numero de licencia"
-                keyboardType="numeric"
-                maxLength={11}
+                placeholder="Codigo de usuario"
                 placeholderTextColor={"white"}
                 onChangeText={(text) => {
                   handleChangeC("noLicencia", text);
-                }}
-              />
-              <TextInput
-                style={styles.input}
-                placeholder="Tipo de licencia"
-                maxLength={1}
-                placeholderTextColor={"white"}
-                onChangeText={(text) => {
-                  handleChangeC("tipoLicencia", text);
-                }}
-              />
-              <TextInput
-                style={styles.input}
-                placeholder="Tarjeta de circulacion"
-                keyboardType="numeric"
-                placeholderTextColor={"white"}
-                onChangeText={(text) => {
-                  handleChangeC("tarjetaCirculacion", text);
-                }}
-              />
-              <TextInput
-                style={styles.input}
-                placeholder="Placas"
-                placeholderTextColor={"white"}
-                onChangeText={(text) => {
-                  handleChangeC("numplacas", text);
                 }}
               />
             </>
