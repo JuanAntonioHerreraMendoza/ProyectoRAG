@@ -149,12 +149,12 @@ const Registro = () => {
       : (tipousuario.idtipousuario = "2");
     persona.tipousuariofk = tipousuario;
     usuario.idpersonafk = persona;
-    //uploadImage(image);
     await saveUsuario(usuario);
     if ((checked === 1)) {
       console.log(conductor);
       await saveConductor(conductor, persona.nombres);
     }
+    uploadImage(image);
     navigation.navigate("Login");
     //login(user);
 
@@ -162,14 +162,15 @@ const Registro = () => {
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
-      allowsEditing: true,
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
       aspect: [4, 3],
       quality: 0.5,
+      allowsMultipleSelection:true,
+      selectionLimit:2
     });
 
     if (!result.canceled) {
-      setImage(result.assets[0].uri);
+      setImage(result.assets)
     } else {
       Alert.alert("No se selecciono una foto");
     }
@@ -223,7 +224,7 @@ const Registro = () => {
             </TouchableOpacity>
             {image && (
               <Image
-                source={{ uri: image }}
+                source={{ uri: image[0].uri }}
                 style={{ width: 200, height: 200 }}
               />
             )}

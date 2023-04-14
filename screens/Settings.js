@@ -28,14 +28,26 @@ const Settings = () => {
   const [NumCModalVisible, setNumCModalVisible] = useState(false);
   const [contraseñaMVisible, setcontraseñaMVisible] = useState(false);
   const [conductor, setConductor] = useState({});
-  const [numCuenta, setnumCuenta] = useState("");
   const [contraseña, setContraseña] = useState("");
   const [codigo, setCodigo] = useState({ codigo: "" });
   const [code, setCode] = useState("");
   const [messageE, setMessageE] = useState("");
   const [messageErrorC, setmessageErrorC] = useState("");
+  const [persona, setpersona] = useState({
+    numcuenta: "",
+    claveInterB: "",
+    titularCuenta: "",
+    banco: "",
+  });
 
-  let usuario = { usuario: userInfo.usuario, contraseña: contraseña };
+  const [usuario, setUsuario] = useState({
+    usuario: userInfo.usuario,
+    contraseña: contraseña,
+    idpersonafk: {},
+  });
+
+  const handleChange = (name, value) =>
+    setpersona({ ...persona, [name]: value });
 
   useEffect(() => {
     obtenerDatos();
@@ -50,12 +62,12 @@ const Settings = () => {
     <View style={styles.container}>
       <View style={{ alignItems: "center" }}>
         <TouchableOpacity>
-        <Image
-          source={{
-            uri: "https://i.pinimg.com/originals/6f/57/76/6f57760966a796644b8cfb0fbc449843.png",
-          }}
-          style={styles.image}
-        />
+          <Image
+            source={{
+              uri: "https://i.pinimg.com/originals/6f/57/76/6f57760966a796644b8cfb0fbc449843.png",
+            }}
+            style={styles.image}
+          />
         </TouchableOpacity>
         <Text style={styles.fontTitle}>
           {userInfo.idpersonafk.nombres +
@@ -117,7 +129,9 @@ const Settings = () => {
             </View>
             <Text style={styles.fontTitle}>Titular de la cuenta</Text>
             <View style={styles.containerInfo}>
-              <Text style={styles.font}>{userInfo.idpersonafk.titularCuenta}</Text>
+              <Text style={styles.font}>
+                {userInfo.idpersonafk.titularCuenta}
+              </Text>
             </View>
             <Text style={styles.fontTitle}>Banco</Text>
             <View style={styles.containerInfo}>
@@ -129,9 +143,11 @@ const Settings = () => {
             </View>
             <Text style={styles.fontTitle}>Clave Interbancaria</Text>
             <View style={styles.containerInfo}>
-              <Text style={styles.font}>{userInfo.idpersonafk.claveInterB}</Text>
+              <Text style={styles.font}>
+                {userInfo.idpersonafk.claveInterB}
+              </Text>
             </View>
-            
+
             {conductor.noLicencia === null ? (
               <></>
             ) : (
@@ -172,10 +188,10 @@ const Settings = () => {
         <Text style={styles.buttonText}>Cambiar cuenta bancaria</Text>
       </TouchableOpacity>
       <Modal isVisible={NumCModalVisible} setVisible={setNumCModalVisible}>
-        <View>
+        <ScrollView automaticallyAdjustKeyboardInsets={true}>
           <View style={{ alignItems: "center" }}>
             <Text style={styles.fontTitle}>
-              Escriba el nuevo numero de cuenta para realizar la actualizacion
+              Escriba los datos que se requieren a continuacion
             </Text>
             <Text style={styles.warningText}>{messageE}</Text>
             <TextInput
@@ -183,9 +199,34 @@ const Settings = () => {
               placeholderTextColor={"white"}
               style={styles.input}
               onChangeText={(text) => {
-                setnumCuenta(text);
+                handleChange("numcuenta", text);
               }}
               keyboardType="numeric"
+            />
+            <TextInput
+              placeholder="Clave interbancaria"
+              placeholderTextColor={"white"}
+              style={styles.input}
+              onChangeText={(text) => {
+                handleChange("claveInterB", text);
+              }}
+              keyboardType="numeric"
+            />
+            <TextInput
+              placeholder="Titular de la cuenta"
+              placeholderTextColor={"white"}
+              style={styles.input}
+              onChangeText={(text) => {
+                handleChange("titularCuenta", text);
+              }}
+            />
+            <TextInput
+              placeholder="Banco"
+              placeholderTextColor={"white"}
+              style={styles.input}
+              onChangeText={(text) => {
+                handleChange("banco", text);
+              }}
             />
           </View>
           <View style={styles.viewMap}>
@@ -194,7 +235,12 @@ const Settings = () => {
               containerStyle={styles.containerSaveMapBtn}
               buttonStyle={styles.saveMapBtn}
               onPress={() => {
-                if (numCuenta === "") {
+                if (
+                  usuario.idpersonafk.numCuenta === "" ||
+                  usuario.idpersonafk.claveInterB === "" ||
+                  usuario.idpersonafk.titularCuenta === "" ||
+                  usuario.idpersonafk.banco === ""
+                ) {
                   setMessageE("Rellene el campo");
                 } else {
                   setNumCModalVisible(false);
@@ -212,7 +258,7 @@ const Settings = () => {
               }}
             />
           </View>
-        </View>
+        </ScrollView>
       </Modal>
       <TouchableOpacity
         style={styles.button}
@@ -294,7 +340,8 @@ const Settings = () => {
               onPress={() => {
                 setMessageE("");
                 setmessageErrorC("");
-                setcontraseñaMVisible(false)}}
+                setcontraseñaMVisible(false);
+              }}
             />
           </View>
         </View>
@@ -327,14 +374,16 @@ const Settings = () => {
           setMessageE("");
         }}
         onConfirmPressed={() => {
-          cambiarNumeroCuenta(usuario, numCuenta).then(() => {
+          usuario.idpersonafk = persona;
+          console.log(usuario)
+          cambiarNumeroCuenta(usuario).then(() => {
             setMessageE("");
             setshowAlert(false);
           });
         }}
         onDismiss={() => {
           setMessageE("");
-          logout;
+          logout();
         }}
       />
       <AwesomeAlert
@@ -398,7 +447,7 @@ const Settings = () => {
             logout();
           } else {
             Alert.alert("Codigo incorrecto");
-            setcontraseñaMVisible(true)
+            setcontraseñaMVisible(true);
           }
         }}
       />

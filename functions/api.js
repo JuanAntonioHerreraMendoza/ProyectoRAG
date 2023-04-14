@@ -63,8 +63,8 @@ export const cambiarContraseña = async (user, codigo) => {
   return res.status
 };
 
-export const cambiarNumeroCuenta = async (user, numero) => {
-  const res = await fetch(`${API}usuarios/editarNumCuenta?numero=${numero}`, {
+export const cambiarNumeroCuenta = async (user) => {
+  const res = await fetch(`${API}usuarios/editarNumCuenta`, {
     method: "PUT",
     headers: {
       Accept: "application/json",
@@ -122,7 +122,6 @@ export const uploadImage = async (image) => {
 
     let formData = new FormData();
     formData.append("file", { uri: localUri, name: filename, type });
-    console.log(formData);
     const res = await fetch(`${API}images`, {
       method: "POST",
       body: formData,
@@ -133,3 +132,27 @@ export const uploadImage = async (image) => {
     return;
   }
 };
+
+export const uploadImagesReg=async(images)=>{
+  let localUri = images;
+  let formData = new FormData();
+  if (localUri === null) {
+    return Alert.alert("Seleccione una imagen");
+  } else {
+    for (let i = 0; i < localUri.length; i++) {
+      let filename = localUri[i].uri.split("/").pop();
+      let match = /\.(\w+)$/.exec(filename);
+      let type = match ? `image/${match[1]}` : "image";
+
+      formData.append("file", { uri: localUri[i].uri, name: filename, type });
+    }
+    const res = await fetch(`${API}images/registroImgs`, {
+      method: "POST",
+      body: formData,
+      header: {
+        "content-type": "multipart/form-data",
+      },
+    });
+    return;
+  }
+}

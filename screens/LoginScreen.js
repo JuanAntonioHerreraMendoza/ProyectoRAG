@@ -13,6 +13,7 @@ import Spinner from "react-native-loading-spinner-overlay";
 import Ionicons from "react-native-vector-icons/Ionicons";
 
 import { AuthContext } from "../context/AuthContext";
+import { KeyboardAvoidingView } from "react-native";
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -73,7 +74,7 @@ const LoginScreen = () => {
 
   useEffect(() => {
     if (response?.type === "success") {
-      console.log(response)
+      console.log(response);
       setAccesToken(response.authentication.accessToken);
       accesToken && fetchUserGInfo();
     }
@@ -110,96 +111,106 @@ const LoginScreen = () => {
   };
 
   return (
-    <View style={styles.container}>
-      <Spinner visible={isLoading} />
-      <Text style={styles.text}>Supervisión Ciudadana</Text>
-      <Text style={styles.text}>SuCi</Text>
-      <Ionicons
-        style={{ marginBottom: 30 }}
-        name={"shield-outline"}
-        size={150}
-        color={"#E1EC2F"}
-      />
-      {userG && <ShowUserInfo />}
-      {emailValidate ? (
-        <Text style={styles.warningText}>Formato de email incorrecto</Text>
-      ) : (
-        <></>
-      )}
-      {inputsValidate ? (
-        <Text style={styles.warningText}>Rellene ambos campos</Text>
-      ) : (
-        <></>
-      )}
-      {loginValidate ? (
-        <Text style={styles.warningText}>Usuario o contraseña incorrectos</Text>
-      ) : (
-        <></>
-      )}
-      <TextInput
-        style={styles.input}
-        placeholder="Correo"
-        placeholderTextColor="#ffffff"
-        onChangeText={(text) => handleChange("usuario", text)}
-      />
-      <View
-        style={{ flexDirection: "row", borderColor: "white", borderWidth: 0.1 }}
-      >
+    <KeyboardAvoidingView behavior="padding" style={{flex:1}}>
+      <View style={styles.container}>
+        <Spinner visible={isLoading} />
+        <Text style={styles.text}>Supervisión Ciudadana</Text>
+        <Text style={styles.text}>SuCi</Text>
+        <Ionicons
+          style={{ marginBottom: 30 }}
+          name={"shield-outline"}
+          size={150}
+          color={"#E1EC2F"}
+        />
+        {userG && <ShowUserInfo />}
+        {emailValidate ? (
+          <Text style={styles.warningText}>Formato de email incorrecto</Text>
+        ) : (
+          <></>
+        )}
+        {inputsValidate ? (
+          <Text style={styles.warningText}>Rellene ambos campos</Text>
+        ) : (
+          <></>
+        )}
+        {loginValidate ? (
+          <Text style={styles.warningText}>
+            Usuario o contraseña incorrectos
+          </Text>
+        ) : (
+          <></>
+        )}
         <TextInput
           style={styles.input}
-          placeholder="Contraseña"
+          placeholder="Correo"
           placeholderTextColor="#ffffff"
-          secureTextEntry={seePass}
-          onChangeText={(text) => handleChange("contraseña", text)}
+          onChangeText={(text) => handleChange("usuario", text)}
         />
-        <View style={styles.wrapperIcon}>
-          <TouchableOpacity onPress={() => setSeePass(!seePass)}>
-            {seePass ? (
-              <Ionicons name={"eye-outline"} size={30} color="white" />
-            ) : (
-              <Ionicons name={"eye-off-outline"} size={30} color="white" />
-            )}
+        <View
+          style={{
+            flexDirection: "row",
+            borderColor: "white",
+            borderWidth: 0.1,
+          }}
+        >
+          <TextInput
+            style={styles.input}
+            placeholder="Contraseña"
+            placeholderTextColor="#ffffff"
+            secureTextEntry={seePass}
+            onChangeText={(text) => handleChange("contraseña", text)}
+          />
+          <View style={styles.wrapperIcon}>
+            <TouchableOpacity onPress={() => setSeePass(!seePass)}>
+              {seePass ? (
+                <Ionicons name={"eye-outline"} size={30} color="white" />
+              ) : (
+                <Ionicons name={"eye-off-outline"} size={30} color="white" />
+              )}
+            </TouchableOpacity>
+          </View>
+        </View>
+        <TouchableOpacity
+          style={styles.buttonSave}
+          onPress={() => {
+            handleSubmmit(user);
+          }}
+        >
+          <Text style={styles.buttonText}>Iniciar sesión</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.buttonGoogle}
+          disabled={!request}
+          onPress={() => {
+            promptAsync();
+          }}
+        >
+          <Text style={styles.buttonText}>Aqui va lo de google</Text>
+        </TouchableOpacity>
+        <View
+          style={{
+            flexDirection: "row",
+            width: "80%",
+            justifyContent: "space-between",
+          }}
+        >
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate("Registro");
+            }}
+          >
+            <Text style={{ color: "white" }}>Registrarse</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate("RecuperarContraseña");
+            }}
+          >
+            <Text style={{ color: "white" }}>Olvide mi contraseña</Text>
           </TouchableOpacity>
         </View>
       </View>
-      <TouchableOpacity
-        style={styles.buttonSave}
-        onPress={() => {
-          handleSubmmit(user);
-        }}
-      >
-        <Text style={styles.buttonText}>Iniciar sesión</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={styles.buttonGoogle}
-        disabled={!request}
-        onPress={() => {
-          promptAsync();
-        }}
-      >
-        <Text style={styles.buttonText}>Aqui va lo de google</Text>
-      </TouchableOpacity>
-      <View
-        style={{
-          flexDirection: "row",
-          width: "80%",
-          justifyContent: "space-between",
-        }}
-      >
-        <TouchableOpacity
-          onPress={() => {
-            navigation.navigate("Registro");
-          }}
-        >
-          <Text style={{ color: "white" }}>Registrarse</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => {
-            navigation.navigate("RecuperarContraseña");
-          }}>
-          <Text style={{ color: "white" }}>Olvide mi contraseña</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
+    </KeyboardAvoidingView>
   );
 };
 
