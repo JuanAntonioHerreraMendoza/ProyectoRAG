@@ -9,7 +9,7 @@ import React from "react";
 import ButtonCamera from "../ButtonCamera";
 import { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
-import { getConductorInfo } from "../../functions/api";
+import { getConductorInfo, getMultasConductor } from "../../functions/api";
 import { TouchableWithoutFeedback } from "react-native";
 import { Keyboard } from "react-native";
 
@@ -24,7 +24,8 @@ const Busqueda = () => {
     if (data.idconductor === null) {
       return alert("No se encontro usuario");
     }
-    navigation.navigate("ConductorDetail", { datos: data });
+    const multasConductor = await getMultasConductor(data.idconductor);
+    navigation.navigate("ConductorDetail", { datos: data ,multas: multasConductor});
   };
 
   return (

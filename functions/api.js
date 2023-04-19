@@ -123,6 +123,19 @@ export const getConductorInfo = async (licencia, circulacion, placas) => {
   return res.json();
 };
 
+export const getMultasConductor = async (conductor) => {
+  const res = await fetch(`${API}multas/buscarMultas`, {
+    method: "POST",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(conductor),
+  });
+  return res.json();
+};
+
+
 export const uploadImage = async (image) => {
   let localUri = image;
   if (localUri === null) {

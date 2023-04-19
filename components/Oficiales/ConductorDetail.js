@@ -1,11 +1,36 @@
-import { View, Text } from "react-native";
-import React from "react";
-import { StyleSheet } from "react-native";
-import { ScrollView } from "react-native";
+import { View, Text, StyleSheet, ScrollView, FlatList } from "react-native";
+import React, { useState, useEffect } from "react";
 
 const ConductorDetail = ({ route }) => {
+  const [infracciones, setInfracciones] = useState(null);
+
+  const loadInfracciones = () => {
+    const data = route.params?.multas;
+    setInfracciones(data);
+  };
+
+  const renderItem = ({ item }) => {
+    return (
+      <View
+        style={{
+          alignItems: "center",
+          flexDirection: "row",
+          justifyContent: "space-between",
+        }}
+      >
+        <Text style={styles.font}>{item.idmulta}</Text>
+        <Text style={styles.font}>{item.razon}</Text>
+        <Text style={styles.font}>{item.infraccion}</Text>
+      </View>
+    );
+  };
+
+  useEffect(() => {
+    loadInfracciones();
+  }, []);
+
   return (
-    <ScrollView style={styles.layout}>
+    <View style={styles.layout}>
       <Text style={styles.fontTitle}>Nombre</Text>
       <View style={styles.container}>
         <Text style={styles.font}>
@@ -40,7 +65,20 @@ const ConductorDetail = ({ route }) => {
       <View style={styles.container}>
         <Text style={styles.font}>{route.params.datos.numplacas}</Text>
       </View>
-    </ScrollView>
+      <Text style={styles.fontTitle}>Incidencias</Text>
+      {route.params?.multas.length === 0 ? (
+        <Text style={styles.font}>Este conductor no presenta alguna multa</Text>
+      ) : (
+        <View>
+          <FlatList
+            style={{ width: "100%" }}
+            data={infracciones}
+            keyExtractor={(item) => item.idmulta}
+            renderItem={renderItem}
+          />
+        </View>
+      )}
+    </View>
   );
 };
 
