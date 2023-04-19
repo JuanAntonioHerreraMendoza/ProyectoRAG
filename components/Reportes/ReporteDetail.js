@@ -3,17 +3,20 @@ import React, { useState, useEffect } from "react";
 import { getReporte } from "../../functions/api";
 import { useIsFocused } from "@react-navigation/native";
 import { StyleSheet } from "react-native";
+import { Video } from "expo-av";
+import { TouchableOpacity } from "react-native";
 
 const ReporteDetail = ({ route, navigation }) => {
   const [reporte, setReporte] = useState([]);
   const [fecha, setFecha] = useState("");
+  const [archivo, setArchivo] = useState("")
   const isFocused = useIsFocused();
 
   const loadReporte = async () => {
     const data = await getReporte(route.params.id);
     setReporte(data);
-    console.log(data);
     setFecha(data["fecha"].substr(0, 10));
+    setArchivo(data['evidencia'].split(".")[1])
   };
 
   useEffect(() => {
@@ -41,22 +44,26 @@ const ReporteDetail = ({ route, navigation }) => {
         </View>
         <Text style={styles.fontTitle}>Evidencia</Text>
         <View style={styles.container}>
+          {archivo=== "mov" || archivo=== "mp4"?
+          <Video source={{uri:"http://192.168.1.75:8080/images/" + reporte.evidencia}} useNativeControls style={styles.video}/>:
           <Image
             source={{
-              uri: "http://192.168.1.75:8080/images?file=" + reporte.evidencia,
+              uri: "http://192.168.1.75:8080/images/" + reporte.evidencia,
             }}
-            alt="react logo"
             style={styles.imagen}
           />
+          }
         </View>
       </View>
-      <View>
-        <Button
-          title="Regresar"
+      <View style={{alignItems:"center"}}>
+        <TouchableOpacity
           onPress={() => {
             navigation.goBack();
           }}
-        />
+          style={styles.buttonSave}
+        >
+          <Text style={styles.buttonText}>Regresar</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -81,6 +88,19 @@ const styles = new StyleSheet.create({
     paddingBottom: 5,
     borderRadius: 10,
   },
+  buttonSave: {
+    paddingTop: 5,
+    paddingBottom: 10,
+    borderRadius: 15,
+    backgroundColor: "red",
+    width: "40%",
+    marginVertical: 10,
+  },
+  buttonText: {
+    color: "#ffffff",
+    textAlign: "center",
+    fontSize: 16,
+  },
   font: {
     fontSize: 17,
     color: "#ffffff",
@@ -93,6 +113,10 @@ const styles = new StyleSheet.create({
   imagen: {
     width: 200,
     height: 200,
+  },
+  video: {
+    width: 300,
+    height: 300,
   },
 });
 

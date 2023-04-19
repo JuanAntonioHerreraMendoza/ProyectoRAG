@@ -1,9 +1,11 @@
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
 import React, { useContext, useState, useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { AuthContext } from "../../context/AuthContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getConductor } from "../../functions/api";
+import { SafeAreaView } from "react-native";
+import { ScrollView } from "react-native";
 
 const Documentos = () => {
   const navigation = useNavigation();
@@ -20,38 +22,59 @@ const Documentos = () => {
   };
 
   return (
-    <View style={styles.container}>
-      <TouchableOpacity
-        onPress={() => {
-          navigation.navigate("VistaDocumentos", {
-            imagen: conductor.imgLicencia,
-          });
-        }}
-        style={styles.buttonSave}
-      >
-        <Text style={styles.buttonText}>Licencia de conducir</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={styles.buttonSave}
-        onPress={() => {
-          navigation.navigate("VistaDocumentos", {
-            imagen: conductor.imgtarjetaCirc,
-          });
-        }}
-      >
-        <Text style={styles.buttonText}>Tarjeta de circulacion</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={styles.buttonSave}
-        onPress={() => {
-          navigation.navigate("VistaDocumentos", {
-            imagen: conductor.imgPlacas,
-          });
-        }}
-      >
-        <Text style={styles.buttonText}>Placas</Text>
-      </TouchableOpacity>
-    </View>
+    <ScrollView bounces={false}>
+      <SafeAreaView style={styles.container}>
+        <TouchableOpacity
+          onPress={() => {
+            navigation.navigate("VistaDocumentos", {
+              imagen: conductor.imgLicencia,
+            });
+          }}
+          style={styles.buttonSave}
+        >
+          <Text style={styles.buttonText}>Licencia de conducir</Text>
+          <Image
+            source={{
+              uri: "http://192.168.1.75:8080/images/" + conductor.imgLicencia,
+            }}
+            style={styles.images}
+          />
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.buttonSave}
+          onPress={() => {
+            navigation.navigate("VistaDocumentos", {
+              imagen: conductor.imgtarjetaCirc,
+            });
+          }}
+        >
+          <Text style={styles.buttonText}>Tarjeta de circulacion</Text>
+          <Image
+            source={{
+              uri:
+                "http://192.168.1.75:8080/images/" + conductor.imgtarjetaCirc,
+            }}
+            style={styles.images}
+          />
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.buttonSave}
+          onPress={() => {
+            navigation.navigate("VistaDocumentos", {
+              imagen: conductor.imgPlacas,
+            });
+          }}
+        >
+          <Text style={styles.buttonText}>Placas</Text>
+          <Image
+            source={{
+              uri: "http://192.168.1.75:8080/images/" + conductor.imgPlacas,
+            }}
+            style={styles.images}
+          />
+        </TouchableOpacity>
+      </SafeAreaView>
+    </ScrollView>
   );
 };
 const styles = new StyleSheet.create({
@@ -71,13 +94,18 @@ const styles = new StyleSheet.create({
     paddingBottom: 10,
     borderRadius: 15,
     backgroundColor: "#105293",
-    width: "80%",
+    width: "90%",
     marginVertical: 10,
   },
   buttonText: {
     color: "#ffffff",
     textAlign: "center",
-    fontSize: 16,
+    fontSize: 17,
+  },
+  images: {
+    width: 300,
+    height: 200,
+    alignSelf: "center",
   },
 });
 

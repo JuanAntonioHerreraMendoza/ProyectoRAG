@@ -5,19 +5,25 @@ import { Camera, CameraType } from "expo-camera";
 import * as MediaLibrary from "expo-media-library";
 import { MaterialIcons } from "@expo/vector-icons";
 import ButtonCamera from "./ButtonCamera";
+import { Video } from "expo-av";
 
 export default function Camara({ navigation, route }) {
   const [hasCameraPermission, setHasCameraPermission] = useState(null);
+  const [hasMicrophonePermission, setHasMicrophonePermission] = useState(null);
   const [image, setImage] = useState(null);
+  const [video, setVideo] = useState(null);
   const [type, setType] = useState(Camera.Constants.Type.back);
   const [flash, setFlash] = useState(Camera.Constants.FlashMode.off);
+  const [isRecording, setIsRecording] = useState(false);
   const cameraRef = useRef(null);
 
   useEffect(() => {
     (async () => {
       MediaLibrary.requestPermissionsAsync();
       const cameraStatus = await Camera.requestCameraPermissionsAsync();
+      const microphoneStatus = await Camera.requestMicrophonePermissionsAsync();
       setHasCameraPermission(cameraStatus.status === "granted");
+      setHasMicrophonePermission(microphoneStatus.status === "granted");
     })();
   }, []);
 
@@ -25,8 +31,43 @@ export default function Camara({ navigation, route }) {
     if (cameraRef) {
       try {
         const data = await cameraRef.current.takePictureAsync();
-        console.log(data);
         setImage(data.uri);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  };
+
+  const takeVideo = async () => {
+    setIsRecording(true);
+    let options = {
+      quality: "720p",
+      maxDuration: 60,
+      mute: false,
+    };
+    cameraRef.current.recordAsync(options).then((recordedVideo) => {
+      setVideo(recordedVideo);
+      console.log(recordedVideo)
+      setIsRecording(false);
+    });
+  };
+
+  const stopVideo = () => {
+    setIsRecording(false);
+    cameraRef.current.stopRecording()
+  };
+
+  const saveVideo = async () => {
+    if (video) {
+      try {
+        alert("Video registrado");
+        console.log("saved successfully");
+        navigation.navigate({
+          name: "ReporteForm",
+          params: { uri: video.uri, video: true },
+          merge: true,
+        });
+        setVideo(null);
       } catch (error) {
         console.log(error);
       }
@@ -56,7 +97,7 @@ export default function Camara({ navigation, route }) {
 
   return (
     <View style={styles.container}>
-      {!image ? (
+      {!image&&!video ? (
         <Camera
           style={styles.camera}
           type={type}
@@ -90,12 +131,20 @@ export default function Camara({ navigation, route }) {
             />
           </View>
         </Camera>
+      ) : video ? (
+        <Video
+          style={styles.camera}
+          source={{ uri: video.uri }}
+          useNativeControls
+          resizeMode="contain"
+          isLooping
+        />
       ) : (
         <Image source={{ uri: image }} style={styles.camera} />
       )}
 
       <View style={styles.controls}>
-        {image ? (
+        {image||video ? (
           <View
             style={{
               flexDirection: "row",
@@ -105,17 +154,47 @@ export default function Camara({ navigation, route }) {
           >
             <ButtonCamera
               title="Tomar de nuevo"
-              onPress={() => setImage(null)}
+              onPress={() => {
+                setImage(null);
+                setVideo(null);
+              }}
               icon="retweet"
             />
-            <ButtonCamera title="Guardar" onPress={savePicture} icon="check" />
+            <ButtonCamera
+              title="Guardar"
+              onPress={image ? savePicture : saveVideo}
+              icon="check"
+            />
           </View>
         ) : (
-          <ButtonCamera
-            title="Capturar"
-            onPress={takePicture}
-            icon="camera"
-          />
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "space-between",
+              paddingHorizontal: 20,
+            }}
+          >
+            {!isRecording ? (
+              <>
+                <ButtonCamera
+                  title="Capturar foto"
+                  onPress={takePicture}
+                  icon="camera"
+                />
+                <ButtonCamera
+                  title="Capturar Video"
+                  onPress={takeVideo}
+                  icon="controller-record"
+                />
+              </>
+            ) : (
+              <ButtonCamera
+                title="Detener"
+                onPress={stopVideo}
+                icon="controller-record"
+              />
+            )}
+          </View>
         )}
       </View>
     </View>
@@ -152,5 +231,9 @@ const styles = StyleSheet.create({
   },
   topControls: {
     flex: 1,
+  },
+  video: {
+    flex: 1,
+    alignSelf: "stretch",
   },
 });

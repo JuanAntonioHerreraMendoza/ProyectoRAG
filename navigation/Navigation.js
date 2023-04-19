@@ -10,6 +10,7 @@ import SplashScreen from "../components/SplashScreen";
 import Registro from "../screens/Registro";
 import RecuperarContraseña from "../screens/RecuperarContraseña";
 import CambioContraseña from "../screens/CambioContraseña";
+import Camara from "../components/Camara"
 
 const Stack = createNativeStackNavigator();
 
@@ -26,11 +27,18 @@ function Navigation() {
             options={{ headerShown: false }}
           />
         ) : userInfo.idusuarios ? (
-          <Stack.Screen
-            name="Index"
-            component={Home}
-            options={{ headerShown: false }}
-          />
+          <>
+            <Stack.Screen
+              name="Index"
+              component={Home}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="Camara"
+              component={Camara}
+              options={{ headerShown: false }}
+            />
+          </>
         ) : (
           <>
             <Stack.Screen

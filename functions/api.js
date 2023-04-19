@@ -36,6 +36,11 @@ export const getReporte = async (id) => {
   return await res.json();
 };
 
+export const getImage = async (image) => {
+  const res = await fetch(`http://192.168.1.75:8080/images/${image}`);
+  return res.body;
+};
+
 export const saveReporte = async (reporte) => {
   const res = await fetch(`${API}reportes`, {
     method: "POST",
@@ -60,7 +65,7 @@ export const cambiarContraseña = async (user, codigo) => {
       body: JSON.stringify(codigo),
     }
   );
-  return res.status
+  return res.status;
 };
 
 export const cambiarNumeroCuenta = async (user) => {
@@ -87,7 +92,7 @@ export const saveUsuario = async (usuario) => {
   return await res.json();
 };
 
-export const saveConductor = async (conductor,nombres) => {
+export const saveConductor = async (conductor, nombres) => {
   const res = await fetch(`${API}conductores?nombres=${nombres}`, {
     method: "POST",
     headers: {
@@ -108,6 +113,13 @@ export const getConductor = async (persona) => {
     },
     body: JSON.stringify(persona),
   });
+  return res.json();
+};
+
+export const getConductorInfo = async (licencia, circulacion, placas) => {
+  const res = await fetch(
+    `${API}conductores/buscarValor?placas=${placas}&licencia=${licencia}`
+  );
   return res.json();
 };
 
@@ -133,7 +145,7 @@ export const uploadImage = async (image) => {
   }
 };
 
-export const uploadImagesReg=async(images)=>{
+export const uploadImagesReg = async (images) => {
   let localUri = images;
   let formData = new FormData();
   if (localUri === null) {
@@ -155,4 +167,4 @@ export const uploadImagesReg=async(images)=>{
     });
     return;
   }
-}
+};

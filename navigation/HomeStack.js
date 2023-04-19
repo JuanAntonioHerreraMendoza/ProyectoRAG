@@ -10,7 +10,6 @@ export default function HomeStackScreen() {
     <HomeStack.Navigator>
       <HomeStack.Screen name="Inicio" component={Home} options={{headerTintColor:"white",headerStyle:{backgroundColor:"#222f3e"}}} />
       <HomeStack.Screen name="ReporteForm" component={ReporteForm} options={{headerTitle:"Formulario de reporte",headerTintColor:"white",headerStyle:{backgroundColor:"#222f3e"}}} />
-      <HomeStack.Screen name="Camara" component={Camara} options={{headerShown:false}}/>
     </HomeStack.Navigator>
   );
 }

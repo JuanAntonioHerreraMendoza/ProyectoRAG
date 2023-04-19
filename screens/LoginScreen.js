@@ -57,13 +57,13 @@ const LoginScreen = () => {
 
   const handleSubmmit = async (user) => {
     setinputsValidate(false);
-    setemailValidate(false);
+    //setemailValidate(false);
     if (validarInputs(user)) {
       return setinputsValidate(true);
     }
-    if (!validarEmail(user)) {
-      return setemailValidate(true);
-    }
+    // if (!validarEmail(user)) {
+      // return setemailValidate(true);
+    // }
     let u = await login(user);
     if (u === undefined) {
       return setloginValidate(true);
@@ -142,7 +142,7 @@ const LoginScreen = () => {
         )}
         <TextInput
           style={styles.input}
-          placeholder="Correo"
+          placeholder="Usuario"
           placeholderTextColor="#ffffff"
           onChangeText={(text) => handleChange("usuario", text)}
         />

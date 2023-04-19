@@ -6,6 +6,7 @@ import {
   Image,
   TouchableOpacity,
   Alert,
+  SafeAreaView,
 } from "react-native";
 import React, { useEffect, useState, useContext } from "react";
 import ButtonCamera from "../components/ButtonCamera";
@@ -17,7 +18,7 @@ import { Button } from "@rneui/themed";
 import { SelectList } from "react-native-dropdown-select-list";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { saveReporte, uploadImage } from "../functions/api";
-import { SafeAreaView } from "react-native";
+import { Video } from "expo-av";
 
 const ReporteForm = ({ navigation, route }) => {
   const date = new Date();
@@ -32,7 +33,7 @@ const ReporteForm = ({ navigation, route }) => {
   const { userInfo } = useContext(AuthContext);
 
   const data = [
-    { key: "1", value: "Mal estacionado"},
+    { key: "1", value: "Mal estacionado" },
     { key: "2", value: "Golpe de vehiculos" },
     { key: "3", value: "Auto sin luces" },
     { key: "4", value: "Auto pasandose un semaforo en rojo" },
@@ -43,8 +44,7 @@ const ReporteForm = ({ navigation, route }) => {
       const response = await getCurrentLocation();
       if (response.status) {
         setNewRegion(response.location);
-        console.log(response.location);
-        console.log(response.direccion[0].name)
+        console.log(response.direccion[0].name);
       }
     })();
   }, []);
@@ -96,13 +96,15 @@ const ReporteForm = ({ navigation, route }) => {
   };
 
   return (
-    <SafeAreaView style={{flex:1}}>
+    <SafeAreaView style={{ flex: 1 }}>
       <View style={styles.title}>
         <Text style={styles.text}>
           Ingrese los datos para que pueda ser generado su reporte
         </Text>
       </View>
       <View style={styles.container}>
+        {route.params?.video === true ?
+        <Video source={{uri:route.params.uri}} useNativeControls style={styles.imagen}/> :
         <Image
           source={{
             uri: route.params?.uri
@@ -110,7 +112,7 @@ const ReporteForm = ({ navigation, route }) => {
               : "https://reactjs.org/logo-og.png",
           }}
           style={styles.imagen}
-        ></Image>
+        />}
         {inputsValidate ? (
           <Text style={styles.warningText}>Rellene todos los campos</Text>
         ) : (
@@ -160,14 +162,18 @@ const ReporteForm = ({ navigation, route }) => {
           data={data}
           save="value"
           placeholder="Tipo de infraccion"
-          inputStyles={{color:"white",width:"72%"}}
-          boxStyles={{marginBottom:10,height:40,color:"white"}}
-          dropdownStyles={{width:300,marginBottom:15}}
-          dropdownTextStyles={{color:"white"}}
+          inputStyles={{ color: "white", width: "72%" }}
+          boxStyles={{ marginBottom: 10, height: 40, color: "white" }}
+          dropdownStyles={{ width: 300, marginBottom: 15 }}
+          dropdownTextStyles={{ color: "white" }}
           search={false}
           notFoundText="No se encontro similitud"
-          searchicon={<Ionicons name="search-outline" color={"white"} size={16}/>}
-          arrowicon={<Ionicons name="chevron-down-outline" color={"white"} size={16} />}
+          searchicon={
+            <Ionicons name="search-outline" color={"white"} size={16} />
+          }
+          arrowicon={
+            <Ionicons name="chevron-down-outline" color={"white"} size={16} />
+          }
         />
         <TextInput
           placeholder="Ingrese una pequeña descripcion"

@@ -1,27 +1,43 @@
-import { View, Image,StyleSheet} from 'react-native'
-import React from 'react'
+import { View, Image, StyleSheet,Dimensions} from "react-native";
+import React from "react";
+import { useState } from "react";
+import { useEffect } from "react";
 
-const VistaDocumentos = ({route}) => {
+const VistaDocumentos = ({ route }) => {
+  const [width, setWidth] = useState(0);
+  const [heigth, setHeigth] = useState(0)
+
+  useEffect(() => {
+    setWidth(Dimensions.get('window').width-10);
+    setHeigth(Dimensions.get('window').height);
+  }, []);
+
   return (
     <View style={styles.container}>
-      <Image source={{uri:"http://192.168.1.75:8080/images?file="+route.params.imagen}}  alt="react logo" style={styles.imagen}/>
+      <Image
+        source={{
+          uri: "http://192.168.1.75:8080/images/" + route.params.imagen,
+        }}
+        alt="react logo"
+        style={{ width: heigth, height: width, transform: [{ rotate: "90deg" }] }}
+      />
     </View>
-  )
-}
+  );
+};
 
 const styles = new StyleSheet.create({
   container: {
-    width: "100%",
-    borderColor: "#818E9C",
-    borderWidth: 2,
-    alignItems:"center",
-    paddingBottom:5,
-    borderRadius:10,
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingBottom: 5,
+    borderRadius: 10,
   },
   imagen: {
-    width: 400,
-    height: 200,
+    width: {},
+    height: 300,
+    transform: [{ rotate: "90deg" }],
   },
-})
+});
 
-export default VistaDocumentos
+export default VistaDocumentos;

@@ -1,4 +1,3 @@
-import { View, Text } from "react-native";
 import React from "react";
 import Documentos from "../components/Conductores/Documentos";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";

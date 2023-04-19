@@ -17,6 +17,7 @@ import HomeStackScreen from "../navigation/HomeStack";
 import SettingsStack from "../navigation/SettingsStack";
 import Documentos from "../components/Conductores/Documentos";
 import DocumentosStack from "../navigation/DocumentosStack";
+import OficialStack from "../navigation/OficialStack";
 
 const Tab = createBottomTabNavigator();
 
@@ -37,7 +38,9 @@ export default function HomeScreen() {
             iconName = focused ? "ios-list" : "ios-list-outline";
           } else if (route.name === "DocumentosStack") {
             iconName = focused ? "card" : "card-outline";
-          }
+          } else if (route.name === "OficialStack") {
+            iconName = focused ? "search-circle" : "search-circle-outline";
+          } 
 
           return <Ionicons name={iconName} size={size} color={color} />;
         },
@@ -65,6 +68,15 @@ export default function HomeScreen() {
           name="DocumentosStack"
           component={DocumentosStack}
           options={{tabBarLabel:"Documentos",headerShown:false}} 
+        />
+      ) : (
+        <></>
+      )}
+      {userInfo.tipousuariofk.idtipousuario === 3 ? (
+        <Tab.Screen
+          name="OficialStack"
+          component={OficialStack}
+          options={{tabBarLabel:"Busqueda",headerShown:false}} 
         />
       ) : (
         <></>
