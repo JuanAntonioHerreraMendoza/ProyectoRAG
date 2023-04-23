@@ -40,3 +40,19 @@ export const validarEmail = (correo) => {
     return true;
   }
 };
+
+export const validarDatosBancarios = (telefono, numcuenta, clave, edad) => {
+  if (edad < 18) {
+    return "Debes ser mayor de edad";
+  }
+  if (telefono.length < 10) {
+    return "El numero de telefono es muy corto";
+  }
+  if (numcuenta.length < 10) {
+    return "El numero de cuenta es muy corto";
+  }
+  if (clave.length < 11) {
+    return "La clave interbancaria es muy corta es muy corto";
+  }
+  return null;
+};

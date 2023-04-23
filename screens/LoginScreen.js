@@ -178,15 +178,15 @@ const LoginScreen = () => {
         >
           <Text style={styles.buttonText}>Iniciar sesión</Text>
         </TouchableOpacity>
-        <TouchableOpacity
+        {/* <TouchableOpacity
           style={styles.buttonGoogle}
           disabled={!request}
           onPress={() => {
             promptAsync();
           }}
         >
-          <Text style={styles.buttonText}>Aqui va lo de google</Text>
-        </TouchableOpacity>
+        <Text style={styles.buttonText}>Aqui va lo de google</Text>
+        </TouchableOpacity> */}
         <View
           style={{
             flexDirection: "row",

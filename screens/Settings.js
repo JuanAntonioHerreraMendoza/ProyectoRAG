@@ -1,11 +1,17 @@
-import { Image, StyleSheet, Text, View } from "react-native";
+import {
+  Image,
+  StyleSheet,
+  Text,
+  View,
+  Alert,
+  TouchableOpacity,
+  TextInput,
+  ScrollView,
+} from "react-native";
 import { Modal } from "../components/Modal";
 import { AuthContext } from "../context/AuthContext";
 import { useContext, useEffect, useState } from "react";
-import { TouchableOpacity } from "react-native";
-import { TextInput } from "react-native";
 import { Button } from "@rneui/themed";
-import { ScrollView } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import AwesomeAlert from "react-native-awesome-alerts";
 import {
@@ -14,11 +20,12 @@ import {
   enviarCorreo,
   getConductor,
 } from "../functions/api";
-import { Alert } from "react-native";
+import * as ImagePicker from "expo-image-picker";
 import { validarContraseña } from "../functions/Validaciones";
 
 const Settings = () => {
   const { logout, userInfo } = useContext(AuthContext);
+  const [image, setImage] = useState("");
   const [showAlert, setshowAlert] = useState(false);
   const [showAlertContraseñaConfrim, setshowAlertContraseñaConfrim] =
     useState(false);
@@ -46,28 +53,46 @@ const Settings = () => {
     idpersonafk: {},
   });
 
+  useEffect(() => {
+    if (userInfo.idpersonafk.tipousuariofk.idtipousuario === 2) obtenerDatos();
+  }, []);
+
   const handleChange = (name, value) =>
     setpersona({ ...persona, [name]: value });
-
-  useEffect(() => {
-    obtenerDatos();
-  }, []);
 
   const obtenerDatos = async () => {
     const data = await getConductor(userInfo.idpersonafk);
     setConductor(data);
   };
 
+  const pickImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      aspect: [4, 3],
+      quality: 0.5,
+    });
+
+    if (!result.canceled) {
+      setImage(result.assets);
+    } else {
+      Alert.alert("No se selecciono una foto");
+    }
+  };
+
   return (
     <View style={styles.container}>
       <View style={{ alignItems: "center" }}>
-        <TouchableOpacity>
-          <Image
-            source={{
-              uri: "https://i.pinimg.com/originals/6f/57/76/6f57760966a796644b8cfb0fbc449843.png",
-            }}
-            style={styles.image}
-          />
+        <TouchableOpacity onPress={pickImage}>
+          {image === "" ? (
+            <Image
+              source={{
+                uri: "https://i.pinimg.com/originals/6f/57/76/6f57760966a796644b8cfb0fbc449843.png",
+              }}
+              style={styles.image}
+            />
+          ) : (
+            <Image source={image} style={styles.image}/>
+          )}
         </TouchableOpacity>
         <Text style={styles.fontTitle}>
           {userInfo.idpersonafk.nombres +
@@ -86,7 +111,7 @@ const Settings = () => {
           setinfoVisible(true);
         }}
       >
-        <Text style={styles.buttonText}>Ver mi informacion</Text>
+        <Text style={styles.buttonText}>Ver mi información</Text>
       </TouchableOpacity>
       <Modal isVisible={infoVisible} setVisible={setinfoVisible}>
         <ScrollView style={{ height: 600 }}>
@@ -119,7 +144,7 @@ const Settings = () => {
             <View style={styles.containerInfo}>
               <Text style={styles.font}>{userInfo.idpersonafk.municipio}</Text>
             </View>
-            <Text style={styles.fontTitle}>Telefono</Text>
+            <Text style={styles.fontTitle}>Teléfono</Text>
             <View style={styles.containerInfo}>
               <Text style={styles.font}>{userInfo.idpersonafk.telefono}</Text>
             </View>
@@ -137,7 +162,7 @@ const Settings = () => {
             <View style={styles.containerInfo}>
               <Text style={styles.font}>{userInfo.idpersonafk.banco}</Text>
             </View>
-            <Text style={styles.fontTitle}>Numero de cuenta bancaria</Text>
+            <Text style={styles.fontTitle}>Número de cuenta bancaria</Text>
             <View style={styles.containerInfo}>
               <Text style={styles.font}>{userInfo.idpersonafk.numcuenta}</Text>
             </View>
@@ -185,7 +210,7 @@ const Settings = () => {
           setNumCModalVisible(true);
         }}
       >
-        <Text style={styles.buttonText}>Cambiar cuenta bancaria</Text>
+        <Text style={styles.buttonText}>Cambiar datos bancarios</Text>
       </TouchableOpacity>
       <Modal isVisible={NumCModalVisible} setVisible={setNumCModalVisible}>
         <ScrollView automaticallyAdjustKeyboardInsets={true}>
@@ -195,7 +220,7 @@ const Settings = () => {
             </Text>
             <Text style={styles.warningText}>{messageE}</Text>
             <TextInput
-              placeholder="Nuevo numero de cuenta"
+              placeholder="Nuevo número de cuenta"
               placeholderTextColor={"white"}
               style={styles.input}
               onChangeText={(text) => {
@@ -236,10 +261,10 @@ const Settings = () => {
               buttonStyle={styles.saveMapBtn}
               onPress={() => {
                 if (
-                  usuario.idpersonafk.numCuenta === "" ||
-                  usuario.idpersonafk.claveInterB === "" ||
-                  usuario.idpersonafk.titularCuenta === "" ||
-                  usuario.idpersonafk.banco === ""
+                  persona.numcuenta === "" ||
+                  persona.claveInterB === "" ||
+                  persona.titularCuenta === "" ||
+                  persona.banco === ""
                 ) {
                   setMessageE("Rellene el campo");
                 } else {
@@ -272,8 +297,8 @@ const Settings = () => {
         <View>
           <View style={{ alignItems: "center" }}>
             <Text style={styles.fontTitle}>
-              Se le envio un correo con un codigo,porfavor escribalo a
-              continuacion
+              Se le envio un correo con un código,por favor escribalo a
+              continuación
             </Text>
             <Text style={styles.warningText}>{messageE}</Text>
             <TextInput
@@ -346,23 +371,20 @@ const Settings = () => {
           </View>
         </View>
       </Modal>
-      <Button
-        title="Cerrar sesion"
-        containerStyle={styles.containerCancelMapBtn}
-        buttonStylestyle={styles.cancelMapBtn}
-        onPress={logout}
-      />
+      <TouchableOpacity style={styles.cerrrarSesionBtn} onPress={logout}>
+        <Text style={styles.buttonText}>Cerrar sesion</Text>
+      </TouchableOpacity>
       <AwesomeAlert
         show={showAlert}
         showProgress={false}
-        title="¿Estas seguro de cambiar su numero de cuenta?"
-        message="Al confirmar se cerrara su sesion para realizar los cambios"
+        title="¿Estas seguro de cambiar sus datos bancarios?"
+        message="Al confirmar se cerrará su sesion para realizar los cambios"
         closeOnTouchOutside={true}
         closeOnHardwareBackPress={false}
         showCancelButton={true}
         showConfirmButton={true}
-        cancelText="No,cancelar"
-        confirmText="Si,estoy de acuerdo"
+        cancelText="No, cancelar"
+        confirmText="Si, estoy de acuerdo"
         confirmButtonColor="#105293"
         cancelButtonColor="red"
         contentContainerStyle={{ backgroundColor: "#1E262E" }}
@@ -375,7 +397,6 @@ const Settings = () => {
         }}
         onConfirmPressed={() => {
           usuario.idpersonafk = persona;
-          console.log(usuario)
           cambiarNumeroCuenta(usuario).then(() => {
             setMessageE("");
             setshowAlert(false);
@@ -389,8 +410,8 @@ const Settings = () => {
       <AwesomeAlert
         show={showAlertContraseña}
         showProgress={false}
-        title="¿Estas seguro de cambiar tu contraseña?"
-        message="Al confirmar se te enviara un correo con un codigo para realizar el cambio"
+        title="¿Estás seguro de cambiar tu contraseña?"
+        message="Al confirmar se te enviara un correo con un código para realizar el cambio"
         closeOnTouchOutside={true}
         closeOnHardwareBackPress={false}
         showCancelButton={true}
@@ -417,14 +438,14 @@ const Settings = () => {
       <AwesomeAlert
         show={showAlertContraseñaConfrim}
         showProgress={false}
-        title="¿Estas seguro de cambiar su contraseña?"
-        message="Al confirmar se cerrara su sesion para realizar los cambios"
+        title="Estás seguro de cambiar su contraseña?"
+        message="Al confirmar se cerrará su sesión para realizar los cambios"
         closeOnTouchOutside={true}
         closeOnHardwareBackPress={false}
         showCancelButton={true}
         showConfirmButton={true}
-        cancelText="No,cancelar"
-        confirmText="Si,estoy de acuerdo"
+        cancelText="No, cancelar"
+        confirmText="Si, estoy de acuerdo"
         confirmButtonColor="#105293"
         cancelButtonColor="red"
         contentContainerStyle={{ backgroundColor: "#1E262E" }}
@@ -446,7 +467,7 @@ const Settings = () => {
           if (code === 200) {
             logout();
           } else {
-            Alert.alert("Codigo incorrecto");
+            Alert.alert("Código incorrecto");
             setcontraseñaMVisible(true);
           }
         }}
@@ -511,7 +532,14 @@ const styles = StyleSheet.create({
   },
   saveMapBtn: { backgroundColor: "green" },
   cancelMapBtn: { backgroundColor: "red" },
-
+  cerrrarSesionBtn: {
+    backgroundColor: "#9C0414",
+    width: "100%",
+    position: "absolute",
+    bottom: 0,
+    alignItems: "center",
+    padding: 5,
+  },
   input: {
     marginTop: 10,
     width: "80%",

@@ -26,7 +26,7 @@ const RecuperarContraseña = () => {
     if (!validarEmail(correo)) {
       return setEmailValidete(true);
     }
-    //enviarCorreo(correo);
+    enviarCorreo(correo);
     navigation.navigate("CambioContraseña", { correo: { correo } });
   };
 
@@ -34,7 +34,7 @@ const RecuperarContraseña = () => {
     <View style={styles.container}>
       <Text style={styles.title}>Recuperar contraseña</Text>
       <Text style={styles.subs}>
-        Escriba su correo a continuacion para poder enviarle un codigo y
+        Escriba su correo a continuación para poder enviarle un codigo y
         recupere su contraseña
       </Text>
       {inputValidate ? (

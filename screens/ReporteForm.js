@@ -24,11 +24,11 @@ const ReporteForm = ({ navigation, route }) => {
   const date = new Date();
   const [selected, setSelected] = useState([]);
   const [inputsValidate, setinputsValidate] = useState(false);
-  const [direc, setDirec] = useState(null);
-  const [descrip, setDescripcion] = useState(null);
+  const [direc, setDirec] = useState("");
+  const [descrip, setDescripcion] = useState("");
   const [mapVisible, setmapVisible] = useState(false);
-  const [location, setLocation] = useState(null);
-  const [newRegion, setNewRegion] = useState(null);
+  const [location, setLocation] = useState("");
+  const [newRegion, setNewRegion] = useState("");
 
   const { userInfo } = useContext(AuthContext);
 
@@ -44,7 +44,15 @@ const ReporteForm = ({ navigation, route }) => {
       const response = await getCurrentLocation();
       if (response.status) {
         setNewRegion(response.location);
-        console.log(response.direccion[0].name);
+        setDirec(
+          response.direccion[0].city +
+            "," +
+            response.direccion[0].street +
+            "," +
+            response.direccion[0].subregion +
+            "," +
+            response.direccion[0].postalCode
+        );
       }
     })();
   }, []);
@@ -54,7 +62,7 @@ const ReporteForm = ({ navigation, route }) => {
     }
   }, [route.params?.uri]);
 
-  const validarInputs = (reporte) => {
+  const validarInputs = () => {
     if (direc === null || descrip === null || location == null) return true;
   };
   const confirmLocation = () => {
@@ -66,8 +74,8 @@ const ReporteForm = ({ navigation, route }) => {
 
   const enviarDatos = async () => {
     setinputsValidate(false);
-    let localUri = route?.params.uri;
-    if (localUri === null) {
+    let localUri = route.params?.uri;
+    if (localUri === undefined) {
       return Alert.alert("Tome una imagen");
     } else {
       let filename = localUri.split("/").pop();
@@ -81,11 +89,10 @@ const ReporteForm = ({ navigation, route }) => {
         idreportadorfk: userInfo.idpersonafk.idpersona,
         tipousuariofk: userInfo.tipousuariofk.idtipousuario,
       };
-      if (validarInputs(reporte)) {
+      if (validarInputs) {
         return setinputsValidate(true);
       }
-      await saveReporte(reporte);
-      await uploadImage(localUri);
+      await saveReporte(reporte).then(await uploadImage(localUri));
       Alert.alert("Reporte generado");
       setNewRegion(null);
       route.params.uri = "";
@@ -103,16 +110,17 @@ const ReporteForm = ({ navigation, route }) => {
         </Text>
       </View>
       <View style={styles.container}>
-        {route.params?.video === true ?
-        <Video source={{uri:route.params.uri}} useNativeControls style={styles.imagen}/> :
-        <Image
-          source={{
-            uri: route.params?.uri
-              ? route.params.uri
-              : "https://reactjs.org/logo-og.png",
-          }}
-          style={styles.imagen}
-        />}
+        {route.params?.video === true ? (
+          <Video
+            source={{ uri: route.params.uri }}
+            useNativeControls
+            style={styles.imagen}
+          />
+        ) : route.params?.uri ? (
+          <Image source={{ uri: route.params.uri }} style={styles.imagen} />
+        ) : (
+          <Image source={require("../assets/camera.png")} style={styles.imagen} />
+        )}
         {inputsValidate ? (
           <Text style={styles.warningText}>Rellene todos los campos</Text>
         ) : (
@@ -167,10 +175,6 @@ const ReporteForm = ({ navigation, route }) => {
           dropdownStyles={{ width: 300, marginBottom: 15 }}
           dropdownTextStyles={{ color: "white" }}
           search={false}
-          notFoundText="No se encontro similitud"
-          searchicon={
-            <Ionicons name="search-outline" color={"white"} size={16} />
-          }
           arrowicon={
             <Ionicons name="chevron-down-outline" color={"white"} size={16} />
           }
@@ -293,7 +297,6 @@ const styles = new StyleSheet.create({
   buttonText: {
     color: "#ffffff",
     textAlign: "center",
-    fontStyle: "italic",
     fontSize: 16,
   },
   map: {

@@ -6,19 +6,26 @@ import {
   TouchableOpacity,
   ScrollView,
   StatusBar,
-  Button,
   Image,
   Alert,
 } from "react-native";
-import { useState, useContext, useEffect } from "react";
+import { useState } from "react";
 import { CheckBox } from "@rneui/themed";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { saveConductor, saveUsuario, uploadImage } from "../functions/api";
+import {
+  validarContraseña,
+  validarEmail,
+  validarDatosBancarios,
+} from "../functions/Validaciones";
 import * as ImagePicker from "expo-image-picker";
+import { Modal } from "../components/Modal";
+import { Button } from "@rneui/themed";
 import { useNavigation } from "@react-navigation/native";
 
 const Registro = () => {
   const navigation = useNavigation();
+  const [modalTerm, setModalTerm] = useState(false);
   const [inputsValidate, setinputsValidate] = useState(false);
   const [emailValidate, setemailValidate] = useState(false);
   const [passValidate, setpassValidate] = useState(false);
@@ -28,7 +35,7 @@ const Registro = () => {
   const [checkedTerms, setCheckedTerms] = useState(false);
   const [messageE, setMessageE] = useState("");
   const [image, setImage] = useState(null);
-  
+
   const [persona, setPersona] = useState({
     nombres: "",
     apellidop: "",
@@ -39,6 +46,9 @@ const Registro = () => {
     municipio: "",
     telefono: "",
     numcuenta: "",
+    claveInterB: "",
+    titularCuenta: "",
+    banco: "",
     correo: "",
     activo: true,
     numSuspenciones: 0,
@@ -61,48 +71,6 @@ const Registro = () => {
     numplacas: "",
   });
 
-  const validarEmail = (user) => {
-    let re = /\S+@\S+\.\S+/;
-    let regex = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im;
-
-    if (re.test(user.usuario) || regex.test(user.usuario)) {
-      return true;
-    }
-  };
-  const validarContraseña = (value) => {
-    const isNonWhiteSpace = /^\S*$/;
-    if (!isNonWhiteSpace.test(value)) {
-      return "La contraseña no puede tener espacios.";
-    }
-
-    const isContainsUppercase = /^(?=.*[A-Z]).*$/;
-    if (!isContainsUppercase.test(value)) {
-      return "La contraseña debe tener al menos una letra mayuscula";
-    }
-
-    const isContainsLowercase = /^(?=.*[a-z]).*$/;
-    if (!isContainsLowercase.test(value)) {
-      return "La contraseña debe tener al menos una letra minuscula";
-    }
-
-    const isContainsNumber = /^(?=.*[0-9]).*$/;
-    if (!isContainsNumber.test(value)) {
-      return "La contraseña debe tener al menos un digito";
-    }
-
-    const isValidLength = /^.{8,16}$/;
-    if (!isValidLength.test(value)) {
-      return "La longitud de la contraseña debe esta entre 8 y 16 caracteres";
-    }
-
-    const isContainsSymbol =
-      /^(?=.*[~`!@#$%^&*()--+={}\[\]|\\:;"'<>,.?/_₹]).*$/;
-    if (!isContainsSymbol.test(value)) {
-      return "La contraseña debe tener al menos un caracter especial";
-    }
-
-    return null;
-  };
   const validarInputs = (persona, user) => {
     if (Object.values(persona).includes("") || Object.values(user).includes(""))
       return true;
@@ -134,7 +102,19 @@ const Registro = () => {
     if (image === null) {
       return setimageValidate(true);
     }
-    if (!validarEmail(usuario)) {
+
+    let alertaDatosBancarios = validarDatosBancarios(
+      persona.telefono,
+      persona.numcuenta,
+      persona.claveInterB,
+      persona.edad
+    );
+
+    if (alertaDatosBancarios !== null) {
+      return alert(alertaDatosBancarios)
+    }
+
+    if (!validarEmail(usuario.usuario)) {
       setemailValidate(true);
       let checkPass = validarContraseña(usuario.contraseña);
       if (checkPass) {
@@ -147,17 +127,15 @@ const Registro = () => {
     checked === 0
       ? (tipousuario.idtipousuario = "1")
       : (tipousuario.idtipousuario = "2");
+
     persona.tipousuariofk = tipousuario;
     usuario.idpersonafk = persona;
     await saveUsuario(usuario);
-    if ((checked === 1)) {
-      console.log(conductor);
+    if (checked === 1) {
       await saveConductor(conductor, persona.nombres);
     }
     uploadImage(image);
     navigation.navigate("Login");
-    //login(user);
-
   };
 
   const pickImage = async () => {
@@ -165,12 +143,12 @@ const Registro = () => {
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       aspect: [4, 3],
       quality: 0.5,
-      allowsMultipleSelection:true,
-      selectionLimit:2
+      allowsMultipleSelection: true,
+      selectionLimit: 2,
     });
 
     if (!result.canceled) {
-      setImage(result.assets)
+      setImage(result.assets);
     } else {
       Alert.alert("No se selecciono una foto");
     }
@@ -186,7 +164,7 @@ const Registro = () => {
       <View style={styles.container}>
         <Text style={styles.title}>Registro de usuario</Text>
         <Text style={styles.subs}>
-          Rellene los campos a continuacion para realizar su registro
+          Rellene los campos a continuación para realizar su registro
         </Text>
         <View style={{ flexDirection: "row" }}>
           <CheckBox
@@ -197,7 +175,7 @@ const Registro = () => {
             onPress={() => setChecked(0)}
             checkedIcon="dot-circle-o"
             uncheckedIcon="circle-o"
-            title="Agente civico"
+            title="Agente cívico"
           />
           <CheckBox
             containerStyle={{ backgroundColor: "#1E262E" }}
@@ -207,7 +185,7 @@ const Registro = () => {
             onPress={() => setChecked(1)}
             checkedIcon="dot-circle-o"
             uncheckedIcon="circle-o"
-            title="Agente Ciudadano"
+            title="Agente ciudadano"
           />
         </View>
         <View style={styles.form}>
@@ -282,7 +260,7 @@ const Registro = () => {
           />
           <TextInput
             style={styles.input}
-            placeholder="Telefono"
+            placeholder="Teléfono"
             keyboardType="numeric"
             maxLength={10}
             placeholderTextColor={"white"}
@@ -290,11 +268,36 @@ const Registro = () => {
           />
           <TextInput
             style={styles.input}
-            placeholder="Numero de cuenta"
+            placeholder="Número de cuenta"
             keyboardType="numeric"
             maxLength={11}
             placeholderTextColor={"white"}
             onChangeText={(text) => handleChangeP("numcuenta", text)}
+          />
+          <TextInput
+            placeholder="Clave interbancaria"
+            placeholderTextColor={"white"}
+            style={styles.input}
+            onChangeText={(text) => {
+              handleChangeP("claveInterB", text);
+            }}
+            keyboardType="numeric"
+          />
+          <TextInput
+            placeholder="Titular de la cuenta"
+            placeholderTextColor={"white"}
+            style={styles.input}
+            onChangeText={(text) => {
+              handleChangeP("titularCuenta", text);
+            }}
+          />
+          <TextInput
+            placeholder="Banco"
+            placeholderTextColor={"white"}
+            style={styles.input}
+            onChangeText={(text) => {
+              handleChangeP("banco", text);
+            }}
           />
           {emailValidate ? (
             <Text style={styles.warningText}>Formato de email incorrecto</Text>
@@ -353,13 +356,74 @@ const Registro = () => {
           ) : (
             <></>
           )}
-          <CheckBox
-            containerStyle={{ backgroundColor: "#1E262E" }}
-            center
-            checked={checkedTerms}
-            onPress={() => setCheckedTerms(!checkedTerms)}
-            title="De acuerdo"
-          />
+          <View
+            style={{
+              flexDirection: "column",
+              alignItems: "center",
+              width: "80%",
+            }}
+          >
+            <CheckBox
+              containerStyle={{ backgroundColor: "#1E262E", paddingRight: 0 }}
+              center
+              checked={checkedTerms}
+              onPress={() => setCheckedTerms(!checkedTerms)}
+              title={"Estoy de acuerdo con los"}
+              textStyle={{ color: "white" }}
+            />
+            <Text
+              onPress={() => {
+                setModalTerm(!modalTerm);
+              }}
+              style={{
+                color: "white",
+                fontWeight: "bold",
+                marginBottom: 20,
+                textDecorationLine: "underline",
+              }}
+            >
+              Términos y condiciones
+            </Text>
+          </View>
+          <Modal isVisible={modalTerm} setVisible={setModalTerm}>
+            <Text style={{ color: "white" }}>
+              Los términos y condiciones ("Términos") son un conjunto de
+              términos legales definidos por el propietario de una página web.
+              Establecieron los términos y condiciones que rigen las actividades
+              de los visitantes de la página web en dicho sitio web y la
+              relación entre los visitantes del sitio y el propietario del sitio
+              web. Los términos deben definirse de acuerdo con las necesidades
+              específicas y la naturaleza de cada página web. Por ejemplo, una
+              página web que ofrece productos a clientes en transacciones de
+              comercio electrónico requiere términos que son diferentes de los
+              términos de una página web que solo proporciona información. Los
+              Términos son un acuerdo entre el propietario del sitio web y los
+              usuarios de la página web; detallan las políticas y procedimientos
+              realizados por el sitio web. En muchos sentidos, los Términos
+              brindan al propietario de la página web la posibilidad de
+              protegerse de una posible exposición legal. Además, existen
+              obligaciones legales para notificar a los usuarios de página web
+              de tales actividades, y en muchos casos los Términos son el lugar
+              indicado para hacerlo. Por lo tanto, es muy importante y muy
+              recomendable que las páginas web tengan términos claros y
+              completos que se ajusten y adapten al sitio web específico y a tus
+              actividades. Importante: Las explicaciones y la información
+              proporcionadas en este documento son solo explicaciones generales
+              y de alto nivel, información y muestras. No debes confiar en este
+              artículo como asesoramiento legal o como recomendaciones con
+              respecto a lo que realmente debes hacer. Te recomendamos que
+              busques asesoramiento legal para ayudarte a comprender y ayudarte
+              a crear tus Términos.
+            </Text>
+            <View style={styles.viewMap}>
+              <Button
+                title={"Cerrar"}
+                containerStyle={styles.containerCancelMapBtn}
+                buttonStyle={styles.cancelMapBtn}
+                onPress={() => setModalTerm(false)}
+              />
+            </View>
+          </Modal>
           <TouchableOpacity
             onPress={() => handleSubmmit(user, persona, tipoUser)}
             disabled={!checkedTerms}
@@ -457,6 +521,15 @@ const styles = new StyleSheet.create({
     marginTop: 0,
     marginBottom: 10,
   },
+  viewMap: {
+    flexDirection: "row",
+    justifyContent: "center",
+    marginTop: 10,
+  },
+  containerCancelMapBtn: {
+    paddingLeft: 5,
+  },
+  cancelMapBtn: { backgroundColor: "red" },
 });
 
 export default Registro;
