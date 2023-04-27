@@ -50,6 +50,7 @@ const Registro = () => {
     titularCuenta: "",
     banco: "",
     correo: "",
+    imagenperfil:"",
     activo: true,
     numSuspenciones: 0,
     tipousuariofk: {},
@@ -149,8 +150,6 @@ const Registro = () => {
 
     if (!result.canceled) {
       setImage(result.assets);
-    } else {
-      Alert.alert("No se selecciono una foto");
     }
   };
 

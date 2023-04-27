@@ -19,14 +19,16 @@ import {
   cambiarNumeroCuenta,
   enviarCorreo,
   getConductor,
+  uploadImage,
 } from "../functions/api";
 import * as ImagePicker from "expo-image-picker";
 import { validarContraseña } from "../functions/Validaciones";
+import { cambiarImagen } from "../functions/api";
 
 const Settings = () => {
   const { logout, userInfo } = useContext(AuthContext);
-  const [image, setImage] = useState("");
   const [showAlert, setshowAlert] = useState(false);
+  const [showAlertImage, setshowAlertImage] = useState(false);
   const [showAlertContraseñaConfrim, setshowAlertContraseñaConfrim] =
     useState(false);
   const [showAlertContraseña, setshowAlertContraseña] = useState(false);
@@ -73,9 +75,10 @@ const Settings = () => {
     });
 
     if (!result.canceled) {
-      setImage(result.assets);
-    } else {
-      Alert.alert("No se selecciono una foto");
+      await uploadImage(result.assets[0].uri);
+      let filename = result.assets[0].uri.split("/").pop();
+      await cambiarImagen(usuario, filename);
+      setshowAlertImage(true)
     }
   };
 
@@ -83,7 +86,7 @@ const Settings = () => {
     <View style={styles.container}>
       <View style={{ alignItems: "center" }}>
         <TouchableOpacity onPress={pickImage}>
-          {image === "" ? (
+          {userInfo.idpersonafk.imagenperfil === null ? (
             <Image
               source={{
                 uri: "https://i.pinimg.com/originals/6f/57/76/6f57760966a796644b8cfb0fbc449843.png",
@@ -91,7 +94,14 @@ const Settings = () => {
               style={styles.image}
             />
           ) : (
-            <Image source={image} style={styles.image}/>
+            <Image
+              source={{
+                uri:
+                  "http://192.168.1.75:8080/images/" +
+                  userInfo.idpersonafk.imagenperfil,
+              }}
+              style={styles.image}
+            />
           )}
         </TouchableOpacity>
         <Text style={styles.fontTitle}>
@@ -404,6 +414,28 @@ const Settings = () => {
         }}
         onDismiss={() => {
           setMessageE("");
+          logout();
+        }}
+      />
+      <AwesomeAlert
+        show={showAlertImage}
+        showProgress={false}
+        title="Cambio de imagen"
+        message="Se cerrará su sesion para realizar el cambio"
+        closeOnTouchOutside={true}
+        closeOnHardwareBackPress={false}
+        showConfirmButton={true}
+        confirmText="Si, estoy de acuerdo"
+        confirmButtonColor="#105293"
+        cancelButtonColor="red"
+        contentContainerStyle={{ backgroundColor: "#1E262E" }}
+        contentStyle={{ backgroundColor: "#1E262E" }}
+        titleStyle={{ color: "white", textAlign: "center" }}
+        messageStyle={{ color: "white", textAlign: "center" }}
+        onConfirmPressed={() => {
+          setshowAlertImage(false)
+        }}
+        onDismiss={() => {
           logout();
         }}
       />

@@ -1,7 +1,7 @@
-import { View, Text, StyleSheet, ScrollView, FlatList } from "react-native";
+import { View, Text, StyleSheet, FlatList, Button } from "react-native";
 import React, { useState, useEffect } from "react";
 
-const ConductorDetail = ({ route }) => {
+const ConductorDetail = ({ route,navigation }) => {
   const [infracciones, setInfracciones] = useState(null);
 
   const loadInfracciones = () => {
@@ -78,6 +78,10 @@ const ConductorDetail = ({ route }) => {
           />
         </View>
       )}
+
+      <View>
+        <Button title="Realizar reporte" onPress={()=>{navigation.navigate("ReporteForm")}}/>
+      </View>
     </View>
   );
 };

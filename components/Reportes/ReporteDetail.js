@@ -30,11 +30,11 @@ const ReporteDetail = ({ route, navigation }) => {
         <View style={styles.container}>
           <Text style={styles.font}>{fecha}</Text>
         </View>
-        <Text style={styles.fontTitle}>Direccion</Text>
+        <Text style={styles.fontTitle}>Dirección</Text>
         <View style={styles.container}>
           <Text style={styles.font}>{reporte["direccion"]}</Text>
         </View>
-        <Text style={styles.fontTitle}>Descripcion</Text>
+        <Text style={styles.fontTitle}>Descripción</Text>
         <View style={styles.container}>
           <Text style={styles.font}>{reporte["descripcion"]}</Text>
         </View>

@@ -37,14 +37,14 @@ const Busqueda = () => {
         </Text>
         <TextInput
           style={styles.input}
-          placeholder="Numero de licencia"
+          placeholder="Número de licencia"
           keyboardType="numeric"
           placeholderTextColor={"white"}
           onChangeText={(text) => setLicencia(text)}
         />
         <TextInput
           style={styles.input}
-          placeholder="Tarjeta de circulacion"
+          placeholder="Tarjeta de circulación"
           placeholderTextColor={"white"}
           onChangeText={(text) => setCirculacion(text)}
         />

@@ -32,7 +32,6 @@ export const AuthProvider = ({ children }) => {
       setUserInfo({});
       setConductor({});
       setIsLoading(false);
-      console.log("Logout correcto");
     } catch (error) {
       console.log(`logout error ${error}`);
       setIsLoading(false);

@@ -80,6 +80,19 @@ export const cambiarNumeroCuenta = async (user) => {
   return await res.json();
 };
 
+
+export const cambiarImagen = async (user,imagen) => {
+  const res = await fetch(`${API}usuarios/editarImagenPerfil?imagen=${imagen}`, {
+    method: "PUT",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(user),
+  });
+  return await res.json();
+};
+
 export const saveUsuario = async (usuario) => {
   const res = await fetch(`${API}usuarios/usuarioR`, {
     method: "POST",
