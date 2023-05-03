@@ -7,7 +7,6 @@ import {
   ScrollView,
   StatusBar,
   Image,
-  Alert,
 } from "react-native";
 import { useState } from "react";
 import { CheckBox } from "@rneui/themed";
@@ -24,7 +23,9 @@ import { Button } from "@rneui/themed";
 import { useNavigation } from "@react-navigation/native";
 
 const Registro = () => {
+  //Funciones para navegar
   const navigation = useNavigation();
+  //Variables
   const [modalTerm, setModalTerm] = useState(false);
   const [inputsValidate, setinputsValidate] = useState(false);
   const [emailValidate, setemailValidate] = useState(false);
@@ -50,7 +51,7 @@ const Registro = () => {
     titularCuenta: "",
     banco: "",
     correo: "",
-    imagenperfil:"",
+    imagenperfil: "",
     activo: true,
     numSuspenciones: 0,
     tipousuariofk: {},
@@ -112,7 +113,7 @@ const Registro = () => {
     );
 
     if (alertaDatosBancarios !== null) {
-      return alert(alertaDatosBancarios)
+      return alert(alertaDatosBancarios);
     }
 
     if (!validarEmail(usuario.usuario)) {
@@ -139,6 +140,7 @@ const Registro = () => {
     navigation.navigate("Login");
   };
 
+  //Funcion para elegir imagenes de la biblioteca
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,

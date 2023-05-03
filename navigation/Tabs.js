@@ -1,28 +1,18 @@
 import React, { useContext } from "react";
-import {
-  Button,
-  Text,
-  View,
-  ImageBackground,
-  Image,
-  TouchableOpacity,
-  StyleSheet,
-} from "react-native";
-import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { AuthContext } from "../context/AuthContext";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import ReportesStack from "../navigation/ReportesStack";
-import HomeStackScreen from "../navigation/HomeStack";
-import SettingsStack from "../navigation/SettingsStack";
-import Documentos from "../components/Conductores/Documentos";
-import DocumentosStack from "../navigation/DocumentosStack";
-import OficialStack from "../navigation/OficialStack";
+import ReportesStack from "./ReportesStack";
+import HomeStackScreen from "./HomeStack";
+import SettingsStack from "./SettingsStack";
+import DocumentosStack from "./DocumentosStack";
+import OficialStack from "./OficialStack";
 
+//Creacion de los tabs para navegacion
 const Tab = createBottomTabNavigator();
 
-export default function HomeScreen() {
-  const { userInfo, splashLoading } = useContext(AuthContext);
+export default function Tabs() {
+  const { userInfo} = useContext(AuthContext);
 
   return (
     <Tab.Navigator

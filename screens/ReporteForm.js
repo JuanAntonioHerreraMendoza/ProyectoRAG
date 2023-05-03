@@ -68,7 +68,6 @@ const ReporteForm = ({ navigation, route }) => {
   const confirmLocation = () => {
     setLocation(newRegion);
     Alert.alert("Se registro la ubicacion");
-    console.log(location);
     setmapVisible(false);
   };
 
@@ -89,7 +88,7 @@ const ReporteForm = ({ navigation, route }) => {
         idreportadorfk: userInfo.idpersonafk.idpersona,
         tipousuariofk: userInfo.tipousuariofk.idtipousuario,
       };
-      if (validarInputs) {
+      if (validarInputs()) {
         return setinputsValidate(true);
       }
       await saveReporte(reporte).then(await uploadImage(localUri));

@@ -12,10 +12,11 @@ import { validarEmail } from "../functions/Validaciones";
 
 const RecuperarContraseña = () => {
   const navigation = useNavigation();
+  //Variables
   const [correo, setCorreo] = useState("");
   const [emailValidate, setEmailValidete] = useState(false);
   const [inputValidate, setInputValidate] = useState(false);
-
+  //Funcion de confirmacion de correo
   const confirmarCorreo = (correo) => {
     setInputValidate(false);
     setEmailValidete(false);

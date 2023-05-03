@@ -4,7 +4,6 @@ import { BarCodeScanner } from "expo-barcode-scanner";
 import { useNavigation } from "@react-navigation/native";
 
 export default function ScanBarCode() {
-  const navigation = useNavigation();
   const [hasPermission, setHasPermission] = useState(null);
   const [scanned, setScanned] = useState(false);
 
@@ -20,7 +19,7 @@ export default function ScanBarCode() {
   const handleBarCodeScanned = ({ type, data }) => {
     setScanned(true);
     alert(
-      `El codigo de barras de tipo ${type} muestra esta informacion ${data}`
+      `El codigo de barras de tipo ${type} muestra la siguiente informacion ${data}`
     );
   };
 

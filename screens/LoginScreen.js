@@ -18,7 +18,9 @@ import { KeyboardAvoidingView } from "react-native";
 WebBrowser.maybeCompleteAuthSession();
 
 const LoginScreen = () => {
+  //Obtencion de funcion para el login
   const { isLoading, login } = useContext(AuthContext);
+  //Variables
   const [accesToken, setAccesToken] = useState(null);
   const [userG, setUserG] = useState(null);
   const [request, response, promptAsync] = Google.useIdTokenAuthRequest({
@@ -34,44 +36,34 @@ const LoginScreen = () => {
   const [inputsValidate, setinputsValidate] = useState(false);
   const [loginValidate, setloginValidate] = useState(false);
 
-  const navigation = useNavigation();
-
   const [user, setUser] = useState({
     idusuarios: 0,
     usuario: "",
     contraseña: "",
   });
 
-  const validarEmail = (user) => {
-    let re = /\S+@\S+\.\S+/;
-    let regex = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im;
-
-    if (re.test(user.usuario) || regex.test(user.usuario)) {
-      return true;
-    }
-  };
+  //Funcion para navegar
+  const navigation = useNavigation();
 
   const validarInputs = (user) => {
     if (user.usuario === "" || user.contraseña === "") return true;
   };
 
+  const handleChange = (name, value) => setUser({ ...user, [name]: value });
+
+  //Envio de informacion
   const handleSubmmit = async (user) => {
     setinputsValidate(false);
-    //setemailValidate(false);
     if (validarInputs(user)) {
       return setinputsValidate(true);
     }
-    // if (!validarEmail(user)) {
-      // return setemailValidate(true);
-    // }
     let u = await login(user);
     if (u === undefined) {
       return setloginValidate(true);
     }
   };
 
-  const handleChange = (name, value) => setUser({ ...user, [name]: value });
-
+  //Funciones de google
   useEffect(() => {
     if (response?.type === "success") {
       console.log(response);
@@ -111,7 +103,7 @@ const LoginScreen = () => {
   };
 
   return (
-    <KeyboardAvoidingView behavior="padding" style={{flex:1}}>
+    <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
       <View style={styles.container}>
         <Spinner visible={isLoading} />
         <Text style={styles.text}>Supervisión Ciudadana</Text>
@@ -123,11 +115,6 @@ const LoginScreen = () => {
           color={"#E1EC2F"}
         />
         {userG && <ShowUserInfo />}
-        {emailValidate ? (
-          <Text style={styles.warningText}>Formato de email incorrecto</Text>
-        ) : (
-          <></>
-        )}
         {inputsValidate ? (
           <Text style={styles.warningText}>Rellene ambos campos</Text>
         ) : (

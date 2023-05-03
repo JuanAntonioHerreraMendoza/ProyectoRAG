@@ -33,7 +33,7 @@ export default function Camara({ navigation, route }) {
         const data = await cameraRef.current.takePictureAsync();
         setImage(data.uri);
       } catch (error) {
-        console.log(error);
+        alert(error);
       }
     }
   };
@@ -47,7 +47,6 @@ export default function Camara({ navigation, route }) {
     };
     cameraRef.current.recordAsync(options).then((recordedVideo) => {
       setVideo(recordedVideo);
-      console.log(recordedVideo)
       setIsRecording(false);
     });
   };
@@ -61,7 +60,6 @@ export default function Camara({ navigation, route }) {
     if (video) {
       try {
         alert("Video registrado");
-        console.log("saved successfully");
         navigation.navigate({
           name: "ReporteForm",
           params: { uri: video.uri, video: true },
@@ -69,7 +67,7 @@ export default function Camara({ navigation, route }) {
         });
         setVideo(null);
       } catch (error) {
-        console.log(error);
+        alert.log(error);
       }
     }
   };
@@ -78,7 +76,6 @@ export default function Camara({ navigation, route }) {
     if (image) {
       try {
         alert("Foto registrada");
-        console.log("saved successfully");
         navigation.navigate({
           name: "ReporteForm",
           params: { uri: image },
@@ -86,7 +83,7 @@ export default function Camara({ navigation, route }) {
         });
         setImage(null);
       } catch (error) {
-        console.log(error);
+        alert(error);
       }
     }
   };

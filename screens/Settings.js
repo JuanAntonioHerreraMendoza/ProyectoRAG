@@ -78,7 +78,7 @@ const Settings = () => {
       await uploadImage(result.assets[0].uri);
       let filename = result.assets[0].uri.split("/").pop();
       await cambiarImagen(usuario, filename);
-      setshowAlertImage(true)
+      setshowAlertImage(true);
     }
   };
 
@@ -123,6 +123,9 @@ const Settings = () => {
       >
         <Text style={styles.buttonText}>Ver mi información</Text>
       </TouchableOpacity>
+
+      {/* Modal para muestra de informacion */}
+
       <Modal isVisible={infoVisible} setVisible={setinfoVisible}>
         <ScrollView style={{ height: 600 }}>
           <View style={styles.principal}>
@@ -222,6 +225,9 @@ const Settings = () => {
       >
         <Text style={styles.buttonText}>Cambiar datos bancarios</Text>
       </TouchableOpacity>
+
+      
+      {/* Modal para cambio de informacion bancaria */}
       <Modal isVisible={NumCModalVisible} setVisible={setNumCModalVisible}>
         <ScrollView automaticallyAdjustKeyboardInsets={true}>
           <View style={{ alignItems: "center" }}>
@@ -303,6 +309,9 @@ const Settings = () => {
       >
         <Text style={styles.buttonText}>Cambiar contraseña</Text>
       </TouchableOpacity>
+
+
+      {/* Modal para cambio de contraseña */}
       <Modal isVisible={contraseñaMVisible} setVisible={setcontraseñaMVisible}>
         <View>
           <View style={{ alignItems: "center" }}>
@@ -384,6 +393,8 @@ const Settings = () => {
       <TouchableOpacity style={styles.cerrrarSesionBtn} onPress={logout}>
         <Text style={styles.buttonText}>Cerrar sesion</Text>
       </TouchableOpacity>
+
+      {/* Alertas para confirmar cambios */}
       <AwesomeAlert
         show={showAlert}
         showProgress={false}
@@ -433,7 +444,7 @@ const Settings = () => {
         titleStyle={{ color: "white", textAlign: "center" }}
         messageStyle={{ color: "white", textAlign: "center" }}
         onConfirmPressed={() => {
-          setshowAlertImage(false)
+          setshowAlertImage(false);
         }}
         onDismiss={() => {
           logout();

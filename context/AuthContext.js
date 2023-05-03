@@ -33,7 +33,7 @@ export const AuthProvider = ({ children }) => {
       setConductor({});
       setIsLoading(false);
     } catch (error) {
-      console.log(`logout error ${error}`);
+      alert(`logout error ${error}`);
       setIsLoading(false);
     }
   };
@@ -57,7 +57,6 @@ export const AuthProvider = ({ children }) => {
       }
     } catch (e) {
       setSplashLoading(false);
-      console.log(`is logged in error ${e}`);
     }
   };
 

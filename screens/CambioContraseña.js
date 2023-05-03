@@ -13,7 +13,9 @@ import { Alert } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 
 const CambioContraseña = ({ route }) => {
+  //Funcion para navegar entre ventanas
   const navigation = useNavigation();
+  //Variables
   const [messageE, setmessageE] = useState("");
   const [messageErrorC, setMessageErrorC] = useState("");
   const [seePass, setSeePass] = useState(true);
@@ -26,11 +28,13 @@ const CambioContraseña = ({ route }) => {
     codigo: "",
   });
 
+  //Funciones para manejar la informacion
   const handleChange = (name, value) => setUser({ ...user, [name]: value });
 
   const handleChangeC = (name, value) =>
     setCodigo({ ...codigo, [name]: value });
 
+  //Funcion que envia los datos  
   const handleSubmmit = (user, codigo) => {
     setmessageE("");
     setMessageErrorC("");

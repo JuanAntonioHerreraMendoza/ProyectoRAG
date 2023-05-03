@@ -5,7 +5,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { AuthContext } from "../context/AuthContext";
 
 import Login from "../screens/LoginScreen";
-import Home from "../screens/Home";
+import Tabs from "../navigation/Tabs";
 import SplashScreen from "../components/SplashScreen";
 import Registro from "../screens/Registro";
 import RecuperarContraseña from "../screens/RecuperarContraseña";
@@ -30,7 +30,7 @@ function Navigation() {
           <>
             <Stack.Screen
               name="Index"
-              component={Home}
+              component={Tabs}
               options={{ headerShown: false }}
             />
             <Stack.Screen

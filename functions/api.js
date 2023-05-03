@@ -36,6 +36,16 @@ export const getReporte = async (id) => {
   return await res.json();
 };
 
+export const getUltimoReporte = async (id) => {
+  const res = await fetch(`${API}reportes/Ultimorep?id=${id}`);
+  return await res.json();
+};
+
+export const getConteos = async (id)=>{
+  const res= await fetch(`${API}reportes/Countrep?id=${id}`);
+  return await res.json();
+}
+
 export const getImage = async (image) => {
   const res = await fetch(`http://192.168.1.75:8080/images/${image}`);
   return res.body;
@@ -131,7 +141,7 @@ export const getConductor = async (persona) => {
 
 export const getConductorInfo = async (licencia, circulacion, placas) => {
   const res = await fetch(
-    `${API}conductores/buscarValor?placas=${placas}&licencia=${licencia}`
+    `${API}conductores/buscarValor?placas=${placas}&licencia=${licencia}&circulacion=${circulacion}`
   );
   return res.json();
 };
