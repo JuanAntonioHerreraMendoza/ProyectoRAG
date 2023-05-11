@@ -7,9 +7,9 @@
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/imageApp.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#1E262E"
     },
     "scheme":"com.supervisionsuci.supervisionsuci",
     "updates": {
@@ -25,7 +25,7 @@
     "android": {
       "package": "com.supervisionsuci.supervisionsuci",
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/imageApp.png",
         "backgroundColor": "#FFFFFF"
       },
       "permissions": [
@@ -37,6 +37,15 @@
     "web": {
       "favicon": "./assets/favicon.png"
     },
+    "plugins": [
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/imageApp.png",
+          "color": "#ffffff"
+        }
+      ]
+    ],
     "extra": {
       "eas": {
         "projectId": "f2518a2d-12ef-4853-a8da-51712e24ab67"

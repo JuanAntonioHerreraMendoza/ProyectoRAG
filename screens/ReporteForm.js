@@ -91,7 +91,7 @@ const ReporteForm = ({ navigation, route }) => {
       if (validarInputs()) {
         return setinputsValidate(true);
       }
-      await saveReporte(reporte).then(await uploadImage(localUri));
+      await saveReporte(reporte).then(await uploadImage(localUri,"reportes"));
       Alert.alert("Reporte generado");
       setNewRegion(null);
       route.params.uri = "";

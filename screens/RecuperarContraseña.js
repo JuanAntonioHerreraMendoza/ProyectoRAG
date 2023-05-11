@@ -7,7 +7,7 @@ import {
 } from "react-native";
 import React, { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
-import { enviarCorreo } from "../functions/api";
+import { enviarCorreo, existeCorreo } from "../functions/api";
 import { validarEmail } from "../functions/Validaciones";
 
 const RecuperarContraseña = () => {
@@ -17,7 +17,7 @@ const RecuperarContraseña = () => {
   const [emailValidate, setEmailValidete] = useState(false);
   const [inputValidate, setInputValidate] = useState(false);
   //Funcion de confirmacion de correo
-  const confirmarCorreo = (correo) => {
+  const confirmarCorreo = async (correo) => {
     setInputValidate(false);
     setEmailValidete(false);
 
@@ -27,8 +27,12 @@ const RecuperarContraseña = () => {
     if (!validarEmail(correo)) {
       return setEmailValidete(true);
     }
+    if(await existeCorreo(correo)){
     enviarCorreo(correo);
     navigation.navigate("CambioContraseña", { correo: { correo } });
+    }else{
+      alert("No existe este correo")
+    }
   };
 
   return (

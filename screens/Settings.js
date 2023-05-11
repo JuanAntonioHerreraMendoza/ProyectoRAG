@@ -17,12 +17,16 @@ import AwesomeAlert from "react-native-awesome-alerts";
 import {
   cambiarContraseña,
   cambiarNumeroCuenta,
+  deleteImage,
   enviarCorreo,
   getConductor,
   uploadImage,
 } from "../functions/api";
 import * as ImagePicker from "expo-image-picker";
-import { validarContraseña } from "../functions/Validaciones";
+import {
+  validarContraseña,
+  validarDatosNumRegistro,
+} from "../functions/Validaciones";
 import { cambiarImagen } from "../functions/api";
 
 const Settings = () => {
@@ -32,6 +36,7 @@ const Settings = () => {
   const [showAlertContraseñaConfrim, setshowAlertContraseñaConfrim] =
     useState(false);
   const [showAlertContraseña, setshowAlertContraseña] = useState(false);
+  const [showAlertSesion, setshowAlertSesion] = useState(false);
   const [seePass, setSeePass] = useState(true);
   const [infoVisible, setinfoVisible] = useState(false);
   const [NumCModalVisible, setNumCModalVisible] = useState(false);
@@ -70,17 +75,23 @@ const Settings = () => {
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
       aspect: [4, 3],
       quality: 0.5,
     });
 
     if (!result.canceled) {
-      await uploadImage(result.assets[0].uri);
+      await uploadImage(result.assets[0].uri,"imagesPerfil");
       let filename = result.assets[0].uri.split("/").pop();
       await cambiarImagen(usuario, filename);
+      await deleteImage("imagesPerfil",userInfo.idpersonafk.imagenperfil)
       setshowAlertImage(true);
     }
   };
+
+  function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
 
   return (
     <View style={styles.container}>
@@ -98,7 +109,7 @@ const Settings = () => {
               source={{
                 uri:
                   "http://192.168.1.75:8080/images/" +
-                  userInfo.idpersonafk.imagenperfil,
+                  userInfo.idpersonafk.imagenperfil+"?path=imagesPerfil"
               }}
               style={styles.image}
             />
@@ -186,7 +197,7 @@ const Settings = () => {
               </Text>
             </View>
 
-            {conductor.noLicencia === null ? (
+            {conductor.noLicencia === undefined ? (
               <></>
             ) : (
               <>
@@ -226,7 +237,6 @@ const Settings = () => {
         <Text style={styles.buttonText}>Cambiar datos bancarios</Text>
       </TouchableOpacity>
 
-      
       {/* Modal para cambio de informacion bancaria */}
       <Modal isVisible={NumCModalVisible} setVisible={setNumCModalVisible}>
         <ScrollView automaticallyAdjustKeyboardInsets={true}>
@@ -276,6 +286,12 @@ const Settings = () => {
               containerStyle={styles.containerSaveMapBtn}
               buttonStyle={styles.saveMapBtn}
               onPress={() => {
+                let aux = validarDatosNumRegistro(
+                  userInfo.idpersonafk.telefono,
+                  persona.numcuenta,
+                  persona.claveInterB,
+                  userInfo.idpersonafk.edad
+                );
                 if (
                   persona.numcuenta === "" ||
                   persona.claveInterB === "" ||
@@ -283,6 +299,8 @@ const Settings = () => {
                   persona.banco === ""
                 ) {
                   setMessageE("Rellene el campo");
+                } else if (aux !== null) {
+                  setMessageE(aux);
                 } else {
                   setNumCModalVisible(false);
                   setshowAlert(true);
@@ -309,7 +327,6 @@ const Settings = () => {
       >
         <Text style={styles.buttonText}>Cambiar contraseña</Text>
       </TouchableOpacity>
-
 
       {/* Modal para cambio de contraseña */}
       <Modal isVisible={contraseñaMVisible} setVisible={setcontraseñaMVisible}>
@@ -390,7 +407,7 @@ const Settings = () => {
           </View>
         </View>
       </Modal>
-      <TouchableOpacity style={styles.cerrrarSesionBtn} onPress={logout}>
+      <TouchableOpacity style={styles.button} onPress={()=>{setshowAlertSesion(true)}}>
         <Text style={styles.buttonText}>Cerrar sesion</Text>
       </TouchableOpacity>
 
@@ -399,7 +416,7 @@ const Settings = () => {
         show={showAlert}
         showProgress={false}
         title="¿Estas seguro de cambiar sus datos bancarios?"
-        message="Al confirmar se cerrará su sesion para realizar los cambios"
+        message="Los cambios se realizaran pero para que pueda verlos tiene que volver a iniciar sesion"
         closeOnTouchOutside={true}
         closeOnHardwareBackPress={false}
         showCancelButton={true}
@@ -423,16 +440,12 @@ const Settings = () => {
             setshowAlert(false);
           });
         }}
-        onDismiss={() => {
-          setMessageE("");
-          logout();
-        }}
       />
       <AwesomeAlert
         show={showAlertImage}
         showProgress={false}
         title="Cambio de imagen"
-        message="Se cerrará su sesion para realizar el cambio"
+        message="Se realizara el cambio de imagen pero para mostrarlo tendra que iniciar sesión de nuevo"
         closeOnTouchOutside={true}
         closeOnHardwareBackPress={false}
         showConfirmButton={true}
@@ -445,9 +458,6 @@ const Settings = () => {
         messageStyle={{ color: "white", textAlign: "center" }}
         onConfirmPressed={() => {
           setshowAlertImage(false);
-        }}
-        onDismiss={() => {
-          logout();
         }}
       />
       <AwesomeAlert
@@ -482,7 +492,7 @@ const Settings = () => {
         show={showAlertContraseñaConfrim}
         showProgress={false}
         title="Estás seguro de cambiar su contraseña?"
-        message="Al confirmar se cerrará su sesión para realizar los cambios"
+        message="Los cambios se realizarán pero para que pueda verlos tiene que volver a iniciar sesión"
         closeOnTouchOutside={true}
         closeOnHardwareBackPress={false}
         showCancelButton={true}
@@ -507,12 +517,37 @@ const Settings = () => {
           });
         }}
         onDismiss={() => {
-          if (code === 200) {
-            logout();
-          } else {
+          if (code !== 200) {
             Alert.alert("Código incorrecto");
             setcontraseñaMVisible(true);
           }
+        }}
+      />
+      <AwesomeAlert
+        show={showAlertSesion}
+        showProgress={false}
+        title="¿Estas seguro de cerrar su sesión?"
+        closeOnTouchOutside={true}
+        closeOnHardwareBackPress={false}
+        showCancelButton={true}
+        showConfirmButton={true}
+        cancelText="No, cancelar"
+        confirmText="Si, estoy de acuerdo"
+        confirmButtonColor="#105293"
+        cancelButtonColor="red"
+        contentContainerStyle={{ backgroundColor: "#1E262E" }}
+        contentStyle={{ backgroundColor: "#1E262E" }}
+        titleStyle={{ color: "white", textAlign: "center" }}
+        messageStyle={{ color: "white", textAlign: "center" }}
+        onCancelPressed={() => {
+          setshowAlertSesion(false);
+        }}
+        onConfirmPressed={() => {
+            setshowAlertSesion(false);
+            sleep(500).then(()=>{
+              logout()
+            }
+            )
         }}
       />
     </View>
@@ -575,14 +610,6 @@ const styles = StyleSheet.create({
   },
   saveMapBtn: { backgroundColor: "green" },
   cancelMapBtn: { backgroundColor: "red" },
-  cerrrarSesionBtn: {
-    backgroundColor: "#9C0414",
-    width: "100%",
-    position: "absolute",
-    bottom: 0,
-    alignItems: "center",
-    padding: 5,
-  },
   input: {
     marginTop: 10,
     width: "80%",

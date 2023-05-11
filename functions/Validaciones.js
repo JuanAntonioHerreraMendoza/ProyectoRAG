@@ -41,7 +41,7 @@ export const validarEmail = (correo) => {
   }
 };
 
-export const validarDatosBancarios = (telefono, numcuenta, clave, edad) => {
+export const validarDatosNumRegistro = (telefono, numcuenta, clave, edad) => {
   if (edad < 18) {
     return "Debes ser mayor de edad";
   }

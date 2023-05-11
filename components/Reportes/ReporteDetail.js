@@ -48,7 +48,7 @@ const ReporteDetail = ({ route, navigation }) => {
           <Video source={{uri:"http://192.168.1.75:8080/images/" + reporte.evidencia}} useNativeControls style={styles.video}/>:
           <Image
             source={{
-              uri: "http://192.168.1.75:8080/images/" + reporte.evidencia,
+              uri: "http://192.168.1.75:8080/images/" + reporte.evidencia+"?path=reportes"
             }}
             style={styles.imagen}
           />

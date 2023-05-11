@@ -16,7 +16,7 @@ const VistaDocumentos = ({ route }) => {
     <View style={styles.container}>
       <Image
         source={{
-          uri: "http://192.168.1.75:8080/images/" + route.params.imagen,
+          uri: "http://192.168.1.75:8080/images/" + route.params.imagen+"?path=documentos"
         }}
         alt="react logo"
         style={{ width: heigth, height: width, transform: [{ rotate: "90deg" }] }}

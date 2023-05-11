@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, FlatList, Button } from "react-native";
+import { View, Text, StyleSheet, FlatList, TouchableOpacity } from "react-native";
 import React, { useState, useEffect } from "react";
 
 const ConductorDetail = ({ route,navigation }) => {
@@ -20,7 +20,7 @@ const ConductorDetail = ({ route,navigation }) => {
       >
         <Text style={styles.font}>{item.idmulta}</Text>
         <Text style={styles.font}>{item.razon}</Text>
-        <Text style={styles.font}>{item.infraccion}</Text>
+        <Text style={styles.font}>{item.estatus===true?"Pagado":"Sin pago"}</Text>
       </View>
     );
   };
@@ -78,9 +78,10 @@ const ConductorDetail = ({ route,navigation }) => {
           />
         </View>
       )}
-
-      <View>
-        <Button title="Realizar reporte" onPress={()=>{navigation.navigate("ReporteForm")}}/>
+      <View style={{alignItems:"center",marginTop:10}}>
+        <TouchableOpacity style={styles.button} onPress={()=>{navigation.navigate("ReporteForm")}}>
+        <Text style={styles.buttonText}>Realizar reporte</Text>
+      </TouchableOpacity>
       </View>
     </View>
   );
@@ -113,6 +114,23 @@ const styles = new StyleSheet.create({
     color: "#ffffff",
     fontSize: 20,
     paddingBottom: 5,
+  },
+  button: {
+    alignItems: "center",
+    backgroundColor: "#E1EC2F",
+    width: "70%",
+    height: 25,
+    borderRadius: 10,
+    marginVertical: 10,
+    textAlign: "center",
+    height: 32,
+    marginBottom: 15,
+  },
+  buttonText: {
+    color: "black",
+    fontSize: 16,
+    paddingTop: 4,
+    fontWeight:"bold"
   },
 });
 

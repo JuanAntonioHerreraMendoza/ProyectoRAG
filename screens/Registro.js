@@ -15,7 +15,7 @@ import { saveConductor, saveUsuario, uploadImage } from "../functions/api";
 import {
   validarContraseña,
   validarEmail,
-  validarDatosBancarios,
+  validarDatosNumRegistro,
 } from "../functions/Validaciones";
 import * as ImagePicker from "expo-image-picker";
 import { Modal } from "../components/Modal";
@@ -105,7 +105,7 @@ const Registro = () => {
       return setimageValidate(true);
     }
 
-    let alertaDatosBancarios = validarDatosBancarios(
+    let alertaDatosBancarios = validarDatosNumRegistro(
       persona.telefono,
       persona.numcuenta,
       persona.claveInterB,

@@ -1,7 +1,7 @@
 import react, { createContext, useState, useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-import { getConductor, loginuser } from "../functions/api";
+import { getConductor, loginuser, loginusergoogle } from "../functions/api";
 import { Alert } from "react-native";
 
 export const AuthContext = createContext();
@@ -15,6 +15,18 @@ export const AuthProvider = ({ children }) => {
   const login = async (user) => {
     setIsLoading(true);
     let userInfo = await loginuser(user);
+    if (userInfo === undefined) {
+      setIsLoading(false);
+    } else {
+      setUserInfo(userInfo);
+      AsyncStorage.setItem("userInfo", JSON.stringify(userInfo));
+      setIsLoading(false);
+    }
+  };
+
+  const loginGoogle = async (user) => {
+    setIsLoading(true);
+    let userInfo = await loginusergoogle(user);
     if (userInfo === undefined) {
       setIsLoading(false);
     } else {
@@ -66,7 +78,7 @@ export const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider
-      value={{ isLoading, userInfo, splashLoading, login, logout}}
+      value={{ isLoading, userInfo, splashLoading, login,loginGoogle, logout}}
     >
       {children}
     </AuthContext.Provider>

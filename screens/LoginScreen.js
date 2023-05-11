@@ -14,16 +14,16 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 
 import { AuthContext } from "../context/AuthContext";
 import { KeyboardAvoidingView } from "react-native";
+import GoogleButton from "react-google-button";
 
 WebBrowser.maybeCompleteAuthSession();
 
 const LoginScreen = () => {
   //Obtencion de funcion para el login
-  const { isLoading, login } = useContext(AuthContext);
+  const { isLoading, login, loginGoogle } = useContext(AuthContext);
   //Variables
   const [accesToken, setAccesToken] = useState(null);
-  const [userG, setUserG] = useState(null);
-  const [request, response, promptAsync] = Google.useIdTokenAuthRequest({
+  const [request, response, promptAsync] = Google.useAuthRequest({
     clientId:
       "46543387206-l1kci17tb7hgddi43fn6odt4ua08jvfd.apps.googleusercontent.com",
     iosClientId:
@@ -66,7 +66,6 @@ const LoginScreen = () => {
   //Funciones de google
   useEffect(() => {
     if (response?.type === "success") {
-      console.log(response);
       setAccesToken(response.authentication.accessToken);
       accesToken && fetchUserGInfo();
     }
@@ -75,30 +74,14 @@ const LoginScreen = () => {
   const fetchUserGInfo = async () => {
     let response = await fetch("https://www.googleapis.com/userinfo/v2/me", {
       headers: {
-        Authorization: Bearer`${accesToken}`,
+        Authorization: `Bearer${accesToken}`,
       },
     });
     const useInfo = await response.json();
-    console.log(useInfo);
-    setUserG(useInfo);
-  };
-
-  const ShowUserInfo = () => {
-    if (userG) {
-      return (
-        <View
-          style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
-        >
-          <Text style={{ fontSize: 35, fontWeight: "bold", marginBottom: 20 }}>
-            Welcome
-          </Text>
-          <Image
-            source={{ uri: userG.picture }}
-            style={{ width: 100, height: 100, borderRadius: 50 }}
-          />
-          <Text style={{ fontSize: 20, fontWeight: "bold" }}>{userG.name}</Text>
-        </View>
-      );
+    if (useInfo === null || useInfo === undefined) {
+      alert("No existe un usuario con este correo");
+    } else {
+      await loginGoogle({ usuario: useInfo.email });
     }
   };
 
@@ -114,7 +97,6 @@ const LoginScreen = () => {
           size={150}
           color={"#E1EC2F"}
         />
-        {userG && <ShowUserInfo />}
         {inputsValidate ? (
           <Text style={styles.warningText}>Rellene ambos campos</Text>
         ) : (
@@ -165,15 +147,21 @@ const LoginScreen = () => {
         >
           <Text style={styles.buttonText}>Iniciar sesión</Text>
         </TouchableOpacity>
-        {/* <TouchableOpacity
+        <TouchableOpacity
           style={styles.buttonGoogle}
           disabled={!request}
           onPress={() => {
             promptAsync();
           }}
         >
-        <Text style={styles.buttonText}>Aqui va lo de google</Text>
-        </TouchableOpacity> */}
+          <Ionicons
+            name="logo-google"
+            size={20}
+            color={"white"}
+            style={{ position: "absolute", left: 20, top: 5 }}
+          />
+          <Text style={styles.buttonText}>Iniciar sesión con google</Text>
+        </TouchableOpacity>
         <View
           style={{
             flexDirection: "row",
@@ -234,6 +222,8 @@ const styles = new StyleSheet.create({
     marginVertical: 10,
   },
   buttonGoogle: {
+    flexDirection: "row",
+    justifyContent: "center",
     paddingTop: 5,
     paddingBottom: 10,
     borderRadius: 15,
