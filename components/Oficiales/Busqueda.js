@@ -11,10 +11,12 @@ import { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { getConductorInfo, getMultasConductor } from "../../functions/api";
 import { TouchableWithoutFeedback } from "react-native";
+import AwesomeAlert from "react-native-awesome-alerts";
 import { Keyboard } from "react-native";
 
 const Busqueda = () => {
   const navigation = useNavigation();
+  const [showAlert, setshowAlert] = useState(false);
   const [licencia, setLicencia] = useState("");
   const [circulacion, setCirculacion] = useState("");
   const [placas, setPlacas] = useState("");
@@ -22,10 +24,13 @@ const Busqueda = () => {
   const handleSubmit = async () => {
     const data = await getConductorInfo(licencia, circulacion, placas);
     if (data.idconductor === null) {
-      return alert("No se encontro usuario");
+      return setshowAlert(true);
     }
     const multasConductor = await getMultasConductor(data.idconductor);
-    navigation.navigate("ConductorDetail", { datos: data ,multas: multasConductor});
+    navigation.navigate("ConductorDetail", {
+      datos: data,
+      multas: multasConductor,
+    });
   };
 
   return (
@@ -64,6 +69,24 @@ const Busqueda = () => {
           title={"Escanear codigo"}
           icon="camera"
           onPress={() => navigation.navigate("ScanCode")}
+        />
+        <AwesomeAlert
+          show={showAlert}
+          showProgress={false}
+          title="Alerta"
+          message="No se encontro al usuario"
+          closeOnTouchOutside={true}
+          closeOnHardwareBackPress={false}
+          showConfirmButton={true}
+          confirmText="De acuerdo"
+          confirmButtonColor="#105293"
+          contentContainerStyle={{ backgroundColor: "#1E262E" }}
+          contentStyle={{ backgroundColor: "#1E262E" }}
+          titleStyle={{ color: "white", textAlign: "center" }}
+          messageStyle={{ color: "white", textAlign: "center" }}
+          onConfirmPressed={() => {
+            setshowAlert(false);
+          }}
         />
       </View>
     </TouchableWithoutFeedback>

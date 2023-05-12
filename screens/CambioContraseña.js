@@ -9,14 +9,15 @@ import React, { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { cambiarContraseña } from "../functions/api";
 import { validarContraseña } from "../functions/Validaciones";
-import { Alert } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
+import AwesomeAlert from "react-native-awesome-alerts";
 
 const CambioContraseña = ({ route }) => {
   //Funcion para navegar entre ventanas
   const navigation = useNavigation();
   //Variables
   const [messageE, setmessageE] = useState("");
+  const [showAlert, setshowAlert] = useState(false);
   const [messageErrorC, setMessageErrorC] = useState("");
   const [seePass, setSeePass] = useState(true);
 
@@ -49,7 +50,7 @@ const CambioContraseña = ({ route }) => {
       if (status === 200) {
         navigation.navigate("Login");
       } else {
-        Alert.alert("Codigo incorrecto");
+        setshowAlert(true)
       }
     });
   };
@@ -105,6 +106,24 @@ const CambioContraseña = ({ route }) => {
       >
         <Text style={styles.buttonText}>Cambiar contraseña</Text>
       </TouchableOpacity>
+      <AwesomeAlert
+        show={showAlert}
+        showProgress={false}
+        title="Alerta"
+        message="El codigo ingresado es incorrecto"
+        closeOnTouchOutside={true}
+        closeOnHardwareBackPress={false}
+        showConfirmButton={true}
+        confirmText="De acuerdo"
+        confirmButtonColor="#105293"
+        contentContainerStyle={{ backgroundColor: "#1E262E" }}
+        contentStyle={{ backgroundColor: "#1E262E" }}
+        titleStyle={{ color: "white", textAlign: "center" }}
+        messageStyle={{ color: "white", textAlign: "center" }}
+        onConfirmPressed={() => {
+          setshowAlert(false);
+        }}
+      />
     </View>
   );
 };

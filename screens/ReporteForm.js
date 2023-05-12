@@ -5,7 +5,6 @@ import {
   StyleSheet,
   Image,
   TouchableOpacity,
-  Alert,
   SafeAreaView,
 } from "react-native";
 import React, { useEffect, useState, useContext } from "react";
@@ -19,10 +18,14 @@ import { SelectList } from "react-native-dropdown-select-list";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { saveReporte, uploadImage } from "../functions/api";
 import { Video } from "expo-av";
+import AwesomeAlert from "react-native-awesome-alerts";
 
 const ReporteForm = ({ navigation, route }) => {
   const date = new Date();
   const [selected, setSelected] = useState([]);
+  const [showAlertUbicacion, setshowAlertUbicacion] = useState(false);
+  const [showAlertImagen, setshowAlertImagen] = useState(false);
+  const [showAlertReporte, setShowAlertReporte] = useState(false);
   const [inputsValidate, setinputsValidate] = useState(false);
   const [direc, setDirec] = useState("");
   const [descrip, setDescripcion] = useState("");
@@ -67,7 +70,7 @@ const ReporteForm = ({ navigation, route }) => {
   };
   const confirmLocation = () => {
     setLocation(newRegion);
-    Alert.alert("Se registro la ubicacion");
+    setshowAlertUbicacion(true);
     setmapVisible(false);
   };
 
@@ -75,7 +78,7 @@ const ReporteForm = ({ navigation, route }) => {
     setinputsValidate(false);
     let localUri = route.params?.uri;
     if (localUri === undefined) {
-      return Alert.alert("Tome una imagen");
+      return setshowAlertImagen(true);
     } else {
       let filename = localUri.split("/").pop();
       let reporte = {
@@ -85,19 +88,20 @@ const ReporteForm = ({ navigation, route }) => {
         ubicacion: location.latitude + "," + location.longitude,
         evidencia: filename,
         estatus: "Revision",
+        razon:selected,
         idreportadorfk: userInfo.idpersonafk.idpersona,
         tipousuariofk: userInfo.tipousuariofk.idtipousuario,
       };
       if (validarInputs()) {
         return setinputsValidate(true);
       }
-      await saveReporte(reporte).then(await uploadImage(localUri,"reportes"));
-      Alert.alert("Reporte generado");
+      await saveReporte(reporte).then(
+      await uploadImage(localUri, "reportes").then(setShowAlertReporte(true))
+      );
       setNewRegion(null);
       route.params.uri = "";
       setDescripcion("");
       setDirec("");
-      navigation.navigate("Reportes");
     }
   };
 
@@ -118,7 +122,10 @@ const ReporteForm = ({ navigation, route }) => {
         ) : route.params?.uri ? (
           <Image source={{ uri: route.params.uri }} style={styles.imagen} />
         ) : (
-          <Image source={require("../assets/camera.png")} style={styles.imagen} />
+          <Image
+            source={require("../assets/camera.png")}
+            style={styles.imagen}
+          />
         )}
         {inputsValidate ? (
           <Text style={styles.warningText}>Rellene todos los campos</Text>
@@ -231,6 +238,63 @@ const ReporteForm = ({ navigation, route }) => {
           </View>
         </View>
       </Modal>
+      <AwesomeAlert
+        show={showAlertUbicacion}
+        showProgress={false}
+        title="Alerta"
+        message="Se registro la ubicacion"
+        closeOnTouchOutside={true}
+        closeOnHardwareBackPress={false}
+        showConfirmButton={true}
+        confirmText="Si, estoy de acuerdo"
+        confirmButtonColor="#105293"
+        contentContainerStyle={{ backgroundColor: "#1E262E" }}
+        contentStyle={{ backgroundColor: "#1E262E" }}
+        titleStyle={{ color: "white", textAlign: "center" }}
+        messageStyle={{ color: "white", textAlign: "center" }}
+        onConfirmPressed={() => {
+          setshowAlertUbicacion(false);
+        }}
+      />
+      <AwesomeAlert
+        show={showAlertImagen}
+        showProgress={false}
+        title="Alerta"
+        message="Necesita tomar una evidencia"
+        closeOnTouchOutside={true}
+        closeOnHardwareBackPress={false}
+        showConfirmButton={true}
+        confirmText="Si, estoy de acuerdo"
+        confirmButtonColor="#105293"
+        contentContainerStyle={{ backgroundColor: "#1E262E" }}
+        contentStyle={{ backgroundColor: "#1E262E" }}
+        titleStyle={{ color: "white", textAlign: "center" }}
+        messageStyle={{ color: "white", textAlign: "center" }}
+        onConfirmPressed={() => {
+          setshowAlertImagen(false);
+        }}
+      />
+      <AwesomeAlert
+        show={showAlertReporte}
+        showProgress={false}
+        title="Alerta"
+        message="Se genero su reporte"
+        closeOnTouchOutside={true}
+        closeOnHardwareBackPress={false}
+        showConfirmButton={true}
+        confirmText="Si, estoy de acuerdo"
+        confirmButtonColor="#105293"
+        contentContainerStyle={{ backgroundColor: "#1E262E" }}
+        contentStyle={{ backgroundColor: "#1E262E" }}
+        titleStyle={{ color: "white", textAlign: "center" }}
+        messageStyle={{ color: "white", textAlign: "center" }}
+        onConfirmPressed={() => {
+          setShowAlertReporte(false);
+        }}
+        onDismiss={() => {
+          navigation.navigate("Reportes");
+        }}
+      />
     </SafeAreaView>
   );
 };

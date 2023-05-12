@@ -14,7 +14,7 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 
 import { AuthContext } from "../context/AuthContext";
 import { KeyboardAvoidingView } from "react-native";
-import GoogleButton from "react-google-button";
+import AwesomeAlert from "react-native-awesome-alerts";
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -22,6 +22,7 @@ const LoginScreen = () => {
   //Obtencion de funcion para el login
   const { isLoading, login, loginGoogle } = useContext(AuthContext);
   //Variables
+  const [showAlert, setshowAlert] = useState(false);
   const [accesToken, setAccesToken] = useState(null);
   const [request, response, promptAsync] = Google.useAuthRequest({
     clientId:
@@ -79,7 +80,7 @@ const LoginScreen = () => {
     });
     const useInfo = await response.json();
     if (useInfo === null || useInfo === undefined) {
-      alert("No existe un usuario con este correo");
+      setshowAlert(true)
     } else {
       await loginGoogle({ usuario: useInfo.email });
     }
@@ -184,6 +185,24 @@ const LoginScreen = () => {
             <Text style={{ color: "white" }}>Olvide mi contraseña</Text>
           </TouchableOpacity>
         </View>
+        <AwesomeAlert
+        show={showAlert}
+        showProgress={false}
+        title="Alerta"
+        message="No existe un usuario con este correo"
+        closeOnTouchOutside={true}
+        closeOnHardwareBackPress={false}
+        showConfirmButton={true}
+        confirmText="Si, estoy de acuerdo"
+        confirmButtonColor="#105293"
+        contentContainerStyle={{ backgroundColor: "#1E262E" }}
+        contentStyle={{ backgroundColor: "#1E262E" }}
+        titleStyle={{ color: "white", textAlign: "center" }}
+        messageStyle={{ color: "white", textAlign: "center" }}
+        onConfirmPressed={() => {
+          setshowAlert(false);
+        }}
+      />
       </View>
     </KeyboardAvoidingView>
   );

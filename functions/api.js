@@ -120,14 +120,14 @@ export const cambiarImagen = async (user,imagen) => {
   return await res.json();
 };
 
-export const saveUsuario = async (usuario) => {
-  const res = await fetch(`${API}usuarios/usuarioR`, {
+export const saveUsuario = async (persona) => {
+  const res = await fetch(`${API}posibleUsuario`, {
     method: "POST",
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
     },
-    body: JSON.stringify(usuario),
+    body: JSON.stringify(persona),
   });
   return await res.json();
 };

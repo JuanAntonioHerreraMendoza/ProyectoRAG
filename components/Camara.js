@@ -59,7 +59,6 @@ export default function Camara({ navigation, route }) {
   const saveVideo = async () => {
     if (video) {
       try {
-        alert("Video registrado");
         navigation.navigate({
           name: "ReporteForm",
           params: { uri: video.uri, video: true },
@@ -75,7 +74,6 @@ export default function Camara({ navigation, route }) {
   const savePicture = async () => {
     if (image) {
       try {
-        alert("Foto registrada");
         navigation.navigate({
           name: "ReporteForm",
           params: { uri: image },
@@ -89,7 +87,7 @@ export default function Camara({ navigation, route }) {
   };
 
   if (hasCameraPermission === false) {
-    return <Text>No access to camera</Text>;
+    return <Text>No se concedieron permisos a la camara</Text>;
   }
 
   return (

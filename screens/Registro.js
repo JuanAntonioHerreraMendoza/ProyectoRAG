@@ -11,7 +11,7 @@ import {
 import { useState } from "react";
 import { CheckBox } from "@rneui/themed";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import { saveConductor, saveUsuario, uploadImage } from "../functions/api";
+import { saveConductor, saveUsuario, uploadImagesReg } from "../functions/api";
 import {
   validarContraseña,
   validarEmail,
@@ -21,12 +21,15 @@ import * as ImagePicker from "expo-image-picker";
 import { Modal } from "../components/Modal";
 import { Button } from "@rneui/themed";
 import { useNavigation } from "@react-navigation/native";
+import AwesomeAlert from "react-native-awesome-alerts";
 
 const Registro = () => {
-  //Funciones para navegar
+  //Funcion para navegar
   const navigation = useNavigation();
   //Variables
-  const [modalTerm, setModalTerm] = useState(false);
+  const [modalTerm, setModalTerm] = useState(true);
+  const [showAlert, setshowAlert] = useState(false);
+  const [message, setMessage] = useState("");
   const [inputsValidate, setinputsValidate] = useState(false);
   const [emailValidate, setemailValidate] = useState(false);
   const [passValidate, setpassValidate] = useState(false);
@@ -51,54 +54,39 @@ const Registro = () => {
     titularCuenta: "",
     banco: "",
     correo: "",
-    imagenperfil: "",
-    activo: true,
-    numSuspenciones: 0,
+    usuario: "",
+    contraseña: "",
+    imagen1: "",
+    imagen2: "",
     tipousuariofk: {},
   });
+
   const [tipoUser, setTipoUser] = useState({
     idtipousuario: "",
   });
 
-  const [user, setUser] = useState({
-    usuario: "",
-    contraseña: "",
-    idpersonafk: {},
-  });
-
-  const [conductor, setConductor] = useState({
-    noLicencia: "",
-    tipoLicencia: "",
-    tarjetaCirculacion: "",
-    numplacas: "",
-  });
-
-  const validarInputs = (persona, user) => {
-    if (Object.values(persona).includes("") || Object.values(user).includes(""))
-      return true;
-    if (checked === 1) {
-      if (Object.values(conductor).includes("")) {
-        return true;
-      }
-    }
+  const validarInputs = (persona) => {
+    if (Object.values(persona).includes("")) return true;
   };
   const handleChangeP = (name, value) => {
     setPersona({ ...persona, [name]: value });
   };
-  const handleChangeU = (name, value) => {
-    setUser({ ...user, [name]: value });
-  };
-  const handleChangeC = (name, value) => {
-    setConductor({ ...conductor, [name]: value });
-  };
 
-  const handleSubmmit = async (usuario, persona, tipousuario) => {
+  const handleSubmmit = async (persona, tipousuario) => {
     setemailValidate(false);
     setpassValidate(false);
     setinputsValidate(false);
     setimageValidate(false);
 
-    if (validarInputs(usuario, persona)) {
+    checked === 0
+      ? (tipousuario.idtipousuario = "1")
+      : (tipousuario.idtipousuario = "2");
+
+    persona.tipousuariofk = tipousuario;
+    persona.usuario = persona.correo;
+    persona.imagen1 = image[0].uri.split("/").pop();
+    persona.imagen2 = image[1].uri.split("/").pop();
+    if (validarInputs(persona)) {
       return setinputsValidate(true);
     }
     if (image === null) {
@@ -113,12 +101,13 @@ const Registro = () => {
     );
 
     if (alertaDatosBancarios !== null) {
-      return alert(alertaDatosBancarios);
+      setMessage(alertaDatosBancarios)
+      return setshowAlert(true);
     }
 
-    if (!validarEmail(usuario.usuario)) {
+    if (!validarEmail(persona.usuario)) {
       setemailValidate(true);
-      let checkPass = validarContraseña(usuario.contraseña);
+      let checkPass = validarContraseña(persona.contraseña);
       if (checkPass) {
         setMessageE(checkPass);
         setpassValidate(true);
@@ -126,17 +115,10 @@ const Registro = () => {
       }
       return;
     }
-    checked === 0
-      ? (tipousuario.idtipousuario = "1")
-      : (tipousuario.idtipousuario = "2");
-
-    persona.tipousuariofk = tipousuario;
-    usuario.idpersonafk = persona;
-    await saveUsuario(usuario);
+    await saveUsuario(persona).then(uploadImagesReg(image));
     if (checked === 1) {
       await saveConductor(conductor, persona.nombres);
     }
-    uploadImage(image);
     navigation.navigate("Login");
   };
 
@@ -277,6 +259,7 @@ const Registro = () => {
           />
           <TextInput
             placeholder="Clave interbancaria"
+            maxLength={18}
             placeholderTextColor={"white"}
             style={styles.input}
             onChangeText={(text) => {
@@ -311,7 +294,6 @@ const Registro = () => {
             placeholderTextColor={"white"}
             onChangeText={(text) => {
               handleChangeP("correo", text);
-              handleChangeU("usuario", text);
             }}
           />
           {passValidate ? (
@@ -331,7 +313,7 @@ const Registro = () => {
               placeholder="Contraseña"
               placeholderTextColor="#ffffff"
               secureTextEntry={seePass}
-              onChangeText={(text) => handleChangeU("contraseña", text)}
+              onChangeText={(text) => handleChangeP("contraseña", text)}
             />
             <View style={styles.wrapperIcon}>
               <TouchableOpacity onPress={() => setSeePass(!seePass)}>
@@ -350,7 +332,7 @@ const Registro = () => {
                 placeholder="Codigo de usuario"
                 placeholderTextColor={"white"}
                 onChangeText={(text) => {
-                  handleChangeC("noLicencia", text);
+                  //handleChangeC("noLicencia", text);
                 }}
               />
             </>
@@ -426,7 +408,7 @@ const Registro = () => {
             </View>
           </Modal>
           <TouchableOpacity
-            onPress={() => handleSubmmit(user, persona, tipoUser)}
+            onPress={() => handleSubmmit(persona, tipoUser)}
             disabled={!checkedTerms}
             style={checkedTerms ? styles.buttonSave : styles.buttonSaveD}
           >
@@ -434,6 +416,25 @@ const Registro = () => {
           </TouchableOpacity>
         </View>
       </View>
+      <AwesomeAlert
+        show={showAlert}
+        showProgress={false}
+        title="Alerta"
+        message={message}
+        closeOnTouchOutside={true}
+        closeOnHardwareBackPress={false}
+        showConfirmButton={true}
+        confirmText="Entendido"
+        confirmButtonColor="#105293"
+        cancelButtonColor="red"
+        contentContainerStyle={{ backgroundColor: "#1E262E" }}
+        contentStyle={{ backgroundColor: "#1E262E" }}
+        titleStyle={{ color: "white", textAlign: "center" }}
+        messageStyle={{ color: "white", textAlign: "center" }}
+        onConfirmPressed={() => {
+          setshowAlert(false)
+        }}
+      />
     </ScrollView>
   );
 };

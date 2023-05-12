@@ -9,10 +9,12 @@ import React, { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { enviarCorreo, existeCorreo } from "../functions/api";
 import { validarEmail } from "../functions/Validaciones";
+import AwesomeAlert from "react-native-awesome-alerts";
 
 const RecuperarContraseña = () => {
   const navigation = useNavigation();
   //Variables
+  const [showAlert, setshowAlert] = useState(false);
   const [correo, setCorreo] = useState("");
   const [emailValidate, setEmailValidete] = useState(false);
   const [inputValidate, setInputValidate] = useState(false);
@@ -31,7 +33,7 @@ const RecuperarContraseña = () => {
     enviarCorreo(correo);
     navigation.navigate("CambioContraseña", { correo: { correo } });
     }else{
-      alert("No existe este correo")
+      setshowAlert(true)
     }
   };
 
@@ -66,6 +68,24 @@ const RecuperarContraseña = () => {
       >
         <Text style={styles.buttonText}>Confirmar correo</Text>
       </TouchableOpacity>
+      <AwesomeAlert
+        show={showAlert}
+        showProgress={false}
+        title="Alerta"
+        message="No existe un usuario con este correo"
+        closeOnTouchOutside={true}
+        closeOnHardwareBackPress={false}
+        showConfirmButton={true}
+        confirmText="Si, estoy de acuerdo"
+        confirmButtonColor="#105293"
+        contentContainerStyle={{ backgroundColor: "#1E262E" }}
+        contentStyle={{ backgroundColor: "#1E262E" }}
+        titleStyle={{ color: "white", textAlign: "center" }}
+        messageStyle={{ color: "white", textAlign: "center" }}
+        onConfirmPressed={() => {
+          setshowAlert(false);
+        }}
+      />
     </View>
   );
 };
