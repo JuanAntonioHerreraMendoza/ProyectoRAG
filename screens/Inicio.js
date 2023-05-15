@@ -10,6 +10,10 @@ import { AuthContext } from "../context/AuthContext";
 import React, { useEffect, useState, useContext } from "react";
 import { getConteos, getUltimoReporte } from "../functions/api";
 import { useIsFocused } from "@react-navigation/native";
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from "react-native-responsive-screen";
 import ReporteItem from "../components/Reportes/ReporteItem";
 
 export function Home({ navigation }) {
@@ -45,7 +49,14 @@ export function Home({ navigation }) {
         backgroundColor: "#1E262E",
       }}
     >
-      <Text style={{ color: "white", fontSize: 20, paddingTop: 10,marginBottom:30 }}>
+      <Text
+        style={{
+          color: "white",
+          fontSize: 20,
+          paddingTop: 10,
+          marginBottom: 30,
+        }}
+      >
         Bienvenido{" "}
         {userInfo.idpersonafk.nombres +
           " " +
@@ -54,26 +65,26 @@ export function Home({ navigation }) {
           userInfo.idpersonafk.apellidom}
       </Text>
       <View>
-        <Text style={{ color: "white", fontSize: 20, paddingTop: 10 }}>
+        <Text style={styles.textoDatos}>
           Reportes hechos: {conteoreportes[0]}
         </Text>
-        <Text style={{ color: "white", fontSize: 20, paddingTop: 10 }}>
+        <Text style={styles.textoDatos}>
           Reportes en revision: {conteoreportes[1]}
         </Text>
-        <Text style={{ color: "white", fontSize: 20, paddingTop: 10 }}>
+        <Text style={styles.textoDatos}>
           Reportes aceptados: {conteoreportes[2]}
         </Text>
-        <Text style={{ color: "white", fontSize: 20, paddingTop: 10 }}>
+        <Text style={styles.textoDatos}>
           Reportes rechazados: {conteoreportes[3]}
         </Text>
       </View>
       <FlatList
-          style={{ width: "100%",marginVertical:30}}
-          data={reportes}
-          keyExtractor={(item) => item.idreporte + ""}
-          renderItem={renderItem}
-          scrollEnabled={false}
-        />
+        style={{ width: wp("100"), marginVertical: 30 }}
+        data={reportes}
+        keyExtractor={(item) => item.idreporte + ""}
+        renderItem={renderItem}
+        scrollEnabled={false}
+      />
       <TouchableOpacity
         style={styles.locationB}
         onPress={() => {
@@ -97,13 +108,18 @@ const styles = new StyleSheet.create({
   },
   fab: {
     backgroundColor: "#E1EC2F",
-    width: 50,
-    height: 50,
+    width: wp("12"),
+    height: hp("6"),
     borderRadius: 100,
     justifyContent: "center",
   },
+  textoDatos: {
+    color: "white",
+    fontSize: hp("2.5"),
+    paddingTop: 10,
+  },
   text: {
-    fontSize: 30,
+    fontSize: hp("3.5"),
     alignSelf: "center",
     fontWeight: "bold",
   },

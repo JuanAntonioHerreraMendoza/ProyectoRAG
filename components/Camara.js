@@ -3,8 +3,8 @@ import { Text, View, StyleSheet, TouchableOpacity, Image } from "react-native";
 import Constants from "expo-constants";
 import { Camera, CameraType } from "expo-camera";
 import * as MediaLibrary from "expo-media-library";
-import { MaterialIcons } from "@expo/vector-icons";
 import ButtonCamera from "./ButtonCamera";
+import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
 import { Video } from "expo-av";
 
 export default function Camara({ navigation, route }) {
@@ -183,11 +183,13 @@ export default function Camara({ navigation, route }) {
                 />
               </>
             ) : (
+              <View style={{marginLeft:wp("30")}}>
               <ButtonCamera
                 title="Detener"
                 onPress={stopVideo}
                 icon="controller-record"
               />
+              </View>
             )}
           </View>
         )}
@@ -206,13 +208,6 @@ const styles = StyleSheet.create({
   },
   controls: {
     flex: 0.5,
-  },
-  button: {
-    height: 40,
-    borderRadius: 6,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
   },
   text: {
     fontWeight: "bold",

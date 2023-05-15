@@ -1,5 +1,6 @@
-import { View, Text, StyleSheet, FlatList, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, ScrollView, SafeAreaView } from "react-native";
 import React, { useState, useEffect } from "react";
+import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
 
 const ConductorDetail = ({ route,navigation }) => {
   const [infracciones, setInfracciones] = useState(null);
@@ -31,6 +32,7 @@ const ConductorDetail = ({ route,navigation }) => {
 
   return (
     <View style={styles.layout}>
+      <SafeAreaView>
       <Text style={styles.fontTitle}>Nombre</Text>
       <View style={styles.container}>
         <Text style={styles.font}>
@@ -65,6 +67,7 @@ const ConductorDetail = ({ route,navigation }) => {
       <View style={styles.container}>
         <Text style={styles.font}>{route.params.datos.numplacas}</Text>
       </View>
+      </SafeAreaView>
       <Text style={styles.fontTitle}>Incidencias</Text>
       {route.params?.multas.length === 0 ? (
         <Text style={styles.font}>Este conductor no presenta alguna multa</Text>
@@ -107,12 +110,12 @@ const styles = new StyleSheet.create({
     borderRadius: 10,
   },
   font: {
-    fontSize: 17,
+    fontSize: hp("2"),
     color: "#ffffff",
   },
   fontTitle: {
     color: "#ffffff",
-    fontSize: 20,
+    fontSize: hp("2"),
     paddingBottom: 5,
   },
   button: {

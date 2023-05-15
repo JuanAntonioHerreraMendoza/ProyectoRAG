@@ -11,6 +11,7 @@ import * as Google from "expo-auth-session/providers/google";
 import { useNavigation } from "@react-navigation/native";
 import Spinner from "react-native-loading-spinner-overlay";
 import Ionicons from "react-native-vector-icons/Ionicons";
+import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
 
 import { AuthContext } from "../context/AuthContext";
 import { KeyboardAvoidingView } from "react-native";
@@ -87,7 +88,7 @@ const LoginScreen = () => {
   };
 
   return (
-    <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
+    <KeyboardAvoidingView behavior="padding" style={{ flex: 1,backgroundColor:"#1E262E" }}>
       <View style={styles.container}>
         <Spinner visible={isLoading} />
         <Text style={styles.text}>Supervisión Ciudadana</Text>
@@ -159,7 +160,7 @@ const LoginScreen = () => {
             name="logo-google"
             size={20}
             color={"white"}
-            style={{ position: "absolute", left: 20, top: 5 }}
+            style={{ position: "absolute", left: 15, top: 5 }}
           />
           <Text style={styles.buttonText}>Iniciar sesión con google</Text>
         </TouchableOpacity>
@@ -175,14 +176,14 @@ const LoginScreen = () => {
               navigation.navigate("Registro");
             }}
           >
-            <Text style={{ color: "white" }}>Registrarse</Text>
+            <Text style={{ color: "white",fontSize:hp("1.5") }}>Registrarse</Text>
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => {
               navigation.navigate("RecuperarContraseña");
             }}
           >
-            <Text style={{ color: "white" }}>Olvide mi contraseña</Text>
+            <Text style={{ color: "white",fontSize:hp("1.5")}}>Olvide mi contraseña</Text>
           </TouchableOpacity>
         </View>
         <AwesomeAlert
@@ -221,7 +222,7 @@ const styles = new StyleSheet.create({
     fontSize: 28,
   },
   input: {
-    width: "80%",
+    width: wp('70%'),
     fontSize: 14,
     marginBottom: 10,
     borderWidth: 2,
@@ -237,7 +238,7 @@ const styles = new StyleSheet.create({
     paddingBottom: 10,
     borderRadius: 15,
     backgroundColor: "#105293",
-    width: "80%",
+    width: wp("70"),
     marginVertical: 10,
   },
   buttonGoogle: {
@@ -247,13 +248,13 @@ const styles = new StyleSheet.create({
     paddingBottom: 10,
     borderRadius: 15,
     backgroundColor: "#105293",
-    width: "80%",
+    width: wp("70%"),
     marginBottom: 15,
   },
   buttonText: {
     color: "#ffffff",
     textAlign: "center",
-    fontSize: 16,
+    fontSize: hp("1.7")
   },
   wrapperIcon: {
     position: "absolute",

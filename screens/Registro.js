@@ -22,6 +22,7 @@ import { Modal } from "../components/Modal";
 import { Button } from "@rneui/themed";
 import { useNavigation } from "@react-navigation/native";
 import AwesomeAlert from "react-native-awesome-alerts";
+import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
 
 const Registro = () => {
   //Funcion para navegar
@@ -149,21 +150,22 @@ const Registro = () => {
         <Text style={styles.subs}>
           Rellene los campos a continuación para realizar su registro
         </Text>
-        <View style={{ flexDirection: "row" }}>
+        <View style={{flexDirection:"row",width:"80%"}} >
           <CheckBox
-            containerStyle={{ backgroundColor: "#1E262E" }}
-            textStyle={{ color: "white" }}
+            containerStyle={{ backgroundColor: "#1E262E",width:"40%"}}
+            textStyle={{ color: "white",fontSize:hp("2")}}
             center
             checked={checked === 0}
             onPress={() => setChecked(0)}
             checkedIcon="dot-circle-o"
             uncheckedIcon="circle-o"
             title="Agente cívico"
+            style={{marginHorizontal:0,paddingHorizontal:0}}
           />
           <CheckBox
-            containerStyle={{ backgroundColor: "#1E262E" }}
+            containerStyle={{ backgroundColor: "#1E262E",width:"50%"}}
             center
-            textStyle={{ color: "white" }}
+            textStyle={{ color: "white",fontSize:hp("2")}}
             checked={checked === 1}
             onPress={() => setChecked(1)}
             checkedIcon="dot-circle-o"
@@ -343,7 +345,7 @@ const Registro = () => {
             style={{
               flexDirection: "column",
               alignItems: "center",
-              width: "80%",
+              width: wp(70),
             }}
           >
             <CheckBox
@@ -369,6 +371,7 @@ const Registro = () => {
             </Text>
           </View>
           <Modal isVisible={modalTerm} setVisible={setModalTerm}>
+            <ScrollView style={{height:hp("70")}}>
             <Text style={{ color: "white" }}>
               Los términos y condiciones ("Términos") son un conjunto de
               términos legales definidos por el propietario de una página web.
@@ -398,6 +401,7 @@ const Registro = () => {
               busques asesoramiento legal para ayudarte a comprender y ayudarte
               a crear tus Términos.
             </Text>
+            </ScrollView>
             <View style={styles.viewMap}>
               <Button
                 title={"Cerrar"}
@@ -441,7 +445,6 @@ const Registro = () => {
 
 const styles = new StyleSheet.create({
   container: {
-    padding: 20,
     flex: 1,
     alignItems: "center",
     justifyContent: "center",

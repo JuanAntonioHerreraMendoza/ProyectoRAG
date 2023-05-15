@@ -28,6 +28,7 @@ import {
   validarDatosNumRegistro,
 } from "../functions/Validaciones";
 import { cambiarImagen } from "../functions/api";
+import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
 
 const Settings = () => {
   const { logout, userInfo } = useContext(AuthContext);
@@ -483,8 +484,6 @@ const Settings = () => {
         onConfirmPressed={() => {
           enviarCorreo(userInfo.usuario);
           setshowAlertContraseña(false);
-        }}
-        onDismiss={() => {
           setcontraseñaMVisible(true);
         }}
       />
@@ -630,8 +629,8 @@ const styles = StyleSheet.create({
     padding: 7,
   },
   image: {
-    width: 200,
-    height: 200,
+    width: wp("50"),
+    height: hp("25"),
     borderRadius: 20,
     marginVertical: 20,
   },

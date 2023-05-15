@@ -39,6 +39,7 @@ const ReportesList = () => {
         data={reportes}
         keyExtractor={(item) => item.idreporte }
         renderItem={renderItem}
+        scrollEnabled={true}
         refreshControl={
           <RefreshControl
             refreshing={refreshing}

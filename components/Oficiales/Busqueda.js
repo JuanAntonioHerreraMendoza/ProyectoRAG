@@ -13,6 +13,8 @@ import { getConductorInfo, getMultasConductor } from "../../functions/api";
 import { TouchableWithoutFeedback } from "react-native";
 import AwesomeAlert from "react-native-awesome-alerts";
 import { Keyboard } from "react-native";
+import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
+
 
 const Busqueda = () => {
   const navigation = useNavigation();
@@ -102,7 +104,7 @@ const styles = new StyleSheet.create({
   },
   text: {
     color: "white",
-    fontSize: 18,
+    fontSize: hp("2"),
     marginBottom: 30,
   },
   input: {
@@ -128,7 +130,7 @@ const styles = new StyleSheet.create({
   buttonText: {
     color: "#ffffff",
     textAlign: "center",
-    fontSize: 16,
+    fontSize: hp("2"),
   },
 });
 

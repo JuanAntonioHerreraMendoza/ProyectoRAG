@@ -2,10 +2,11 @@ import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
 import React, { useContext, useState, useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { AuthContext } from "../../context/AuthContext";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { getConductor } from "../../functions/api";
 import { SafeAreaView } from "react-native";
 import { ScrollView } from "react-native";
+import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
+
 
 const Documentos = () => {
   const navigation = useNavigation();
@@ -103,8 +104,8 @@ const styles = new StyleSheet.create({
     fontSize: 17,
   },
   images: {
-    width: 300,
-    height: 200,
+    width: wp("80"),
+    height: hp("25"),
     alignSelf: "center",
   },
 });

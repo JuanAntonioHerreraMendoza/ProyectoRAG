@@ -3,8 +3,10 @@ import React, { useState, useEffect } from "react";
 import { getReporte } from "../../functions/api";
 import { useIsFocused } from "@react-navigation/native";
 import { StyleSheet } from "react-native";
-import { Video } from "expo-av";
+import { ResizeMode, Video } from "expo-av";
 import { TouchableOpacity } from "react-native";
+import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
+
 
 const ReporteDetail = ({ route, navigation }) => {
   const [reporte, setReporte] = useState([]);
@@ -45,7 +47,7 @@ const ReporteDetail = ({ route, navigation }) => {
         <Text style={styles.fontTitle}>Evidencia</Text>
         <View style={styles.container}>
           {archivo=== "mov" || archivo=== "mp4"?
-          <Video source={{uri:"http://192.168.1.75:8080/images/" + reporte.evidencia}} useNativeControls style={styles.video}/>:
+          <Video source={{uri:"http://192.168.1.75:8080/images/" + reporte.evidencia+"?path=reportes"}} useNativeControls resizeMode={ResizeMode.COVER} style={styles.video} />:
           <Image
             source={{
               uri: "http://192.168.1.75:8080/images/" + reporte.evidencia+"?path=reportes"
@@ -73,12 +75,11 @@ const styles = new StyleSheet.create({
   layout: {
     backgroundColor: "#222f3e",
     padding: 20,
+    paddingTop:0,
     flex: 1,
   },
   principal: {
     textAlign: "left",
-    borderWidth: 1,
-    borderRadius: 5,
   },
   container: {
     width: "100%",
@@ -89,34 +90,33 @@ const styles = new StyleSheet.create({
     borderRadius: 10,
   },
   buttonSave: {
-    paddingTop: 5,
-    paddingBottom: 10,
     borderRadius: 15,
     backgroundColor: "red",
     width: "40%",
+    height: hp("4"),
     marginVertical: 10,
   },
   buttonText: {
     color: "#ffffff",
     textAlign: "center",
-    fontSize: 16,
+    fontSize: hp("2"),
   },
   font: {
-    fontSize: 17,
+    fontSize: hp("2.1"),
     color: "#ffffff",
   },
   fontTitle: {
     color: "#ffffff",
-    fontSize: 20,
+    fontSize: hp("2"),
     paddingBottom: 5,
   },
   imagen: {
-    width: 200,
-    height: 200,
+    width: wp("70"),
+    height: hp("30"),
   },
   video: {
-    width: 300,
-    height: 300,
+    width: wp("70"),
+    height: hp("30"),
   },
 });
 

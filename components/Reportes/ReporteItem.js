@@ -14,7 +14,7 @@ const ReporteItem = ({ reporte,handleDelete}) => {
 
   return (
     <View style={styles.itemContainer}>
-      <TouchableOpacity onPress={()=> navigation.navigate('ReporteDetail',{id:reporte.idreporte})} >
+      <TouchableOpacity onPress={()=> navigation.navigate('ReporteDetail',{id:reporte.idreporte})} style={{width:"80%"}} >
         <Text style={styles.itemTitle}>Reporte hecho el {fecha} </Text>
         <Text style={styles.itemTitle}>{reporte.direccion}</Text>
       </TouchableOpacity>

@@ -27,7 +27,7 @@ function App() {
 
   useEffect(() => {
     registerForPushNotificationsAsync().then(async (token) => {
-
+      //console.log(token)
     });
     // This listener is fired whenever a notification is received while the app is foregrounded
     notificationListener.current =

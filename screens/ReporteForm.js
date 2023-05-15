@@ -19,6 +19,8 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import { saveReporte, uploadImage } from "../functions/api";
 import { Video } from "expo-av";
 import AwesomeAlert from "react-native-awesome-alerts";
+import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
+
 
 const ReporteForm = ({ navigation, route }) => {
   const date = new Date();
@@ -163,9 +165,7 @@ const ReporteForm = ({ navigation, route }) => {
             style={styles.input}
             value={route.params?.uri}
             editable={false}
-          >
-            <Text></Text>
-          </TextInput>
+          />
           <ButtonCamera
             icon="camera"
             onPress={() => navigation.navigate("Camara")}
@@ -347,7 +347,7 @@ const styles = new StyleSheet.create({
   },
   imagen: {
     width: 200,
-    height: 200,
+    height: hp("25"),
   },
   buttonSave: {
     paddingTop: 10,

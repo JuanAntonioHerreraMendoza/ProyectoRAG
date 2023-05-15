@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Entypo } from '@expo/vector-icons';
-import { MaterialIcons } from '@expo/vector-icons';
+import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
 
 export default function ButtonCamera({ title, onPress, icon, color }) {
   return (
@@ -14,7 +14,7 @@ export default function ButtonCamera({ title, onPress, icon, color }) {
 
 const styles = StyleSheet.create({
   button: {
-    height: 40,
+    height: hp("5"),
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -22,7 +22,7 @@ const styles = StyleSheet.create({
   },
   text: {
     fontWeight: 'bold',
-    fontSize: 16,
+    fontSize: hp("2"),
     color: '#f1f1f1',
     marginLeft: 10,
   },
