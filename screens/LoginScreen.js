@@ -80,10 +80,9 @@ const LoginScreen = () => {
       },
     });
     const useInfo = await response.json();
-    if (useInfo === null || useInfo === undefined) {
-      setshowAlert(true)
-    } else {
-      await loginGoogle({ usuario: useInfo.email });
+    let u = await loginGoogle({usuario:useInfo.email})
+    if (u === undefined) {
+      return setshowAlert(true)
     }
   };
 
@@ -190,7 +189,7 @@ const LoginScreen = () => {
         show={showAlert}
         showProgress={false}
         title="Alerta"
-        message="No existe un usuario con este correo"
+        message="No existe un usuario con este correo,porfavor registrese"
         closeOnTouchOutside={true}
         closeOnHardwareBackPress={false}
         showConfirmButton={true}

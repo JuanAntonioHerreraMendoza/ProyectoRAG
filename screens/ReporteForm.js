@@ -68,7 +68,7 @@ const ReporteForm = ({ navigation, route }) => {
   }, [route.params?.uri]);
 
   const validarInputs = () => {
-    if (direc === null || descrip === null || location == null) return true;
+    if (direc === "" || descrip === "" || location == "") return true;
   };
   const confirmLocation = () => {
     setLocation(newRegion);
@@ -78,6 +78,9 @@ const ReporteForm = ({ navigation, route }) => {
 
   const enviarDatos = async () => {
     setinputsValidate(false);
+    if (validarInputs()) {
+      return setinputsValidate(true);
+    }
     let localUri = route.params?.uri;
     if (localUri === undefined) {
       return setshowAlertImagen(true);
@@ -94,9 +97,6 @@ const ReporteForm = ({ navigation, route }) => {
         idreportadorfk: userInfo.idpersonafk.idpersona,
         tipousuariofk: userInfo.tipousuariofk.idtipousuario,
       };
-      if (validarInputs()) {
-        return setinputsValidate(true);
-      }
       await saveReporte(reporte).then(
       await uploadImage(localUri, "reportes").then(setShowAlertReporte(true))
       );

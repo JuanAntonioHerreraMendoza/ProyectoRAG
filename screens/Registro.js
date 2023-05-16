@@ -22,7 +22,10 @@ import { Modal } from "../components/Modal";
 import { Button } from "@rneui/themed";
 import { useNavigation } from "@react-navigation/native";
 import AwesomeAlert from "react-native-awesome-alerts";
-import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from "react-native-responsive-screen";
 
 const Registro = () => {
   //Funcion para navegar
@@ -79,19 +82,16 @@ const Registro = () => {
     setinputsValidate(false);
     setimageValidate(false);
 
-    checked === 0
-      ? (tipousuario.idtipousuario = "1")
-      : (tipousuario.idtipousuario = "2");
-
-    persona.tipousuariofk = tipousuario;
     persona.usuario = persona.correo;
-    persona.imagen1 = image[0].uri.split("/").pop();
-    persona.imagen2 = image[1].uri.split("/").pop();
-    if (validarInputs(persona)) {
-      return setinputsValidate(true);
-    }
+
     if (image === null) {
       return setimageValidate(true);
+    }
+    persona.imagen1 = image[0].uri.split("/").pop();
+    persona.imagen2 = image[1].uri.split("/").pop();
+
+    if (validarInputs(persona)) {
+      return setinputsValidate(true);
     }
 
     let alertaDatosBancarios = validarDatosNumRegistro(
@@ -102,7 +102,7 @@ const Registro = () => {
     );
 
     if (alertaDatosBancarios !== null) {
-      setMessage(alertaDatosBancarios)
+      setMessage(alertaDatosBancarios);
       return setshowAlert(true);
     }
 
@@ -116,6 +116,12 @@ const Registro = () => {
       }
       return;
     }
+
+    checked === 0
+      ? (tipousuario.idtipousuario = "1")
+      : (tipousuario.idtipousuario = "2");
+
+    persona.tipousuariofk = tipousuario;
     await saveUsuario(persona).then(uploadImagesReg(image));
     if (checked === 1) {
       await saveConductor(conductor, persona.nombres);
@@ -150,22 +156,22 @@ const Registro = () => {
         <Text style={styles.subs}>
           Rellene los campos a continuación para realizar su registro
         </Text>
-        <View style={{flexDirection:"row",width:"80%"}} >
+        <View style={{ flexDirection: "row", width: "80%" }}>
           <CheckBox
-            containerStyle={{ backgroundColor: "#1E262E",width:"40%"}}
-            textStyle={{ color: "white",fontSize:hp("2")}}
+            containerStyle={{ backgroundColor: "#1E262E", width: "40%" }}
+            textStyle={{ color: "white", fontSize: hp("2") }}
             center
             checked={checked === 0}
             onPress={() => setChecked(0)}
             checkedIcon="dot-circle-o"
             uncheckedIcon="circle-o"
             title="Agente cívico"
-            style={{marginHorizontal:0,paddingHorizontal:0}}
+            style={{ marginHorizontal: 0, paddingHorizontal: 0 }}
           />
           <CheckBox
-            containerStyle={{ backgroundColor: "#1E262E",width:"50%"}}
+            containerStyle={{ backgroundColor: "#1E262E", width: "50%" }}
             center
-            textStyle={{ color: "white",fontSize:hp("2")}}
+            textStyle={{ color: "white", fontSize: hp("2") }}
             checked={checked === 1}
             onPress={() => setChecked(1)}
             checkedIcon="dot-circle-o"
@@ -371,36 +377,37 @@ const Registro = () => {
             </Text>
           </View>
           <Modal isVisible={modalTerm} setVisible={setModalTerm}>
-            <ScrollView style={{height:hp("70")}}>
-            <Text style={{ color: "white" }}>
-              Los términos y condiciones ("Términos") son un conjunto de
-              términos legales definidos por el propietario de una página web.
-              Establecieron los términos y condiciones que rigen las actividades
-              de los visitantes de la página web en dicho sitio web y la
-              relación entre los visitantes del sitio y el propietario del sitio
-              web. Los términos deben definirse de acuerdo con las necesidades
-              específicas y la naturaleza de cada página web. Por ejemplo, una
-              página web que ofrece productos a clientes en transacciones de
-              comercio electrónico requiere términos que son diferentes de los
-              términos de una página web que solo proporciona información. Los
-              Términos son un acuerdo entre el propietario del sitio web y los
-              usuarios de la página web; detallan las políticas y procedimientos
-              realizados por el sitio web. En muchos sentidos, los Términos
-              brindan al propietario de la página web la posibilidad de
-              protegerse de una posible exposición legal. Además, existen
-              obligaciones legales para notificar a los usuarios de página web
-              de tales actividades, y en muchos casos los Términos son el lugar
-              indicado para hacerlo. Por lo tanto, es muy importante y muy
-              recomendable que las páginas web tengan términos claros y
-              completos que se ajusten y adapten al sitio web específico y a tus
-              actividades. Importante: Las explicaciones y la información
-              proporcionadas en este documento son solo explicaciones generales
-              y de alto nivel, información y muestras. No debes confiar en este
-              artículo como asesoramiento legal o como recomendaciones con
-              respecto a lo que realmente debes hacer. Te recomendamos que
-              busques asesoramiento legal para ayudarte a comprender y ayudarte
-              a crear tus Términos.
-            </Text>
+            <ScrollView style={{ height: hp("70") }}>
+              <Text style={{ color: "white" }}>
+                Los términos y condiciones ("Términos") son un conjunto de
+                términos legales definidos por el propietario de una página web.
+                Establecieron los términos y condiciones que rigen las
+                actividades de los visitantes de la página web en dicho sitio
+                web y la relación entre los visitantes del sitio y el
+                propietario del sitio web. Los términos deben definirse de
+                acuerdo con las necesidades específicas y la naturaleza de cada
+                página web. Por ejemplo, una página web que ofrece productos a
+                clientes en transacciones de comercio electrónico requiere
+                términos que son diferentes de los términos de una página web
+                que solo proporciona información. Los Términos son un acuerdo
+                entre el propietario del sitio web y los usuarios de la página
+                web; detallan las políticas y procedimientos realizados por el
+                sitio web. En muchos sentidos, los Términos brindan al
+                propietario de la página web la posibilidad de protegerse de una
+                posible exposición legal. Además, existen obligaciones legales
+                para notificar a los usuarios de página web de tales
+                actividades, y en muchos casos los Términos son el lugar
+                indicado para hacerlo. Por lo tanto, es muy importante y muy
+                recomendable que las páginas web tengan términos claros y
+                completos que se ajusten y adapten al sitio web específico y a
+                tus actividades. Importante: Las explicaciones y la información
+                proporcionadas en este documento son solo explicaciones
+                generales y de alto nivel, información y muestras. No debes
+                confiar en este artículo como asesoramiento legal o como
+                recomendaciones con respecto a lo que realmente debes hacer. Te
+                recomendamos que busques asesoramiento legal para ayudarte a
+                comprender y ayudarte a crear tus Términos.
+              </Text>
             </ScrollView>
             <View style={styles.viewMap}>
               <Button
@@ -436,7 +443,7 @@ const Registro = () => {
         titleStyle={{ color: "white", textAlign: "center" }}
         messageStyle={{ color: "white", textAlign: "center" }}
         onConfirmPressed={() => {
-          setshowAlert(false)
+          setshowAlert(false);
         }}
       />
     </ScrollView>
