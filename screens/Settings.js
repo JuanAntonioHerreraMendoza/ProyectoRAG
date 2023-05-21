@@ -28,7 +28,10 @@ import {
   validarDatosNumRegistro,
 } from "../functions/Validaciones";
 import { cambiarImagen } from "../functions/api";
-import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from "react-native-responsive-screen";
 
 const Settings = () => {
   const { logout, userInfo } = useContext(AuthContext);
@@ -82,16 +85,16 @@ const Settings = () => {
     });
 
     if (!result.canceled) {
-      await uploadImage(result.assets[0].uri,"imagesPerfil");
+      await uploadImage(result.assets[0].uri, "imagesPerfil");
       let filename = result.assets[0].uri.split("/").pop();
       await cambiarImagen(usuario, filename);
-      await deleteImage("imagesPerfil",userInfo.idpersonafk.imagenperfil)
+      await deleteImage("imagesPerfil", userInfo.idpersonafk.imagenperfil);
       setshowAlertImage(true);
     }
   };
 
   function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
   return (
@@ -110,7 +113,8 @@ const Settings = () => {
               source={{
                 uri:
                   "http://192.168.1.75:8080/images/" +
-                  userInfo.idpersonafk.imagenperfil+"?path=imagesPerfil"
+                  userInfo.idpersonafk.imagenperfil +
+                  "?path=imagesPerfil",
               }}
               style={styles.image}
             />
@@ -408,7 +412,12 @@ const Settings = () => {
           </View>
         </View>
       </Modal>
-      <TouchableOpacity style={styles.button} onPress={()=>{setshowAlertSesion(true)}}>
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => {
+          setshowAlertSesion(true);
+        }}
+      >
         <Text style={styles.buttonText}>Cerrar sesion</Text>
       </TouchableOpacity>
 
@@ -542,11 +551,10 @@ const Settings = () => {
           setshowAlertSesion(false);
         }}
         onConfirmPressed={() => {
-            setshowAlertSesion(false);
-            sleep(500).then(()=>{
-              logout()
-            }
-            )
+          setshowAlertSesion(false);
+          sleep(500).then(() => {
+            logout();
+          });
         }}
       />
     </View>

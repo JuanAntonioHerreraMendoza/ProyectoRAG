@@ -19,11 +19,14 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import { saveReporte, uploadImage } from "../functions/api";
 import { Video } from "expo-av";
 import AwesomeAlert from "react-native-awesome-alerts";
-import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
-
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from "react-native-responsive-screen";
 
 const ReporteForm = ({ navigation, route }) => {
   const date = new Date();
+  const [showAlert, setshowAlert] = useState(false);
   const [selected, setSelected] = useState([]);
   const [showAlertUbicacion, setshowAlertUbicacion] = useState(false);
   const [showAlertImagen, setshowAlertImagen] = useState(false);
@@ -41,7 +44,11 @@ const ReporteForm = ({ navigation, route }) => {
     { key: "1", value: "Mal estacionado" },
     { key: "2", value: "Golpe de vehiculos" },
     { key: "3", value: "Auto sin luces" },
-    { key: "4", value: "Auto pasandose un semaforo en rojo" },
+    { key: "4", value: "Manejar sin licencia" },
+    { key: "5", value: "No usar el cinturón de seguridad" },
+    { key: "6", value: "Uso de celular al manejar" },
+    { key: "7", value: "Rebasar el límite de velocidad" },
+    { key: "8", value: "Conducir alcoholizado o bajo los efectos de drogas" },
   ];
 
   useEffect(() => {
@@ -93,12 +100,16 @@ const ReporteForm = ({ navigation, route }) => {
         ubicacion: location.latitude + "," + location.longitude,
         evidencia: filename,
         estatus: "Revision",
-        razon:selected,
+        razon: selected,
         idreportadorfk: userInfo.idpersonafk.idpersona,
         tipousuariofk: userInfo.tipousuariofk.idtipousuario,
       };
       await saveReporte(reporte).then(
-      await uploadImage(localUri, "reportes").then(setShowAlertReporte(true))
+        await uploadImage(localUri, "reportes")
+          .then(setShowAlertReporte(true))
+          .catch((error) => {
+            alert(error);
+          })
       );
       setNewRegion(null);
       route.params.uri = "";
@@ -197,7 +208,8 @@ const ReporteForm = ({ navigation, route }) => {
         <TouchableOpacity
           style={styles.buttonSave}
           onPress={() => {
-            enviarDatos();
+            setshowAlert(true);
+            //enviarDatos();
           }}
         >
           <Text style={styles.buttonText}>Enviar Reporte</Text>
@@ -238,6 +250,31 @@ const ReporteForm = ({ navigation, route }) => {
           </View>
         </View>
       </Modal>
+      <AwesomeAlert
+        show={showAlert}
+        showProgress={false}
+        title="Confirmacion"
+        message="¿Esta seguro de enviar esta informacion para su reporte?"
+        closeOnTouchOutside={true}
+        closeOnHardwareBackPress={false}
+        showCancelButton={true}
+        showConfirmButton={true}
+        cancelText="No, cancelar"
+        confirmText="Si, estoy de acuerdo"
+        confirmButtonColor="#105293"
+        cancelButtonColor="red"
+        contentContainerStyle={{ backgroundColor: "#1E262E" }}
+        contentStyle={{ backgroundColor: "#1E262E" }}
+        titleStyle={{ color: "white", textAlign: "center" }}
+        messageStyle={{ color: "white", textAlign: "center" }}
+        onCancelPressed={() => {
+          setshowAlert(false);
+        }}
+        onConfirmPressed={() => {
+          setshowAlert(false);
+          enviarDatos();
+        }}
+      />
       <AwesomeAlert
         show={showAlertUbicacion}
         showProgress={false}
