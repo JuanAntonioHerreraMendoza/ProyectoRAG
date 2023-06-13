@@ -11,7 +11,10 @@ import * as Google from "expo-auth-session/providers/google";
 import { useNavigation } from "@react-navigation/native";
 import Spinner from "react-native-loading-spinner-overlay";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from "react-native-responsive-screen";
 
 import { AuthContext } from "../context/AuthContext";
 import { KeyboardAvoidingView } from "react-native";
@@ -69,123 +72,138 @@ const LoginScreen = () => {
   useEffect(() => {
     if (response?.type === "success") {
       setAccesToken(response.authentication.accessToken);
-      accesToken && fetchUserGInfo();
+      fetchUserGInfo();
     }
-  }, [response, accesToken]);
+  }, [response,accesToken]);
 
   const fetchUserGInfo = async () => {
-    let response = await fetch("https://www.googleapis.com/userinfo/v2/me", {
-      headers: {
-        Authorization: `Bearer${accesToken}`,
-      },
-    });
-    const useInfo = await response.json();
-    let u = await loginGoogle({usuario:useInfo.email})
-    if (u === undefined) {
-      return setshowAlert(true)
+    try {
+      const response = await fetch(
+        "https://www.googleapis.com/userinfo/v2/me",
+        {
+          headers: { Authorization: `Bearer ${accesToken}` },
+        }
+      );
+
+      const useInfo = await response.json();
+      let u = await loginGoogle({ usuario: useInfo.email });
+      if (u === false) {
+        setshowAlert(true);
+      }
+    } catch (error) {
     }
   };
 
   return (
-    <KeyboardAvoidingView behavior="padding" style={{ flex: 1,backgroundColor:"#1E262E" }}>
-      <View style={styles.container}>
-        <Spinner visible={isLoading} />
-        <Text style={styles.text}>Supervisión Ciudadana</Text>
-        <Text style={styles.text}>SuCi</Text>
-        <Ionicons
-          style={{ marginBottom: 30 }}
-          name={"shield-outline"}
-          size={150}
-          color={"#E1EC2F"}
-        />
-        {inputsValidate ? (
-          <Text style={styles.warningText}>Rellene ambos campos</Text>
-        ) : (
-          <></>
-        )}
-        {loginValidate ? (
-          <Text style={styles.warningText}>
-            Usuario o contraseña incorrectos
-          </Text>
-        ) : (
-          <></>
-        )}
-        <TextInput
-          style={styles.input}
-          placeholder="Usuario"
-          placeholderTextColor="#ffffff"
-          onChangeText={(text) => handleChange("usuario", text)}
-        />
-        <View
-          style={{
-            flexDirection: "row",
-            borderColor: "white",
-            borderWidth: 0.1,
-          }}
-        >
+    <>
+      <KeyboardAvoidingView
+        behavior="padding"
+        style={{ flex: 1, backgroundColor: "#1E262E" }}
+      >
+        <View style={styles.container}>
+          <Spinner visible={isLoading} />
+          <Text style={styles.text}>Supervisión Ciudadana</Text>
+          <Text style={styles.text}>SuCi</Text>
+          <Ionicons
+            style={{ marginBottom: 30 }}
+            name={"shield-outline"}
+            size={150}
+            color={"#E1EC2F"}
+          />
+          {inputsValidate ? (
+            <Text style={styles.warningText}>Rellene ambos campos</Text>
+          ) : (
+            <></>
+          )}
+          {loginValidate ? (
+            <Text style={styles.warningText}>
+              Usuario o contraseña incorrectos
+            </Text>
+          ) : (
+            <></>
+          )}
           <TextInput
             style={styles.input}
-            placeholder="Contraseña"
+            placeholder="Usuario"
             placeholderTextColor="#ffffff"
-            secureTextEntry={seePass}
-            onChangeText={(text) => handleChange("contraseña", text)}
+            onChangeText={(text) => handleChange("usuario", text)}
           />
-          <View style={styles.wrapperIcon}>
-            <TouchableOpacity onPress={() => setSeePass(!seePass)}>
-              {seePass ? (
-                <Ionicons name={"eye-outline"} size={30} color="white" />
-              ) : (
-                <Ionicons name={"eye-off-outline"} size={30} color="white" />
-              )}
+          <View
+            style={{
+              flexDirection: "row",
+              borderColor: "white",
+              borderWidth: 0.1,
+            }}
+          >
+            <TextInput
+              style={styles.input}
+              placeholder="Contraseña"
+              placeholderTextColor="#ffffff"
+              secureTextEntry={seePass}
+              onChangeText={(text) => handleChange("contraseña", text)}
+            />
+            <View style={styles.wrapperIcon}>
+              <TouchableOpacity onPress={() => setSeePass(!seePass)}>
+                {seePass ? (
+                  <Ionicons name={"eye-outline"} size={30} color="white" />
+                ) : (
+                  <Ionicons name={"eye-off-outline"} size={30} color="white" />
+                )}
+              </TouchableOpacity>
+            </View>
+          </View>
+          <TouchableOpacity
+            style={styles.buttonSave}
+            onPress={() => {
+              handleSubmmit(user);
+            }}
+          >
+            <Text style={styles.buttonText}>Iniciar sesión</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.buttonGoogle}
+            disabled={!request}
+            onPress={() => {
+              promptAsync();
+            }}
+          >
+            <Ionicons
+              name="logo-google"
+              size={20}
+              color={"white"}
+              style={{ position: "absolute", left: 15, top: 5 }}
+            />
+            <Text style={styles.buttonText}>Iniciar sesión con google</Text>
+          </TouchableOpacity>
+          <View
+            style={{
+              flexDirection: "row",
+              width: "80%",
+              justifyContent: "space-between",
+            }}
+          >
+            <TouchableOpacity
+              onPress={() => {
+                navigation.navigate("Registro");
+              }}
+            >
+              <Text style={{ color: "white", fontSize: hp("1.5") }}>
+                Registrarse
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                navigation.navigate("RecuperarContraseña");
+              }}
+            >
+              <Text style={{ color: "white", fontSize: hp("1.5") }}>
+                Olvide mi contraseña
+              </Text>
             </TouchableOpacity>
           </View>
         </View>
-        <TouchableOpacity
-          style={styles.buttonSave}
-          onPress={() => {
-            handleSubmmit(user);
-          }}
-        >
-          <Text style={styles.buttonText}>Iniciar sesión</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.buttonGoogle}
-          disabled={!request}
-          onPress={() => {
-            promptAsync();
-          }}
-        >
-          <Ionicons
-            name="logo-google"
-            size={20}
-            color={"white"}
-            style={{ position: "absolute", left: 15, top: 5 }}
-          />
-          <Text style={styles.buttonText}>Iniciar sesión con google</Text>
-        </TouchableOpacity>
-        <View
-          style={{
-            flexDirection: "row",
-            width: "80%",
-            justifyContent: "space-between",
-          }}
-        >
-          <TouchableOpacity
-            onPress={() => {
-              navigation.navigate("Registro");
-            }}
-          >
-            <Text style={{ color: "white",fontSize:hp("1.5") }}>Registrarse</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => {
-              navigation.navigate("RecuperarContraseña");
-            }}
-          >
-            <Text style={{ color: "white",fontSize:hp("1.5")}}>Olvide mi contraseña</Text>
-          </TouchableOpacity>
-        </View>
-        <AwesomeAlert
+      </KeyboardAvoidingView>
+      <AwesomeAlert
         show={showAlert}
         showProgress={false}
         title="Alerta"
@@ -203,8 +221,7 @@ const LoginScreen = () => {
           setshowAlert(false);
         }}
       />
-      </View>
-    </KeyboardAvoidingView>
+    </>
   );
 };
 
@@ -221,7 +238,7 @@ const styles = new StyleSheet.create({
     fontSize: 28,
   },
   input: {
-    width: wp('70%'),
+    width: wp("70%"),
     fontSize: 14,
     marginBottom: 10,
     borderWidth: 2,
@@ -253,7 +270,7 @@ const styles = new StyleSheet.create({
   buttonText: {
     color: "#ffffff",
     textAlign: "center",
-    fontSize: hp("1.7")
+    fontSize: hp("1.7"),
   },
   wrapperIcon: {
     position: "absolute",

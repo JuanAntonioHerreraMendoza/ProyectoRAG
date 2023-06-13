@@ -46,8 +46,8 @@ const CambioContraseña = ({ route }) => {
     if (checkPass) {
       return setMessageErrorC(checkPass);
     }
-    cambiarContraseña(user, codigo).then((status) => {
-      if (status === 200) {
+    cambiarContraseña(user, codigo).then((res) => {
+      if (res === true) {
         navigation.navigate("Login");
       } else {
         setshowAlert(true)

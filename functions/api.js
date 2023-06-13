@@ -80,6 +80,21 @@ export const saveReporte = async (reporte) => {
   return await res.json();
 };
 
+export const editarUsuario = async (user) => {
+    const res = await fetch(
+      `${API}usuarios/editarUsuario`,
+      {
+        method: "PUT",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(user),
+      }
+    );
+    return res.status;
+};
+
 export const cambiarContraseña = async (user, codigo) => {
   const res = await fetch(
     `${API}usuarios/editarContraseña?pass=${user.contraseña}`,
@@ -92,7 +107,7 @@ export const cambiarContraseña = async (user, codigo) => {
       body: JSON.stringify(codigo),
     }
   );
-  return res.status;
+  return res.json();
 };
 
 export const cambiarNumeroCuenta = async (user) => {
@@ -132,17 +147,6 @@ export const saveUsuario = async (persona) => {
   return await res.json();
 };
 
-export const saveConductor = async (conductor, nombres) => {
-  const res = await fetch(`${API}conductores?nombres=${nombres}`, {
-    method: "POST",
-    headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(conductor),
-  });
-  return await res.json();
-};
 
 export const getConductor = async (persona) => {
   const res = await fetch(`${API}conductores/getConductor`, {
@@ -171,6 +175,18 @@ export const getMultasConductor = async (conductor) => {
       "Content-Type": "application/json",
     },
     body: JSON.stringify(conductor),
+  });
+  return res.json();
+};
+
+export const getMultasPersona = async (persona) => {
+  const res = await fetch(`${API}multas/multasPersona`, {
+    method: "POST",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(persona),
   });
   return res.json();
 };

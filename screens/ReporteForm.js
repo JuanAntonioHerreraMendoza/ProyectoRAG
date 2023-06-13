@@ -89,7 +89,7 @@ const ReporteForm = ({ navigation, route }) => {
       return setinputsValidate(true);
     }
     let localUri = route.params?.uri;
-    if (localUri === undefined) {
+    if (localUri === undefined||location===undefined) {
       return setshowAlertImagen(true);
     } else {
       let filename = localUri.split("/").pop();
@@ -209,7 +209,7 @@ const ReporteForm = ({ navigation, route }) => {
           style={styles.buttonSave}
           onPress={() => {
             setshowAlert(true);
-            //enviarDatos();
+            enviarDatos();
           }}
         >
           <Text style={styles.buttonText}>Enviar Reporte</Text>

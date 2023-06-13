@@ -43,6 +43,7 @@ const Registro = () => {
   const [checkedTerms, setCheckedTerms] = useState(false);
   const [messageE, setMessageE] = useState("");
   const [image, setImage] = useState(null);
+  const [codigo, setCodigo] = useState("")
 
   const [persona, setPersona] = useState({
     nombres: "",
@@ -63,6 +64,7 @@ const Registro = () => {
     imagen1: "",
     imagen2: "",
     tipousuariofk: {},
+    datoconductor:""
   });
 
   const [tipoUser, setTipoUser] = useState({
@@ -123,9 +125,6 @@ const Registro = () => {
 
     persona.tipousuariofk = tipousuario;
     await saveUsuario(persona).then(uploadImagesReg(image));
-    if (checked === 1) {
-      await saveConductor(conductor, persona.nombres);
-    }
     navigation.navigate("Login");
   };
 
@@ -337,10 +336,11 @@ const Registro = () => {
             <>
               <TextInput
                 style={styles.input}
-                placeholder="Codigo de usuario"
+                keyboardType="numeric"
+                placeholder="No. licencia o tarjeta circulacion"
                 placeholderTextColor={"white"}
                 onChangeText={(text) => {
-                  //handleChangeC("noLicencia", text);
+                  handleChangeP("datoconductor", text)
                 }}
               />
             </>
