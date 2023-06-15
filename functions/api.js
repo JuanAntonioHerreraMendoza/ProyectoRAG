@@ -58,10 +58,10 @@ export const getUltimoReporte = async (id) => {
   return await res.json();
 };
 
-export const getConteos = async (id)=>{
-  const res= await fetch(`${API}reportes/Countrep?id=${id}`);
+export const getConteos = async (id) => {
+  const res = await fetch(`${API}reportes/Countrep?id=${id}`);
   return await res.json();
-}
+};
 
 export const getImage = async (image) => {
   const res = await fetch(`http://192.168.1.75:8080/images/${image}`);
@@ -81,18 +81,15 @@ export const saveReporte = async (reporte) => {
 };
 
 export const editarUsuario = async (user) => {
-    const res = await fetch(
-      `${API}usuarios/editarUsuario`,
-      {
-        method: "PUT",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(user),
-      }
-    );
-    return res.status;
+  const res = await fetch(`${API}usuarios/editarUsuario`, {
+    method: "PUT",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(user),
+  });
+  return res.status;
 };
 
 export const cambiarContraseña = async (user, codigo) => {
@@ -122,16 +119,18 @@ export const cambiarNumeroCuenta = async (user) => {
   return await res.json();
 };
 
-
-export const cambiarImagen = async (user,imagen) => {
-  const res = await fetch(`${API}usuarios/editarImagenPerfil?imagen=${imagen}`, {
-    method: "PUT",
-    headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(user),
-  });
+export const cambiarImagen = async (user, imagen) => {
+  const res = await fetch(
+    `${API}usuarios/editarImagenPerfil?imagen=${imagen}`,
+    {
+      method: "PUT",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(user),
+    }
+  );
   return await res.json();
 };
 
@@ -146,7 +145,6 @@ export const saveUsuario = async (persona) => {
   });
   return await res.json();
 };
-
 
 export const getConductor = async (persona) => {
   const res = await fetch(`${API}conductores/getConductor`, {
@@ -191,8 +189,7 @@ export const getMultasPersona = async (persona) => {
   return res.json();
 };
 
-
-export const uploadImage = async (image,path) => {
+export const uploadImage = async (image, path) => {
   let localUri = image;
   if (localUri === null) {
     return Alert.alert("Seleccione una imagen");
@@ -238,7 +235,7 @@ export const uploadImagesReg = async (images) => {
   }
 };
 
-export const deleteImage = async (path,file) => {
+export const deleteImage = async (path, file) => {
   const res = await fetch(`${API}images/deleteImg?path=${path}&file=${file}`, {
     method: "POST",
     headers: {
@@ -247,4 +244,27 @@ export const deleteImage = async (path,file) => {
     },
   });
   return;
+};
+
+export const guardarToken = async (token, correo) => {
+  const res = await fetch(`${API}tokens`, {
+    method: "POST",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+    body: { token: token, correo: correo },
+  });
+  return res;
+};
+
+export const existeToken = async (token) => {
+  const res = await fetch(`${API}tokens/existeToken?token=${token}`, {
+    method: "GET",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    }
+  });
+  return res;
 };

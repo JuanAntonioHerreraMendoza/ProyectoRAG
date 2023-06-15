@@ -36,7 +36,7 @@ const Notificaciones = () => {
 
   const renderItem = ({ item }) => {
     return (
-      <TouchableOpacity>
+      <TouchableOpacity style={{marginTop:10,marginRight:10}}>
         <View
           style={{
             alignItems: "center",

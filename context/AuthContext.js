@@ -3,11 +3,14 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import {
   editarUsuario,
+  existeToken,
   getConductor,
+  guardarToken,
   loginuser,
   loginusergoogle,
 } from "../functions/api";
 import { Alert } from "react-native";
+import { registerForPushNotificationsAsync } from "../functions/notificaciones";
 
 export const AuthContext = createContext();
 
@@ -22,7 +25,10 @@ export const AuthProvider = ({ children }) => {
     let userInfo = await loginuser(user);
     if (userInfo === undefined) {
       setIsLoading(false);
-    } else if (userInfo.idpersonafk.activo === false || userInfo.idpersonafk.activo === null) {
+    } else if (
+      userInfo.idpersonafk.activo === false ||
+      userInfo.idpersonafk.activo === null
+    ) {
       setIsLoading(false);
       if (
         Date.parse(userInfo.idpersonafk.fechasuspencion) < Date.parse(Date())
@@ -31,6 +37,15 @@ export const AuthProvider = ({ children }) => {
         await editarUsuario(userInfo);
         setUserInfo(userInfo);
         AsyncStorage.setItem("userInfo", JSON.stringify(userInfo));
+        registerForPushNotificationsAsync().then((token) =>
+          existeToken(token).then((res) => {
+            if (res) {
+              console.log("ya existe");
+            } else {
+              guardarToken(token, userInfo.usuario);
+            }
+          })
+        );
         setIsLoading(false);
       } else {
         alert(
@@ -38,13 +53,20 @@ export const AuthProvider = ({ children }) => {
             JSON.stringify(userInfo.idpersonafk.fechasuspencion).substring(
               1,
               11
-            )
-            +" por infrigir las normas de uso de la aplicacion"
+            ) +
+            " por infrigir las normas de uso de la aplicacion"
         );
       }
     } else {
       setUserInfo(userInfo);
       AsyncStorage.setItem("userInfo", JSON.stringify(userInfo));
+      registerForPushNotificationsAsync().then((token) =>
+        existeToken(token).then((res) => {
+          if (!res) {
+            guardarToken(token, userInfo.usuario);
+          }
+        })
+      );
       setIsLoading(false);
     }
   };
@@ -52,9 +74,9 @@ export const AuthProvider = ({ children }) => {
   const loginGoogle = async (user) => {
     setIsLoading(true);
     let userInfo = await loginusergoogle(user);
-    if (userInfo === undefined || userInfo.usuario===null) {
+    if (userInfo === undefined || userInfo.usuario === null) {
       setIsLoading(false);
-      return false
+      return false;
     } else {
       setUserInfo(userInfo);
       AsyncStorage.setItem("userInfo", JSON.stringify(userInfo));
