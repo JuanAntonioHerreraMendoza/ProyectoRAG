@@ -14,20 +14,15 @@ import { useContext, useEffect, useState } from "react";
 import { Button } from "@rneui/themed";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import AwesomeAlert from "react-native-awesome-alerts";
-import {
-  cambiarContraseña,
-  cambiarNumeroCuenta,
-  deleteImage,
-  enviarCorreo,
-  getConductor,
-  uploadImage,
-} from "../functions/api";
+import { cambiarContraseña, cambiarNumeroCuenta } from "../functions/api";
+import { getConductor } from "../functions/apiConductor";
+import { enviarCorreo } from "../functions/apiCorreo";
 import * as ImagePicker from "expo-image-picker";
 import {
   validarContraseña,
   validarDatosNumRegistro,
 } from "../functions/Validaciones";
-import { cambiarImagen } from "../functions/api";
+import { cambiarImagen, deleteImage, uploadImage } from "../functions/apiImage";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,

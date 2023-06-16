@@ -11,7 +11,8 @@ import {
 import { useState } from "react";
 import { CheckBox } from "@rneui/themed";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import { saveConductor, saveUsuario, uploadImagesReg } from "../functions/api";
+import { saveUsuario } from "../functions/api";
+import { uploadImagesReg } from "../functions/apiImage";
 import {
   validarContraseña,
   validarEmail,
@@ -43,7 +44,7 @@ const Registro = () => {
   const [checkedTerms, setCheckedTerms] = useState(false);
   const [messageE, setMessageE] = useState("");
   const [image, setImage] = useState(null);
-  const [codigo, setCodigo] = useState("")
+  const [codigo, setCodigo] = useState("");
 
   const [persona, setPersona] = useState({
     nombres: "",
@@ -64,7 +65,7 @@ const Registro = () => {
     imagen1: "",
     imagen2: "",
     tipousuariofk: {},
-    datoconductor:""
+    datoconductor: "",
   });
 
   const [tipoUser, setTipoUser] = useState({
@@ -340,7 +341,7 @@ const Registro = () => {
                 placeholder="No. licencia o tarjeta circulacion"
                 placeholderTextColor={"white"}
                 onChangeText={(text) => {
-                  handleChangeP("datoconductor", text)
+                  handleChangeP("datoconductor", text);
                 }}
               />
             </>

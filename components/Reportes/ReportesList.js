@@ -1,7 +1,7 @@
 import { StyleSheet, View, FlatList, RefreshControl, Text } from "react-native";
 import React, { useEffect, useState, useContext } from "react";
 import { AuthContext } from "../../context/AuthContext";
-import { getReportes } from "../../functions/api";
+import { getReportes } from "../../functions/apiReportes";
 import { useIsFocused } from "@react-navigation/native";
 import ReporteItem from "./ReporteItem";
 

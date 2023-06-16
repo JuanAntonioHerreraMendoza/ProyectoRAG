@@ -8,13 +8,14 @@ import {
 } from "react-native";
 import { AuthContext } from "../context/AuthContext";
 import React, { useEffect, useState, useContext } from "react";
-import { getConteos, getUltimoReporte } from "../functions/api";
 import { useIsFocused } from "@react-navigation/native";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 import ReporteItem from "../components/Reportes/ReporteItem";
+import {getConductor,getConteoInfracciones} from '../functions/apiConductor'
+import { getUltimoReporte,getConteos } from "../functions/apiReportes";
 
 export function Home({ navigation }) {
   //Obtencion de contexto(Informacion de usuario)
@@ -23,13 +24,22 @@ export function Home({ navigation }) {
   //Variables
   const [reportes, setReportes] = useState([]);
   const [conteoreportes, setConteoReportes] = useState([]);
+  const [conteoInfracciones, setConteoInfracciones] = useState(0);
   const isFocused = useIsFocused();
 
   const loadReportes = async () => {
-    const data = await getUltimoReporte(userInfo.idpersonafk.idpersona);
-    setReportes(data);
-    const conteoData = await getConteos(userInfo.idpersonafk.idpersona);
-    setConteoReportes(conteoData);
+    if (userInfo.tipousuariofk.idtipousuario === 1) {
+      const data = await getUltimoReporte(userInfo.idpersonafk.idpersona);
+      setReportes(data);
+      const conteoData = await getConteos(userInfo.idpersonafk.idpersona);
+      setConteoReportes(conteoData);
+    } else {
+      await getConductor(userInfo.idpersonafk).then((res) => {
+        getConteoInfracciones(res.idconductor).then((res) =>
+          setConteoInfracciones(res)
+        );
+      });
+    }
   };
 
   useEffect(() => {
@@ -64,37 +74,47 @@ export function Home({ navigation }) {
           " " +
           userInfo.idpersonafk.apellidom}
       </Text>
-      <View>
-        <Text style={styles.textoDatos}>
-          Reportes hechos: {conteoreportes[0]}
-        </Text>
-        <Text style={styles.textoDatos}>
-          Reportes en revision: {conteoreportes[1]}
-        </Text>
-        <Text style={styles.textoDatos}>
-          Reportes aceptados: {conteoreportes[2]}
-        </Text>
-        <Text style={styles.textoDatos}>
-          Reportes rechazados: {conteoreportes[3]}
-        </Text>
-      </View>
-      <FlatList
-        style={{ width: wp("100"), marginVertical: 30 }}
-        data={reportes}
-        keyExtractor={(item) => item.idreporte + ""}
-        renderItem={renderItem}
-        scrollEnabled={false}
-      />
-      <TouchableOpacity
-        style={styles.locationB}
-        onPress={() => {
-          navigation.navigate("ReporteForm");
-        }}
-      >
-        <View style={styles.fab}>
-          <Text style={styles.text}>+</Text>
+      {userInfo.tipousuariofk.idtipousuario === 1 ? (
+        <>
+          <View>
+            <Text style={styles.textoDatos}>
+              Reportes hechos: {conteoreportes[0]}
+            </Text>
+            <Text style={styles.textoDatos}>
+              Reportes en revision: {conteoreportes[1]}
+            </Text>
+            <Text style={styles.textoDatos}>
+              Reportes aceptados: {conteoreportes[2]}
+            </Text>
+            <Text style={styles.textoDatos}>
+              Reportes rechazados: {conteoreportes[3]}
+            </Text>
+          </View>
+          <FlatList
+            style={{ width: wp("100"), marginVertical: 30 }}
+            data={reportes}
+            keyExtractor={(item) => item.idreporte + ""}
+            renderItem={renderItem}
+            scrollEnabled={false}
+          />
+          <TouchableOpacity
+            style={styles.locationB}
+            onPress={() => {
+              navigation.navigate("ReporteForm");
+            }}
+          >
+            <View style={styles.fab}>
+              <Text style={styles.text}>+</Text>
+            </View>
+          </TouchableOpacity>
+        </>
+      ) : (
+        <View style={{ paddingBottom: "80%" }}>
+          <Text style={styles.textoDatos}>
+            Infracciones cometidas: {conteoInfracciones}
+          </Text>
         </View>
-      </TouchableOpacity>
+      )}
     </View>
   );
 }

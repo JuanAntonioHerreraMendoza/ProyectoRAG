@@ -9,7 +9,7 @@ import React from "react";
 import ButtonCamera from "../ButtonCamera";
 import { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
-import { getConductorInfo, getMultasConductor } from "../../functions/api";
+import { getConductorInfo, getMultasConductor } from "../../functions/apiConductor";
 import { TouchableWithoutFeedback } from "react-native";
 import AwesomeAlert from "react-native-awesome-alerts";
 import { Keyboard } from "react-native";

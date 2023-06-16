@@ -7,7 +7,7 @@ import {
 } from "react-native";
 import React, { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
-import { enviarCorreo, existeCorreo } from "../functions/api";
+import { enviarCorreo, existeCorreo } from "../functions/apiCorreo";
 import { validarEmail } from "../functions/Validaciones";
 import AwesomeAlert from "react-native-awesome-alerts";
 

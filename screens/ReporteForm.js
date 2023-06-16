@@ -16,7 +16,8 @@ import MapView, { Marker } from "react-native-maps";
 import { Button } from "@rneui/themed";
 import { SelectList } from "react-native-dropdown-select-list";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import { saveReporte, uploadImage } from "../functions/api";
+import { saveReporte } from "../functions/apiReportes";
+import { uploadImage } from "../functions/apiImage";
 import { Video } from "expo-av";
 import AwesomeAlert from "react-native-awesome-alerts";
 import {
@@ -89,7 +90,7 @@ const ReporteForm = ({ navigation, route }) => {
       return setinputsValidate(true);
     }
     let localUri = route.params?.uri;
-    if (localUri === undefined||location===undefined) {
+    if (localUri === undefined || location === undefined) {
       return setshowAlertImagen(true);
     } else {
       let filename = localUri.split("/").pop();

@@ -10,7 +10,7 @@ import {
   getConductor,
   getMultasConductor,
   getMultasPersona,
-} from "../functions/api";
+} from "../functions/apiConductor";
 import { useState, useEffect, useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
 import {
@@ -36,7 +36,7 @@ const Notificaciones = () => {
 
   const renderItem = ({ item }) => {
     return (
-      <TouchableOpacity style={{marginTop:10,marginRight:10}}>
+      <TouchableOpacity style={{ marginTop: 10, marginRight: 10 }}>
         <View
           style={{
             alignItems: "center",

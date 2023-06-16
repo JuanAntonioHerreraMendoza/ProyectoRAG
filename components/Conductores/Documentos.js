@@ -2,7 +2,7 @@ import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
 import React, { useContext, useState, useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { AuthContext } from "../../context/AuthContext";
-import { getConductor } from "../../functions/api";
+import { getConductor } from "../../functions/apiConductor";
 import { SafeAreaView } from "react-native";
 import { ScrollView } from "react-native";
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';

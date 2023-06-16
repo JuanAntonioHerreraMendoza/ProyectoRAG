@@ -12,7 +12,7 @@ import OficialStack from "./OficialStack";
 const Tab = createBottomTabNavigator();
 
 export default function Tabs() {
-  const { userInfo} = useContext(AuthContext);
+  const { userInfo } = useContext(AuthContext);
 
   return (
     <Tab.Navigator
@@ -30,7 +30,7 @@ export default function Tabs() {
             iconName = focused ? "card" : "card-outline";
           } else if (route.name === "OficialStack") {
             iconName = focused ? "search-circle" : "search-circle-outline";
-          } 
+          }
 
           return <Ionicons name={iconName} size={size} color={color} />;
         },
@@ -39,7 +39,6 @@ export default function Tabs() {
         tabBarInactiveTintColor: "white",
         tabBarStyle: {
           backgroundColor: "#464646",
-          //"#818E9C"
         },
       })}
     >
@@ -48,25 +47,26 @@ export default function Tabs() {
         component={HomeStackScreen}
         options={{ headerShown: false, title: "Inicio" }}
       />
-      <Tab.Screen
-        name="Reportes"
-        component={ReportesStack}
-        options={{ headerShown: false }}
-      />
       {userInfo.tipousuariofk.idtipousuario === 2 ? (
         <Tab.Screen
           name="DocumentosStack"
           component={DocumentosStack}
-          options={{tabBarLabel:"Documentos",headerShown:false}} 
+          options={{ tabBarLabel: "Documentos", headerShown: false }}
         />
       ) : (
-        <></>
+        <>
+          <Tab.Screen
+            name="Reportes"
+            component={ReportesStack}
+            options={{ headerShown: false }}
+          />
+        </>
       )}
       {userInfo.tipousuariofk.idtipousuario === 3 ? (
         <Tab.Screen
           name="OficialStack"
           component={OficialStack}
-          options={{tabBarLabel:"Busqueda",headerShown:false}} 
+          options={{ tabBarLabel: "Busqueda", headerShown: false }}
         />
       ) : (
         <></>

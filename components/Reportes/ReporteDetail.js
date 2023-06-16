@@ -1,6 +1,6 @@
 import { View, Button, Text, Image } from "react-native";
 import React, { useState, useEffect } from "react";
-import { getReporte } from "../../functions/api";
+import { getReporte } from "../../functions/apiReportes";
 import { useIsFocused } from "@react-navigation/native";
 import { StyleSheet } from "react-native";
 import { ResizeMode, Video } from "expo-av";
