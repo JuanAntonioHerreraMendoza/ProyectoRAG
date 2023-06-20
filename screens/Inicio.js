@@ -14,8 +14,8 @@ import {
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 import ReporteItem from "../components/Reportes/ReporteItem";
-import {getConductor,getConteoInfracciones} from '../functions/apiConductor'
-import { getUltimoReporte,getConteos } from "../functions/apiReportes";
+import { getConductor, getConteoInfracciones } from "../functions/apiConductor";
+import { getUltimoReporte, getConteos } from "../functions/apiReportes";
 
 export function Home({ navigation }) {
   //Obtencion de contexto(Informacion de usuario)
@@ -28,7 +28,7 @@ export function Home({ navigation }) {
   const isFocused = useIsFocused();
 
   const loadReportes = async () => {
-    if (userInfo.tipousuariofk.idtipousuario === 1) {
+    if (userInfo.tipousuariofk.idtipousuario === 1 || userInfo.tipousuariofk.idtipousuario === 3) {
       const data = await getUltimoReporte(userInfo.idpersonafk.idpersona);
       setReportes(data);
       const conteoData = await getConteos(userInfo.idpersonafk.idpersona);
@@ -74,7 +74,8 @@ export function Home({ navigation }) {
           " " +
           userInfo.idpersonafk.apellidom}
       </Text>
-      {userInfo.tipousuariofk.idtipousuario === 1 ? (
+      {userInfo.tipousuariofk.idtipousuario === 1 ||
+      userInfo.tipousuariofk.idtipousuario === 3 ? (
         <>
           <View>
             <Text style={styles.textoDatos}>

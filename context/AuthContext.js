@@ -24,10 +24,7 @@ export const AuthProvider = ({ children }) => {
     let userInfo = await loginuser(user);
     if (userInfo === undefined) {
       setIsLoading(false);
-    } else if (
-      userInfo.idpersonafk.activo === false ||
-      userInfo.idpersonafk.activo === null
-    ) {
+    } else if (userInfo.idpersonafk.activo === false) {
       setIsLoading(false);
       if (
         Date.parse(userInfo.idpersonafk.fechasuspencion) < Date.parse(Date())
@@ -38,9 +35,7 @@ export const AuthProvider = ({ children }) => {
         AsyncStorage.setItem("userInfo", JSON.stringify(userInfo));
         registerForPushNotificationsAsync().then((token) =>
           existeToken(token).then((res) => {
-            if (res) {
-              console.log("ya existe");
-            } else {
+            if (!res) {
               guardarToken(token, userInfo.usuario);
             }
           })
@@ -73,12 +68,45 @@ export const AuthProvider = ({ children }) => {
   const loginGoogle = async (user) => {
     setIsLoading(true);
     let userInfo = await loginusergoogle(user);
-    if (userInfo === undefined || userInfo.usuario === null) {
+    if (userInfo === undefined) {
       setIsLoading(false);
-      return false;
+    } else if (userInfo.idpersonafk.activo === false) {
+      setIsLoading(false);
+      if (
+        Date.parse(userInfo.idpersonafk.fechasuspencion) < Date.parse(Date())
+      ) {
+        userInfo.idpersonafk.activo = true;
+        await editarUsuario(userInfo);
+        setUserInfo(userInfo);
+        AsyncStorage.setItem("userInfo", JSON.stringify(userInfo));
+        registerForPushNotificationsAsync().then((token) =>
+          existeToken(token).then((res) => {
+            if (!res) {
+              guardarToken(token, userInfo.usuario);
+            }
+          })
+        );
+        setIsLoading(false);
+      } else {
+        alert(
+          "Ha sido suspendido hasta el: " +
+            JSON.stringify(userInfo.idpersonafk.fechasuspencion).substring(
+              1,
+              11
+            ) +
+            " por infrigir las normas de uso de la aplicacion"
+        );
+      }
     } else {
       setUserInfo(userInfo);
       AsyncStorage.setItem("userInfo", JSON.stringify(userInfo));
+      registerForPushNotificationsAsync().then((token) =>
+        existeToken(token).then((res) => {
+          if (!res) {
+            guardarToken(token, userInfo.usuario);
+          }
+        })
+      );
       setIsLoading(false);
     }
   };
@@ -109,6 +137,19 @@ export const AuthProvider = ({ children }) => {
 
       let userInfo = await AsyncStorage.getItem("userInfo");
       userInfo = JSON.parse(userInfo);
+
+      let aux = await loginuser({usuario:userInfo.usuario,contraseña:userInfo.contraseña});
+      if(aux.idpersonafk.activo===false){
+        try {
+          AsyncStorage.removeItem("userInfo");
+          setUserInfo({});
+          setIsLoading(false);
+        } catch (error) {
+          alert(`logout error ${error}`);
+          setIsLoading(false);
+        }
+        return
+      }
 
       if (userInfo) {
         setUserInfo(userInfo);
