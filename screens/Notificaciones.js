@@ -63,34 +63,6 @@ const Notificaciones = () => {
   return (
     <View style={styles.container}>
       <View>
-        <Text style={styles.fontTitle}>Multas</Text>
-        <View
-          style={{
-            justifyContent: "center",
-            alignItems: "center",
-            flexDirection: "row",
-          }}
-        >
-          <Text style={styles.column}>ID</Text>
-          <Text style={styles.column}>Razon</Text>
-          <Text style={styles.column}>Monto</Text>
-          <Text style={styles.column}>Estatus</Text>
-        </View>
-        {multas?.length > 0 ? (
-          <>
-            <FlatList
-              style={{ width: "100%", height: "50%" }}
-              data={multas}
-              keyExtractor={(item) => item.idmulta}
-              renderItem={renderItem}
-              scrollEnabled
-            />
-          </>
-        ) : (
-          <Text style={styles.fontTitle}>
-            No se encontraron multas aceptadas aun
-          </Text>
-        )}
         {userInfo.tipousuariofk.idtipousuario === 2 ? (
           <>
             <Text style={styles.fontTitle}>Multas Propias</Text>
@@ -123,7 +95,36 @@ const Notificaciones = () => {
             )}
           </>
         ) : (
-          <></>
+          <>
+            <Text style={styles.fontTitle}>Multas</Text>
+            <View
+              style={{
+                justifyContent: "center",
+                alignItems: "center",
+                flexDirection: "row",
+              }}
+            >
+              <Text style={styles.column}>ID</Text>
+              <Text style={styles.column}>Razon</Text>
+              <Text style={styles.column}>Monto</Text>
+              <Text style={styles.column}>Estatus</Text>
+            </View>
+            {multas?.length > 0 ? (
+              <>
+                <FlatList
+                  style={{ width: "100%", height: "50%" }}
+                  data={multas}
+                  keyExtractor={(item) => item.idmulta}
+                  renderItem={renderItem}
+                  scrollEnabled
+                />
+              </>
+            ) : (
+              <Text style={styles.fontTitle}>
+                No se encontraron multas aceptadas aun
+              </Text>
+            )}
+          </>
         )}
       </View>
     </View>
