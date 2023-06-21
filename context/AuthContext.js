@@ -68,8 +68,9 @@ export const AuthProvider = ({ children }) => {
   const loginGoogle = async (user) => {
     setIsLoading(true);
     let userInfo = await loginusergoogle(user);
-    if (userInfo === undefined) {
+    if (userInfo.usuario === null) {
       setIsLoading(false);
+      return false;
     } else if (userInfo.idpersonafk.activo === false) {
       setIsLoading(false);
       if (
