@@ -6,6 +6,7 @@ import { StyleSheet } from "react-native";
 import { ResizeMode, Video } from "expo-av";
 import { TouchableOpacity } from "react-native";
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
+import { API } from "../../functions/api";
 
 
 const ReporteDetail = ({ route, navigation }) => {
@@ -47,10 +48,10 @@ const ReporteDetail = ({ route, navigation }) => {
         <Text style={styles.fontTitle}>Evidencia</Text>
         <View style={styles.container}>
           {archivo=== "mov" || archivo=== "mp4"?
-          <Video source={{uri:"http://192.168.1.75:8080/images/" + reporte.evidencia+"?path=reportes"}} useNativeControls resizeMode={ResizeMode.COVER} style={styles.video} />:
+          <Video source={{uri:API+"images/" + reporte.evidencia+"?path=reportes"}} useNativeControls resizeMode={ResizeMode.COVER} style={styles.video} />:
           <Image
             source={{
-              uri: "http://192.168.1.75:8080/images/" + reporte.evidencia+"?path=reportes"
+              uri: API+"images/" + reporte.evidencia+"?path=reportes"
             }}
             style={styles.imagen}
           />

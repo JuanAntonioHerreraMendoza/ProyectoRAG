@@ -1,6 +1,7 @@
 import { Alert } from "react-native";
 
-const API = "http://192.168.1.75:8080/"; //"http://172.20.10.2:8080/";
+export const API = "http://192.168.1.71:8080/"; 
+//export const API = "http://172.20.10.2:8080/"; 
 
 export const loginuser = async (user) => {
   const res = await fetch(`${API}usuarios/login`, {

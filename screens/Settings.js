@@ -14,7 +14,7 @@ import { useContext, useEffect, useState } from "react";
 import { Button } from "@rneui/themed";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import AwesomeAlert from "react-native-awesome-alerts";
-import { cambiarContraseña, cambiarNumeroCuenta } from "../functions/api";
+import { API, cambiarContraseña, cambiarNumeroCuenta } from "../functions/api";
 import { getConductor } from "../functions/apiConductor";
 import { enviarCorreo } from "../functions/apiCorreo";
 import * as ImagePicker from "expo-image-picker";
@@ -107,7 +107,7 @@ const Settings = () => {
             <Image
               source={{
                 uri:
-                  "http://192.168.1.75:8080/images/" +
+                  API+"images/" +
                   userInfo.idpersonafk.imagenperfil +
                   "?path=imagesPerfil",
               }}

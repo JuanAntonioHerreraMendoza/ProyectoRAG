@@ -6,6 +6,7 @@ import { getConductor } from "../../functions/apiConductor";
 import { SafeAreaView } from "react-native";
 import { ScrollView } from "react-native";
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
+import { API } from "../../functions/api";
 
 
 const Documentos = () => {
@@ -36,7 +37,7 @@ const Documentos = () => {
           <Text style={styles.buttonText}>Licencia de conducir</Text>
           <Image
             source={{
-              uri: "http://192.168.1.75:8080/images/" + conductor.imgLicencia+"?path=documentos"
+              uri: API+ "images/" + conductor.imgLicencia+"?path=documentos"
             }}
             style={styles.images}
           />
@@ -53,7 +54,7 @@ const Documentos = () => {
           <Image
             source={{
               uri:
-                "http://192.168.1.75:8080/images/" + conductor.imgtarjetaCirc+"?path=documentos"
+                API+"images/" + conductor.imgtarjetaCirc+"?path=documentos"
             }}
             style={styles.images}
           />
@@ -69,7 +70,7 @@ const Documentos = () => {
           <Text style={styles.buttonText}>Placas</Text>
           <Image
             source={{
-              uri: "http://192.168.1.75:8080/images/" + conductor.imgPlacas+"?path=documentos"
+              uri: API+"images/" + conductor.imgPlacas+"?path=documentos"
             }}
             style={styles.images}
           />
