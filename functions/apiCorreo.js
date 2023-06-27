@@ -1,4 +1,4 @@
-const API = "http://192.168.1.75:8080/";
+import { API } from "./api";
 
 export const existeCorreo = async (correo) => {
   const res = await fetch(`${API}usuarios/existeUsuario?correo=${correo}`);

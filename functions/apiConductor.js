@@ -1,4 +1,5 @@
-const API = "http://192.168.1.75:8080/";
+import { API } from "./api";
+
 
 export const getConductor = async (persona) => {
   const res = await fetch(`${API}conductores/getConductor`, {

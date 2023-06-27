@@ -1,11 +1,14 @@
+import { API } from "./api";
+
+
 export const getImage = async (image) => {
-    const res = await fetch(`http://192.168.1.75:8080/images/${image}`);
+    const res = await fetch(API+`images/${image}`);
     return res.body;
   };
 
   export const cambiarImagen = async (user, imagen) => {
     const res = await fetch(
-      `${API}usuarios/editarImagenPerfil?imagen=${imagen}`,
+      `${APII}usuarios/editarImagenPerfil?imagen=${imagen}`,
       {
         method: "PUT",
         headers: {

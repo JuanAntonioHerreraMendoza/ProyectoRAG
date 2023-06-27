@@ -2,6 +2,7 @@ import { View, Image, StyleSheet,Dimensions} from "react-native";
 import React from "react";
 import { useState } from "react";
 import { useEffect } from "react";
+import { API } from "../../functions/api";
 
 const VistaDocumentos = ({ route }) => {
   const [width, setWidth] = useState(0);
@@ -16,7 +17,7 @@ const VistaDocumentos = ({ route }) => {
     <View style={styles.container}>
       <Image
         source={{
-          uri: "http://192.168.1.75:8080/images/" + route.params.imagen+"?path=documentos"
+          uri: API+"images/" + route.params.imagen+"?path=documentos"
         }}
         alt="react logo"
         style={{ width: heigth, height: width, transform: [{ rotate: "90deg" }] }}
