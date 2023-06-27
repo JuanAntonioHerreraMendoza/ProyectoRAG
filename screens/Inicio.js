@@ -19,7 +19,7 @@ import { getUltimoReporte, getConteos } from "../functions/apiReportes";
 
 export function Home({ navigation }) {
   //Obtencion de contexto(Informacion de usuario)
-  const { userInfo, isLoading, logout } = useContext(AuthContext);
+  const { userInfo, logged } = useContext(AuthContext);
 
   //Variables
   const [reportes, setReportes] = useState([]);
@@ -28,7 +28,10 @@ export function Home({ navigation }) {
   const isFocused = useIsFocused();
 
   const loadReportes = async () => {
-    if (userInfo.tipousuariofk.idtipousuario === 1 || userInfo.tipousuariofk.idtipousuario === 3) {
+    if (
+      userInfo.tipousuariofk.idtipousuario === 1 ||
+      userInfo.tipousuariofk.idtipousuario === 3
+    ) {
       const data = await getUltimoReporte(userInfo.idpersonafk.idpersona);
       setReportes(data);
       const conteoData = await getConteos(userInfo.idpersonafk.idpersona);
@@ -45,6 +48,12 @@ export function Home({ navigation }) {
   useEffect(() => {
     loadReportes();
   }, [isFocused]);
+
+  useEffect(() => {
+    if (logged) {
+      navigation.navigate("ReporteForm")
+    }
+  }, []);
 
   const renderItem = ({ item }) => {
     return <ReporteItem reporte={item}></ReporteItem>;

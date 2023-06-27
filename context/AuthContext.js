@@ -17,6 +17,7 @@ export const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [userInfo, setUserInfo] = useState({});
   const [Conductor, setConductor] = useState({});
+  const [logged, setlogged] = useState(false)
   const [isLoading, setIsLoading] = useState(false);
   const [splashLoading, setSplashLoading] = useState(false);
 
@@ -121,7 +122,7 @@ export const AuthProvider = ({ children }) => {
       AsyncStorage.removeItem("userInfo");
       AsyncStorage.removeItem("userConductor");
       setUserInfo({});
-      setConductor({});
+      setlogged(false)
       setIsLoading(false);
     } catch (error) {
       alert(`logout error ${error}`);
@@ -149,13 +150,14 @@ export const AuthProvider = ({ children }) => {
           setUserInfo({});
           setIsLoading(false);
         } catch (error) {
-          alert(`logout error ${error}`);
+          alert(`${error}`);
           setIsLoading(false);
         }
         return;
       }
       if (userInfo) {
         setUserInfo(userInfo);
+        setlogged(true)
       }
     } catch (e) {
       setSplashLoading(false);
@@ -168,7 +170,7 @@ export const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider
-      value={{ isLoading, userInfo, splashLoading, login, loginGoogle, logout }}
+      value={{ isLoading, userInfo, splashLoading,logged, login, loginGoogle, logout }}
     >
       {children}
     </AuthContext.Provider>

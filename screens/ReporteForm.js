@@ -127,20 +127,22 @@ const ReporteForm = ({ navigation, route }) => {
         </Text>
       </View>
       <View style={styles.container}>
-        {route.params?.video === true ? (
-          <Video
-            source={{ uri: route.params.uri }}
-            useNativeControls
-            style={styles.imagen}
-          />
-        ) : route.params?.uri ? (
-          <Image source={{ uri: route.params.uri }} style={styles.imagen} />
-        ) : (
-          <Image
-            source={require("../assets/camera.png")}
-            style={styles.imagen}
-          />
-        )}
+        <TouchableOpacity onPress={() => navigation.navigate("Camara")}>
+          {route.params?.video === true ? (
+            <Video
+              source={{ uri: route.params.uri }}
+              useNativeControls
+              style={styles.imagen}
+            />
+          ) : route.params?.uri ? (
+            <Image source={{ uri: route.params.uri }} style={styles.imagen} />
+          ) : (
+            <Image
+              source={require("../assets/camera.png")}
+              style={styles.imagen}
+            />
+          )}
+        </TouchableOpacity>
         {inputsValidate ? (
           <Text style={styles.warningText}>Rellene todos los campos</Text>
         ) : (
@@ -174,14 +176,25 @@ const ReporteForm = ({ navigation, route }) => {
           <TextInput
             placeholder="Url de la imagen"
             placeholderTextColor={"#ffffff"}
-            style={styles.input}
+            style={{
+              width: "90%",
+              fontSize: 14,
+              marginBottom: 10,
+              borderWidth: 1,
+              borderColor: "gray",
+              height: 35,
+              color: "#ffffff",
+              padding: 5,
+              textalign: "center",
+              borderRadius: 5,
+            }}
             value={route.params?.uri}
             editable={false}
           />
-          <ButtonCamera
+          {/* <ButtonCamera
             icon="camera"
             onPress={() => navigation.navigate("Camara")}
-          />
+          /> */}
         </View>
         <SelectList
           setSelected={(val) => setSelected(val)}
