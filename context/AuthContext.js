@@ -4,6 +4,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   editarUsuario,
   existeToken,
+  getUsuario,
   guardarToken,
   loginuser,
   loginusergoogle,
@@ -23,9 +24,10 @@ export const AuthProvider = ({ children }) => {
     setIsLoading(true);
     let userInfo = await loginuser(user);
     if (userInfo === undefined) {
-      setIsLoading(false);
-    } else if (userInfo.idpersonafk.activo === false) {
-      setIsLoading(false);
+      return setIsLoading(false);
+    }
+    if (userInfo.idpersonafk?.activo === false) {
+      setIsLoading(true);
       if (
         Date.parse(userInfo.idpersonafk.fechasuspencion) < Date.parse(Date())
       ) {
@@ -50,6 +52,7 @@ export const AuthProvider = ({ children }) => {
             ) +
             " por infrigir las normas de uso de la aplicacion"
         );
+        setIsLoading(false);
       }
     } else {
       setUserInfo(userInfo);
@@ -71,8 +74,8 @@ export const AuthProvider = ({ children }) => {
     if (userInfo.usuario === null) {
       setIsLoading(false);
       return false;
-    } else if (userInfo.idpersonafk.activo === false) {
-      setIsLoading(false);
+    } else if (userInfo.idpersonafk?.activo === false) {
+      setIsLoading(true);
       if (
         Date.parse(userInfo.idpersonafk.fechasuspencion) < Date.parse(Date())
       ) {
@@ -97,6 +100,7 @@ export const AuthProvider = ({ children }) => {
             ) +
             " por infrigir las normas de uso de la aplicacion"
         );
+        setIsLoading(false);
       }
     } else {
       setUserInfo(userInfo);
@@ -138,9 +142,8 @@ export const AuthProvider = ({ children }) => {
 
       let userInfo = await AsyncStorage.getItem("userInfo");
       userInfo = JSON.parse(userInfo);
-
-      let aux = await loginuser({usuario:userInfo.usuario,contraseña:userInfo.contraseña});
-      if(aux.idpersonafk.activo===false){
+      let aux = await getUsuario(userInfo.idusuarios);
+      if (aux.idpersonafk?.activo === false) {
         try {
           AsyncStorage.removeItem("userInfo");
           setUserInfo({});
@@ -149,9 +152,8 @@ export const AuthProvider = ({ children }) => {
           alert(`logout error ${error}`);
           setIsLoading(false);
         }
-        return
+        return;
       }
-
       if (userInfo) {
         setUserInfo(userInfo);
       }

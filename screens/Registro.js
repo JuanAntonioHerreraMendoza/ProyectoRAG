@@ -176,7 +176,7 @@ const Registro = () => {
             onPress={() => setChecked(1)}
             checkedIcon="dot-circle-o"
             uncheckedIcon="circle-o"
-            title="Agente ciudadano"
+            title="Conductor"
           />
         </View>
         <View style={styles.form}>

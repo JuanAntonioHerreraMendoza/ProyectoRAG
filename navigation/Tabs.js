@@ -7,6 +7,7 @@ import HomeStackScreen from "./HomeStack";
 import SettingsStack from "./SettingsStack";
 import DocumentosStack from "./DocumentosStack";
 import OficialStack from "./OficialStack";
+import MensajesStack from "./MensajesStack";
 
 //Creacion de los tabs para navegacion
 const Tab = createBottomTabNavigator();
@@ -30,6 +31,8 @@ export default function Tabs() {
             iconName = focused ? "card" : "card-outline";
           } else if (route.name === "OficialStack") {
             iconName = focused ? "search-circle" : "search-circle-outline";
+          } else if (route.name === "MensajesStack") {
+            iconName = focused ? "chatbox-ellipses" : "chatbox-ellipses-outline";
           }
 
           return <Ionicons name={iconName} size={size} color={color} />;
@@ -48,11 +51,18 @@ export default function Tabs() {
         options={{ headerShown: false, title: "Inicio" }}
       />
       {userInfo.tipousuariofk.idtipousuario === 2 ? (
-        <Tab.Screen
-          name="DocumentosStack"
-          component={DocumentosStack}
-          options={{ tabBarLabel: "Documentos", headerShown: false }}
-        />
+        <>
+          <Tab.Screen
+            name="DocumentosStack"
+            component={DocumentosStack}
+            options={{ tabBarLabel: "Documentos", headerShown: false }}
+          />
+          <Tab.Screen
+            name="MensajesStack"
+            component={MensajesStack}
+            options={{ tabBarLabel: "Mensajes", headerShown: false }}
+          />
+        </>
       ) : (
         <>
           <Tab.Screen

@@ -1,4 +1,3 @@
-import { Alert } from "react-native";
 
 const API = "http://192.168.1.75:8080/"; //"http://172.20.10.2:8080/";
 
@@ -73,6 +72,17 @@ export const saveUsuario = async (persona) => {
       "Content-Type": "application/json",
     },
     body: JSON.stringify(persona),
+  });
+  return await res.json();
+};
+
+export const getUsuario = async (id) => {
+  const res = await fetch(`${API}usuarios/getUsuario?id=`+id, {
+    method: "GET",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
   });
   return await res.json();
 };
