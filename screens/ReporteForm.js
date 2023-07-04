@@ -16,7 +16,7 @@ import MapView, { Marker } from "react-native-maps";
 import { Button } from "@rneui/themed";
 import { SelectList } from "react-native-dropdown-select-list";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import { saveReporte } from "../functions/apiReportes";
+import { getInfracciones, saveReporte } from "../functions/apiReportes";
 import { uploadImage } from "../functions/apiImage";
 import { Video } from "expo-av";
 import AwesomeAlert from "react-native-awesome-alerts";
@@ -27,6 +27,7 @@ import {
 
 const ReporteForm = ({ navigation, route }) => {
   const date = new Date();
+  const [infracciones, setInfracciones] = useState([]);
   const [showAlert, setshowAlert] = useState(false);
   const [selected, setSelected] = useState([]);
   const [showAlertUbicacion, setshowAlertUbicacion] = useState(false);
@@ -41,19 +42,17 @@ const ReporteForm = ({ navigation, route }) => {
 
   const { userInfo } = useContext(AuthContext);
 
-  const data = [
-    { key: "1", value: "Mal estacionado" },
-    { key: "2", value: "Golpe de vehiculos" },
-    { key: "3", value: "Auto sin luces" },
-    { key: "4", value: "Manejar sin licencia" },
-    { key: "5", value: "No usar el cinturón de seguridad" },
-    { key: "6", value: "Uso de celular al manejar" },
-    { key: "7", value: "Rebasar el límite de velocidad" },
-    { key: "8", value: "Conducir alcoholizado o bajo los efectos de drogas" },
-  ];
+  const getInfraccionesInfo = async () => {
+    const res = await getInfracciones();
+    let newArray = res.map((item) => {
+      return { key: item.idtipoincidente, value: item.incidente };
+    });
+    setInfracciones(newArray);
+  };
 
   useEffect(() => {
     (async () => {
+      getInfraccionesInfo();
       const response = await getCurrentLocation();
       if (response.status) {
         setNewRegion(response.location);
@@ -100,7 +99,7 @@ const ReporteForm = ({ navigation, route }) => {
         descripcion: descrip,
         ubicacion: location.latitude + "," + location.longitude,
         evidencia: filename,
-        estatus: "Revision",
+        estatus: "Revisión",
         razon: selected,
         idreportadorfk: userInfo.idpersonafk.idpersona,
         tipousuariofk: userInfo.tipousuariofk.idtipousuario,
@@ -191,14 +190,10 @@ const ReporteForm = ({ navigation, route }) => {
             value={route.params?.uri}
             editable={false}
           />
-          {/* <ButtonCamera
-            icon="camera"
-            onPress={() => navigation.navigate("Camara")}
-          /> */}
         </View>
         <SelectList
           setSelected={(val) => setSelected(val)}
-          data={data}
+          data={infracciones}
           save="value"
           placeholder="Tipo de infraccion"
           inputStyles={{ color: "white", width: "72%" }}

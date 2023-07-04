@@ -168,6 +168,10 @@ const Settings = () => {
             <View style={styles.containerInfo}>
               <Text style={styles.font}>{userInfo.idpersonafk.municipio}</Text>
             </View>
+            <Text style={styles.fontTitle}>Codigo postal</Text>
+            <View style={styles.containerInfo}>
+              <Text style={styles.font}>{userInfo.idpersonafk.codigopostal}</Text>
+            </View>
             <Text style={styles.fontTitle}>Teléfono</Text>
             <View style={styles.containerInfo}>
               <Text style={styles.font}>{userInfo.idpersonafk.telefono}</Text>
