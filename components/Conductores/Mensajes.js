@@ -43,12 +43,8 @@ const Mensajes = () => {
   const Item = ({ name, mensaje }) => {
     return (
       <View style={styles.item}>
-        <TouchableOpacity
-          onPress={() => {
-            console.log(name);
-          }}
-        >
-          <Text style={{ color: "white", fontWeight: "bold", fontSize: "20%" }}>
+        <TouchableOpacity>
+          <Text style={{ color: "white", fontWeight: "bold", fontSize: 20 }}>
             {name}
           </Text>
           <Text style={{ color: "white" }}>{mensaje}</Text>

@@ -5,7 +5,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { AuthContext } from "../context/AuthContext";
 import { registerForPushNotificationsAsync } from "../functions/notificaciones";
 import * as Notifications from "expo-notifications";
-import { navigate, navigationRef } from '../functions/rootNavigation';
+import { navigate, navigationRef } from "../functions/rootNavigation";
 
 import Login from "../screens/LoginScreen";
 import Tabs from "../navigation/Tabs";
@@ -31,28 +31,21 @@ function Navigation() {
     }),
   });
 
-  const handleNotification = (response) => {
-    // if (response) {
-    //   
-    // }
-  };
+  const handleNotification = (response) => {};
 
   const handleNotificationResponse = (response) => {
     if (response) {
-      navigate("Notificaciones")
+      navigate("Notificaciones");
     }
   };
 
   useEffect(() => {
-    // This listener is fired whenever a notification is received while the app is foregrounded
     notificationListener.current =
       Notifications.addNotificationReceivedListener(handleNotification);
 
-    // This listener is fired whenever a user taps on or interacts with a notification (works when app is foregrounded, backgrounded, or killed)
-    responseListener.current =
-      Notifications.addNotificationResponseReceivedListener(
-        handleNotificationResponse
-      );
+    Notifications.addNotificationResponseReceivedListener(
+      handleNotificationResponse
+    );
 
     return () => {
       Notifications.removeNotificationSubscription(

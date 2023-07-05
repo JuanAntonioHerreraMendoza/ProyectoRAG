@@ -51,22 +51,22 @@ const ReporteForm = ({ navigation, route }) => {
   };
 
   useEffect(() => {
-    (async () => {
-      getInfraccionesInfo();
-      const response = await getCurrentLocation();
-      if (response.status) {
-        setNewRegion(response.location);
-        setDirec(
-          response.direccion[0].city +
-            "," +
-            response.direccion[0].street +
-            "," +
-            response.direccion[0].subregion +
-            "," +
-            response.direccion[0].postalCode
-        );
-      }
-    })();
+    getInfraccionesInfo().then(
+      getCurrentLocation().then((response) => {
+        if (response.status) {
+          setNewRegion(response.location);
+          setDirec(
+            response.direccion[0].city +
+              "," +
+              response.direccion[0].street +
+              "," +
+              response.direccion[0].subregion +
+              "," +
+              response.direccion[0].postalCode
+          );
+        }
+      })
+    );
   }, []);
 
   useEffect(() => {
@@ -197,8 +197,8 @@ const ReporteForm = ({ navigation, route }) => {
           save="value"
           placeholder="Tipo de infraccion"
           inputStyles={{ color: "white", width: "72%" }}
-          boxStyles={{ marginBottom: 10, height: 40, color: "white" }}
-          dropdownStyles={{ width: 300, marginBottom: 15 }}
+          boxStyles={{ marginBottom: 10, height: 50, color: "white" }}
+          dropdownStyles={{ width: 300, marginBottom: 15, height: 150 }}
           dropdownTextStyles={{ color: "white" }}
           search={false}
           arrowicon={
@@ -226,23 +226,21 @@ const ReporteForm = ({ navigation, route }) => {
       </View>
       <Modal isVisible={mapVisible} setVisible={setmapVisible}>
         <View>
-          {newRegion && (
-            <MapView
-              style={styles.map}
-              initialRegion={newRegion}
-              showsUserLocation
-              onRegionChange={(region) => setLocation(region)}
-            >
-              <Marker
-                coordinate={{
-                  latitude: newRegion.latitude,
-                  longitude: newRegion.longitude,
-                }}
-                draggable={true}
-                pinColor={"green"}
-              />
-            </MapView>
-          )}
+          <MapView
+            style={styles.map}
+            initialRegion={newRegion}
+            showsUserLocation
+            onRegionChange={(region) => setLocation(region)}
+          >
+            <Marker
+              coordinate={{
+                latitude: newRegion.latitude,
+                longitude: newRegion.longitude,
+              }}
+              draggable={true}
+              pinColor={"green"}
+            />
+          </MapView>
           <View style={styles.viewMap}>
             <Button
               title={"Guardar"}
