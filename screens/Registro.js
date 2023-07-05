@@ -34,6 +34,7 @@ const Registro = () => {
   //Variables
   const [modalTerm, setModalTerm] = useState(true);
   const [showAlert, setshowAlert] = useState(false);
+  const [showAlert2, setshowAlert2] = useState(false);
   const [message, setMessage] = useState("");
   const [inputsValidate, setinputsValidate] = useState(false);
   const [emailValidate, setemailValidate] = useState(false);
@@ -44,7 +45,6 @@ const Registro = () => {
   const [checkedTerms, setCheckedTerms] = useState(false);
   const [messageE, setMessageE] = useState("");
   const [image, setImage] = useState(null);
-  const [codigo, setCodigo] = useState("");
 
   const [persona, setPersona] = useState({
     nombres: "",
@@ -54,6 +54,7 @@ const Registro = () => {
     calle: "",
     colonia: "",
     municipio: "",
+    codigopostal: "",
     telefono: "",
     numcuenta: "",
     claveInterB: "",
@@ -73,7 +74,9 @@ const Registro = () => {
   });
 
   const validarInputs = (persona) => {
-    if (Object.values(persona).includes("")) return true;
+    if (Object.values(persona).includes("")) {
+      return true;
+    }
   };
   const handleChangeP = (name, value) => {
     setPersona({ ...persona, [name]: value });
@@ -92,6 +95,10 @@ const Registro = () => {
     }
     persona.imagen1 = image[0].uri.split("/").pop();
     persona.imagen2 = image[1].uri.split("/").pop();
+
+    if (checked === 0) {
+      persona.datoconductor = "null";
+    }
 
     if (validarInputs(persona)) {
       return setinputsValidate(true);
@@ -125,8 +132,16 @@ const Registro = () => {
       : (tipousuario.idtipousuario = "2");
 
     persona.tipousuariofk = tipousuario;
-    await saveUsuario(persona).then(uploadImagesReg(image));
-    navigation.navigate("Login");
+    await saveUsuario(persona)
+      .then(uploadImagesReg(image))
+      .catch((error) => {
+        setMessage("Ha sucedido un error.Intentelo de nuevo mas tarde");
+        return setshowAlert(true);
+      });
+    setMessage(
+      "Se ha registrado su peticion de registro, se le notificara cuando su usuario sea aceptado o rechazado."
+    );
+    setshowAlert2(true);
   };
 
   //Funcion para elegir imagenes de la biblioteca
@@ -248,6 +263,14 @@ const Registro = () => {
             placeholder="Municipio"
             placeholderTextColor={"white"}
             onChangeText={(text) => handleChangeP("municipio", text)}
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Codigo postal"
+            keyboardType="numeric"
+            maxLength={5}
+            placeholderTextColor={"white"}
+            onChangeText={(text) => handleChangeP("codigopostal", text)}
           />
           <TextInput
             style={styles.input}
@@ -445,6 +468,29 @@ const Registro = () => {
         messageStyle={{ color: "white", textAlign: "center" }}
         onConfirmPressed={() => {
           setshowAlert(false);
+        }}
+      />
+      <AwesomeAlert
+        show={showAlert2}
+        showProgress={false}
+        title="Alerta"
+        message={message}
+        closeOnTouchOutside={true}
+        closeOnHardwareBackPress={false}
+        showConfirmButton={true}
+        confirmText="Entendido"
+        confirmButtonColor="#105293"
+        cancelButtonColor="red"
+        contentContainerStyle={{ backgroundColor: "#1E262E" }}
+        contentStyle={{ backgroundColor: "#1E262E" }}
+        titleStyle={{ color: "white", textAlign: "center" }}
+        messageStyle={{ color: "white", textAlign: "center" }}
+        onConfirmPressed={() => {
+          setshowAlert(false);
+          navigation.navigate("Login");
+        }}
+        onDismiss={() => {
+          navigation.navigate("Login");
         }}
       />
     </ScrollView>

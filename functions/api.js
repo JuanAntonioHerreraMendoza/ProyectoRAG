@@ -1,6 +1,6 @@
 
-//export const API = "http://192.168.1.71:8080/"; 
-export const API = "https://14b1-187-221-239-17.ngrok-free.app/"; 
+export const API = "http://192.168.1.75:8080/"; 
+//export const API = "https://14b1-187-221-239-17.ngrok-free.app/"; 
 
 export const loginuser = async (user) => {
   const res = await fetch(`${API}usuarios/login`, {

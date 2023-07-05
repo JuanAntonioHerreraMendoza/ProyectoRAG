@@ -30,3 +30,8 @@ export const saveReporte = async (reporte) => {
   });
   return await res.json();
 };
+
+export const getInfracciones = async () => {
+  const res = await fetch(`${API}incidentes`);
+  return await res.json();
+};

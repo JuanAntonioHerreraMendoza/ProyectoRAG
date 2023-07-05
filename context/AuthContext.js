@@ -17,7 +17,7 @@ export const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [userInfo, setUserInfo] = useState({});
   const [Conductor, setConductor] = useState({});
-  const [logged, setlogged] = useState(false)
+  const [logged, setlogged] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [splashLoading, setSplashLoading] = useState(false);
 
@@ -30,10 +30,26 @@ export const AuthProvider = ({ children }) => {
     if (userInfo.idpersonafk?.activo === false) {
       setIsLoading(true);
       if (
-        Date.parse(userInfo.idpersonafk.fechasuspencion) < Date.parse(Date())
+        Date.parse(userInfo.idpersonafk.fechasuspencioninicio) <
+          Date.parse(Date()) &&
+        Date.parse(userInfo.idpersonafk.fechasuspencion) > Date.parse(Date())
       ) {
-        userInfo.idpersonafk.activo = true;
-        await editarUsuario(userInfo);
+        alert(
+          "Ha sido suspendido hasta el: " +
+            JSON.stringify(userInfo.idpersonafk.fechasuspencion).split("T")[0] +
+            " a las " +
+            JSON.stringify(userInfo.idpersonafk.fechasuspencion).split("T")[1] +
+            " por infrigir las normas de uso de la aplicacion"
+        );
+
+        setIsLoading(false);
+      } else {
+        if (
+          Date.parse(userInfo.idpersonafk.fechasuspencion) < Date.parse(Date())
+        ) {
+          userInfo.idpersonafk.activo = true;
+          await editarUsuario(userInfo);
+        }
         setUserInfo(userInfo);
         AsyncStorage.setItem("userInfo", JSON.stringify(userInfo));
         registerForPushNotificationsAsync().then((token) =>
@@ -42,16 +58,6 @@ export const AuthProvider = ({ children }) => {
               guardarToken(token, userInfo.usuario);
             }
           })
-        );
-        setIsLoading(false);
-      } else {
-        alert(
-          "Ha sido suspendido hasta el: " +
-            JSON.stringify(userInfo.idpersonafk.fechasuspencion).substring(
-              1,
-              11
-            ) +
-            " por infrigir las normas de uso de la aplicacion"
         );
         setIsLoading(false);
       }
@@ -78,10 +84,26 @@ export const AuthProvider = ({ children }) => {
     } else if (userInfo.idpersonafk?.activo === false) {
       setIsLoading(true);
       if (
-        Date.parse(userInfo.idpersonafk.fechasuspencion) < Date.parse(Date())
+        Date.parse(userInfo.idpersonafk.fechasuspencioninicio) <
+          Date.parse(Date()) &&
+        Date.parse(userInfo.idpersonafk.fechasuspencion) > Date.parse(Date())
       ) {
-        userInfo.idpersonafk.activo = true;
-        await editarUsuario(userInfo);
+        alert(
+          "Ha sido suspendido hasta el: " +
+            JSON.stringify(userInfo.idpersonafk.fechasuspencion).split("T")[0] +
+            " a las " +
+            JSON.stringify(userInfo.idpersonafk.fechasuspencion).split("T")[1] +
+            " por infrigir las normas de uso de la aplicacion"
+        );
+
+        setIsLoading(false);
+      } else {
+        if (
+          Date.parse(userInfo.idpersonafk.fechasuspencion) < Date.parse(Date())
+        ) {
+          userInfo.idpersonafk.activo = true;
+          await editarUsuario(userInfo);
+        }
         setUserInfo(userInfo);
         AsyncStorage.setItem("userInfo", JSON.stringify(userInfo));
         registerForPushNotificationsAsync().then((token) =>
@@ -90,16 +112,6 @@ export const AuthProvider = ({ children }) => {
               guardarToken(token, userInfo.usuario);
             }
           })
-        );
-        setIsLoading(false);
-      } else {
-        alert(
-          "Ha sido suspendido hasta el: " +
-            JSON.stringify(userInfo.idpersonafk.fechasuspencion).substring(
-              1,
-              11
-            ) +
-            " por infrigir las normas de uso de la aplicacion"
         );
         setIsLoading(false);
       }
@@ -122,7 +134,7 @@ export const AuthProvider = ({ children }) => {
       AsyncStorage.removeItem("userInfo");
       AsyncStorage.removeItem("userConductor");
       setUserInfo({});
-      setlogged(false)
+      setlogged(false);
       setIsLoading(false);
     } catch (error) {
       alert(`logout error ${error}`);
@@ -144,8 +156,13 @@ export const AuthProvider = ({ children }) => {
       let userInfo = await AsyncStorage.getItem("userInfo");
       userInfo = JSON.parse(userInfo);
       let aux = await getUsuario(userInfo.idusuarios);
-      if (aux.idpersonafk?.activo === false) {
+      if (
+        Date.parse(aux.idpersonafk.fechasuspencioninicio) <
+          Date.parse(Date()) &&
+        aux.idpersonafk?.activo === false
+      ) {
         try {
+          alert("Estas suspendido por infringir normas");
           AsyncStorage.removeItem("userInfo");
           setUserInfo({});
           setIsLoading(false);
@@ -157,7 +174,7 @@ export const AuthProvider = ({ children }) => {
       }
       if (userInfo) {
         setUserInfo(userInfo);
-        setlogged(true)
+        setlogged(true);
       }
     } catch (e) {
       setSplashLoading(false);
@@ -170,7 +187,15 @@ export const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider
-      value={{ isLoading, userInfo, splashLoading,logged, login, loginGoogle, logout }}
+      value={{
+        isLoading,
+        userInfo,
+        splashLoading,
+        logged,
+        login,
+        loginGoogle,
+        logout,
+      }}
     >
       {children}
     </AuthContext.Provider>
