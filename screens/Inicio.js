@@ -50,7 +50,7 @@ export function Home({ navigation }) {
   }, [isFocused]);
 
   useEffect(() => {
-    if (logged) {
+    if (logged && userInfo.tipousuariofk.idtipousuario!==2) {
       navigation.navigate("ReporteForm")
     }
   }, []);
