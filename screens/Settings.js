@@ -14,7 +14,12 @@ import { useContext, useEffect, useState } from "react";
 import { Button } from "@rneui/themed";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import AwesomeAlert from "react-native-awesome-alerts";
-import { API, cambiarContraseña, cambiarNumeroCuenta } from "../functions/api";
+import {
+  API,
+  cambiarContraseña,
+  cambiarNumeroCuenta,
+  existeNumCuenta,
+} from "../functions/api";
 import { getConductor } from "../functions/apiConductor";
 import { enviarCorreo } from "../functions/apiCorreo";
 import * as ImagePicker from "expo-image-picker";
@@ -71,6 +76,12 @@ const Settings = () => {
     setConductor(data);
   };
 
+  const existenciaNumCuenta = (cuenta) => {
+    existeNumCuenta(cuenta).then((res) => {
+      if (res) return true;
+    });
+  };
+
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -107,7 +118,8 @@ const Settings = () => {
             <Image
               source={{
                 uri:
-                  API+"images/" +
+                  API +
+                  "images/" +
                   userInfo.idpersonafk.imagenperfil +
                   "?path=imagesPerfil",
               }}
@@ -156,6 +168,10 @@ const Settings = () => {
             <View style={styles.containerInfo}>
               <Text style={styles.font}>{userInfo.idpersonafk.edad}</Text>
             </View>
+            <Text style={styles.fontTitle}>Curp</Text>
+            <View style={styles.containerInfo}>
+              <Text style={styles.font}>{userInfo.idpersonafk.curp}</Text>
+            </View>
             <Text style={styles.fontTitle}>Calle</Text>
             <View style={styles.containerInfo}>
               <Text style={styles.font}>{userInfo.idpersonafk.calle}</Text>
@@ -170,7 +186,9 @@ const Settings = () => {
             </View>
             <Text style={styles.fontTitle}>Codigo postal</Text>
             <View style={styles.containerInfo}>
-              <Text style={styles.font}>{userInfo.idpersonafk.codigopostal}</Text>
+              <Text style={styles.font}>
+                {userInfo.idpersonafk.codigopostal}
+              </Text>
             </View>
             <Text style={styles.fontTitle}>Teléfono</Text>
             <View style={styles.containerInfo}>
@@ -305,6 +323,8 @@ const Settings = () => {
                   setMessageE("Rellene el campo");
                 } else if (aux !== null) {
                   setMessageE(aux);
+                } else if (existenciaNumCuenta(persona.numcuenta)) {
+                  setMessageE("Ya existe el numero de cuenta");
                 } else {
                   setNumCModalVisible(false);
                   setshowAlert(true);

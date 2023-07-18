@@ -11,7 +11,7 @@ import {
 import { useState } from "react";
 import { CheckBox } from "@rneui/themed";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import { saveUsuario } from "../functions/api";
+import { existeCurp, existeNumCuenta, saveUsuario } from "../functions/api";
 import { uploadImagesReg } from "../functions/apiImage";
 import {
   validarContraseña,
@@ -38,6 +38,9 @@ const Registro = () => {
   const [message, setMessage] = useState("");
   const [inputsValidate, setinputsValidate] = useState(false);
   const [emailValidate, setemailValidate] = useState(false);
+  const [curpValidate, setCurpValidate] = useState(false);
+  const [curpExiste, setCurpExiste] = useState(false);
+  const [cuentaExiste, setCuentaExiste] = useState(false);
   const [passValidate, setpassValidate] = useState(false);
   const [imageValidate, setimageValidate] = useState(false);
   const [seePass, setSeePass] = useState(true);
@@ -51,6 +54,7 @@ const Registro = () => {
     apellidop: "",
     apellidom: "",
     edad: "",
+    curp: "",
     calle: "",
     colonia: "",
     municipio: "",
@@ -78,12 +82,34 @@ const Registro = () => {
       return true;
     }
   };
+
+  const validarCurp = () => {
+    if (persona.curp.length < 18) {
+      return true;
+    }
+  };
+
+  const existenciaCurp = (curp) => {
+    existeCurp(curp).then((res) => {
+      if (res) return true;
+    });
+  };
+
+  const existenciaNumCuenta = (cuenta) => {
+    existeNumCuenta(cuenta).then((res) => {
+      if (res) return true;
+    });
+  };
+
   const handleChangeP = (name, value) => {
     setPersona({ ...persona, [name]: value });
   };
 
   const handleSubmmit = async (persona, tipousuario) => {
+    setCurpExiste(false);
+    setCuentaExiste(false);
     setemailValidate(false);
+    setCurpValidate(false);
     setpassValidate(false);
     setinputsValidate(false);
     setimageValidate(false);
@@ -118,13 +144,26 @@ const Registro = () => {
 
     if (!validarEmail(persona.usuario)) {
       setemailValidate(true);
-      let checkPass = validarContraseña(persona.contraseña);
-      if (checkPass) {
-        setMessageE(checkPass);
-        setpassValidate(true);
-        return;
-      }
       return;
+    }
+
+    let checkPass = validarContraseña(persona.contraseña);
+    if (checkPass) {
+      setMessageE(checkPass);
+      setpassValidate(true);
+      return;
+    }
+
+    if (validarCurp()) {
+      return setCurpValidate(true);
+    }
+
+    if (existenciaCurp(persona.curp)) {
+      return setCurpExiste(true);
+    }
+
+    if (existenciaNumCuenta(persona.numcuenta)) {
+      return setCuentaExiste(true);
     }
 
     checked === 0
@@ -133,15 +172,17 @@ const Registro = () => {
 
     persona.tipousuariofk = tipousuario;
     await saveUsuario(persona)
-      .then(uploadImagesReg(image))
+      .then(() => {
+        uploadImagesReg(image);
+        setMessage(
+          "Se ha registrado su petición de registro, se le notificará cuando su usuario sea aceptado o rechazado."
+        );
+        setshowAlert2(true);
+      })
       .catch((error) => {
-        setMessage("Ha sucedido un error.Intentelo de nuevo mas tarde");
+        setMessage("Ha sucedido un error.Inténtelo de nuevo mas tarde.");
         return setshowAlert(true);
       });
-    setMessage(
-      "Se ha registrado su peticion de registro, se le notificara cuando su usuario sea aceptado o rechazado."
-    );
-    setshowAlert2(true);
   };
 
   //Funcion para elegir imagenes de la biblioteca
@@ -246,6 +287,28 @@ const Registro = () => {
             placeholderTextColor={"white"}
             onChangeText={(text) => handleChangeP("edad", text)}
           />
+          {curpValidate ? (
+            <Text style={styles.warningText}>
+              Se necesitan 18 caracteres para el curp
+            </Text>
+          ) : (
+            <></>
+          )}
+          {curpExiste ? (
+            <Text style={styles.warningText}>
+              Esta curp ya ha sido registrada
+            </Text>
+          ) : (
+            <></>
+          )}
+          <TextInput
+            style={styles.input}
+            placeholder="CURP"
+            maxLength={18}
+            placeholderTextColor={"white"}
+            value={persona.curp.toLocaleUpperCase()}
+            onChangeText={(text) => handleChangeP("curp", text)}
+          />
           <TextInput
             style={styles.input}
             placeholder="Calle"
@@ -280,6 +343,13 @@ const Registro = () => {
             placeholderTextColor={"white"}
             onChangeText={(text) => handleChangeP("telefono", text)}
           />
+          {cuentaExiste ? (
+            <Text style={styles.warningText}>
+              Este numero de cuenta ya existe
+            </Text>
+          ) : (
+            <></>
+          )}
           <TextInput
             style={styles.input}
             placeholder="Número de cuenta"
@@ -486,8 +556,7 @@ const Registro = () => {
         titleStyle={{ color: "white", textAlign: "center" }}
         messageStyle={{ color: "white", textAlign: "center" }}
         onConfirmPressed={() => {
-          setshowAlert(false);
-          navigation.navigate("Login");
+          setshowAlert2(false);
         }}
         onDismiss={() => {
           navigation.navigate("Login");

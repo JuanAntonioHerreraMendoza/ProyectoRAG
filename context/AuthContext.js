@@ -30,22 +30,22 @@ export const AuthProvider = ({ children }) => {
     if (userInfo.idpersonafk?.activo === false) {
       setIsLoading(true);
       if (
-        Date.parse(userInfo.idpersonafk.fechasuspencioninicio) <
+        Date.parse(userInfo.idpersonafk.fechasuspensioninicio) <
           Date.parse(Date()) &&
-        Date.parse(userInfo.idpersonafk.fechasuspencion) > Date.parse(Date())
+        Date.parse(userInfo.idpersonafk.fechasuspension) > Date.parse(Date())
       ) {
         alert(
           "Ha sido suspendido hasta el: " +
-            JSON.stringify(userInfo.idpersonafk.fechasuspencion).split("T")[0] +
+            JSON.stringify(userInfo.idpersonafk.fechasuspension).split("T")[0] +
             " a las " +
-            JSON.stringify(userInfo.idpersonafk.fechasuspencion).split("T")[1] +
+            JSON.stringify(userInfo.idpersonafk.fechasuspension).split("T")[1] +
             " por infrigir las normas de uso de la aplicacion"
         );
 
         setIsLoading(false);
       } else {
         if (
-          Date.parse(userInfo.idpersonafk.fechasuspencion) < Date.parse(Date())
+          Date.parse(userInfo.idpersonafk.fechasuspension) < Date.parse(Date())
         ) {
           userInfo.idpersonafk.activo = true;
           await editarUsuario(userInfo);
@@ -84,22 +84,22 @@ export const AuthProvider = ({ children }) => {
     } else if (userInfo.idpersonafk?.activo === false) {
       setIsLoading(true);
       if (
-        Date.parse(userInfo.idpersonafk.fechasuspencioninicio) <
+        Date.parse(userInfo.idpersonafk.fechasuspensioninicio) <
           Date.parse(Date()) &&
-        Date.parse(userInfo.idpersonafk.fechasuspencion) > Date.parse(Date())
+        Date.parse(userInfo.idpersonafk.fechasuspension) > Date.parse(Date())
       ) {
         alert(
           "Ha sido suspendido hasta el: " +
-            JSON.stringify(userInfo.idpersonafk.fechasuspencion).split("T")[0] +
+            JSON.stringify(userInfo.idpersonafk.fechasuspension).split("T")[0] +
             " a las " +
-            JSON.stringify(userInfo.idpersonafk.fechasuspencion).split("T")[1] +
+            JSON.stringify(userInfo.idpersonafk.fechasuspension).split("T")[1] +
             " por infrigir las normas de uso de la aplicacion"
         );
 
         setIsLoading(false);
       } else {
         if (
-          Date.parse(userInfo.idpersonafk.fechasuspencion) < Date.parse(Date())
+          Date.parse(userInfo.idpersonafk.fechasuspension) < Date.parse(Date())
         ) {
           userInfo.idpersonafk.activo = true;
           await editarUsuario(userInfo);
@@ -157,7 +157,7 @@ export const AuthProvider = ({ children }) => {
       userInfo = JSON.parse(userInfo);
       let aux = await getUsuario(userInfo.idusuarios);
       if (
-        Date.parse(aux.idpersonafk.fechasuspencioninicio) <
+        Date.parse(aux.idpersonafk.fechasuspensioninicio) <
           Date.parse(Date()) &&
         aux.idpersonafk?.activo === false
       ) {

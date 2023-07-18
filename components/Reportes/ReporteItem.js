@@ -18,7 +18,7 @@ const ReporteItem = ({ reporte,handleDelete}) => {
         <Text style={styles.itemTitle}>Reporte hecho el {fecha} </Text>
         <Text style={styles.itemTitle}>{reporte.direccion}</Text>
       </TouchableOpacity>
-      <Text style={reporte.estatus==='Revision' ? styles.itemStatusRev : (reporte.estatus==='Aceptado' ? styles.itemStatusAceptado : styles.itemStatusRechazado)}>{reporte.estatus}</Text>
+      <Text style={reporte.estatus==='Revisión' ? styles.itemStatusRev : (reporte.estatus==='Aceptado' ? styles.itemStatusAceptado : styles.itemStatusRechazado)}>{reporte.estatus}</Text>
     </View>
   );
 };

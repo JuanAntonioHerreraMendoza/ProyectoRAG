@@ -1,5 +1,5 @@
-
-export const API = "https://e24c-187-221-239-17.ngrok-free.app/"; 
+//export const API = "https://b773-187-221-235-195.ngrok-free.app/";
+export const API = "http://192.168.1.75:8080/";
 
 export const loginuser = async (user) => {
   const res = await fetch(`${API}usuarios/login`, {
@@ -77,7 +77,7 @@ export const saveUsuario = async (persona) => {
 };
 
 export const getUsuario = async (id) => {
-  const res = await fetch(`${API}usuarios/getUsuario?id=`+id, {
+  const res = await fetch(`${API}usuarios/getUsuario?id=` + id, {
     method: "GET",
     headers: {
       Accept: "application/json",
@@ -102,6 +102,33 @@ export const guardarToken = async (token, correo) => {
 export const existeToken = async (token) => {
   const res = await fetch(
     `${API}tokens/existeToken?token=${encodeURI(token)}`,
+    {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    }
+  );
+  return res;
+};
+
+export const existeCurp = async (curp) => {
+  const res = await fetch(
+    `${API}personal/existecurp?curp=${curp}`,
+    {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    }
+  );
+  return res;
+};
+export const existeNumCuenta = async (cuenta) => {
+  const res = await fetch(
+    `${API}personal/existenumcuenta?numcuenta=${cuenta}`,
     {
       method: "GET",
       headers: {

@@ -55,6 +55,7 @@ const ReporteForm = ({ navigation, route }) => {
       getCurrentLocation().then((response) => {
         if (response.status) {
           setNewRegion(response.location);
+          setLocation(response.location);
           setDirec(
             response.direccion[0].city +
               "," +
@@ -89,7 +90,7 @@ const ReporteForm = ({ navigation, route }) => {
       return setinputsValidate(true);
     }
     let localUri = route.params?.uri;
-    if (localUri === undefined || location === undefined) {
+    if (localUri === undefined) {
       return setshowAlertImagen(true);
     } else {
       let filename = localUri.split("/").pop();
@@ -104,13 +105,15 @@ const ReporteForm = ({ navigation, route }) => {
         idreportadorfk: userInfo.idpersonafk.idpersona,
         tipousuariofk: userInfo.tipousuariofk.idtipousuario,
       };
-      await saveReporte(reporte).then(
-        await uploadImage(localUri, "reportes")
-          .then(setShowAlertReporte(true))
-          .catch((error) => {
-            alert(error);
-          })
-      );
+
+      saveReporte(reporte)
+        .then(() => {
+          uploadImage(localUri, "reportes").then(setShowAlertReporte(true));
+        })
+        .catch((error) => {
+          alert(error);
+        });
+
       setNewRegion(null);
       route.params.uri = "";
       setDescripcion("");
@@ -218,7 +221,6 @@ const ReporteForm = ({ navigation, route }) => {
           style={styles.buttonSave}
           onPress={() => {
             setshowAlert(true);
-            enviarDatos();
           }}
         >
           <Text style={styles.buttonText}>Enviar Reporte</Text>
@@ -232,14 +234,14 @@ const ReporteForm = ({ navigation, route }) => {
             showsUserLocation
             onRegionChange={(region) => setLocation(region)}
           >
-            <Marker
+            {/* <Marker
               coordinate={{
                 latitude: newRegion.latitude,
                 longitude: newRegion.longitude,
               }}
               draggable={true}
               pinColor={"green"}
-            />
+            /> */}
           </MapView>
           <View style={styles.viewMap}>
             <Button
