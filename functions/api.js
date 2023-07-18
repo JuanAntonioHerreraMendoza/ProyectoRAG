@@ -126,9 +126,24 @@ export const existeCurp = async (curp) => {
   );
   return res;
 };
+
 export const existeNumCuenta = async (cuenta) => {
   const res = await fetch(
     `${API}personal/existenumcuenta?numcuenta=${cuenta}`,
+    {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    }
+  );
+  return res;
+};
+
+export const existeUsuario = async (usuario) => {
+  const res = await fetch(
+    `${API}usuarios/existeUsuario?correo=${usuario}`,
     {
       method: "GET",
       headers: {

@@ -11,7 +11,12 @@ import {
 import { useState } from "react";
 import { CheckBox } from "@rneui/themed";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import { existeCurp, existeNumCuenta, saveUsuario } from "../functions/api";
+import {
+  existeCurp,
+  existeNumCuenta,
+  existeUsuario,
+  saveUsuario,
+} from "../functions/api";
 import { uploadImagesReg } from "../functions/apiImage";
 import {
   validarContraseña,
@@ -41,6 +46,7 @@ const Registro = () => {
   const [curpValidate, setCurpValidate] = useState(false);
   const [curpExiste, setCurpExiste] = useState(false);
   const [cuentaExiste, setCuentaExiste] = useState(false);
+  const [usuarioExiste, setUsuarioExiste] = useState(false);
   const [passValidate, setpassValidate] = useState(false);
   const [imageValidate, setimageValidate] = useState(false);
   const [seePass, setSeePass] = useState(true);
@@ -101,6 +107,12 @@ const Registro = () => {
     });
   };
 
+  const existeCorreo = (usuario) => {
+    existeUsuario(usuario).then((res) => {
+      if (res) return true;
+    });
+  };
+
   const handleChangeP = (name, value) => {
     setPersona({ ...persona, [name]: value });
   };
@@ -141,6 +153,20 @@ const Registro = () => {
       setMessage(alertaDatosBancarios);
       return setshowAlert(true);
     }
+    if (validarCurp()) {
+      return setCurpValidate(true);
+    }
+
+    if (existenciaCurp(persona.curp)) {
+      return setCurpExiste(true);
+    }
+
+    if (existenciaNumCuenta(persona.numcuenta)) {
+      return setCuentaExiste(true);
+    }
+    if (existeCorreo(persona.correo)) {
+      return setUsuarioExiste(true);
+    }
 
     if (!validarEmail(persona.usuario)) {
       setemailValidate(true);
@@ -152,18 +178,6 @@ const Registro = () => {
       setMessageE(checkPass);
       setpassValidate(true);
       return;
-    }
-
-    if (validarCurp()) {
-      return setCurpValidate(true);
-    }
-
-    if (existenciaCurp(persona.curp)) {
-      return setCurpExiste(true);
-    }
-
-    if (existenciaNumCuenta(persona.numcuenta)) {
-      return setCuentaExiste(true);
     }
 
     checked === 0
@@ -386,6 +400,11 @@ const Registro = () => {
           />
           {emailValidate ? (
             <Text style={styles.warningText}>Formato de email incorrecto</Text>
+          ) : (
+            <></>
+          )}
+          {usuarioExiste ? (
+            <Text style={styles.warningText}>Este úsuario ya existe</Text>
           ) : (
             <></>
           )}
