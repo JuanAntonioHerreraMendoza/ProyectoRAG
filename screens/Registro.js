@@ -368,7 +368,7 @@ const Registro = () => {
             style={styles.input}
             placeholder="Número de cuenta"
             keyboardType="numeric"
-            maxLength={11}
+            maxLength={20}
             placeholderTextColor={"white"}
             onChangeText={(text) => handleChangeP("numcuenta", text)}
           />

@@ -24,6 +24,9 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
+import { KeyboardAvoidingView } from "react-native";
+import { Platform } from "react-native";
+import { ScrollView } from "react-native";
 
 const ReporteForm = ({ navigation, route }) => {
   const date = new Date();
@@ -93,13 +96,21 @@ const ReporteForm = ({ navigation, route }) => {
     if (localUri === undefined) {
       return setshowAlertImagen(true);
     } else {
-      let filename = localUri.split("/").pop();
+      let filename =
+        route.params?.video === false
+          ? localUri[0].split("/").pop()
+          : localUri.split("/").pop();
+      let filename2 = localUri[1] ? localUri[1].split("/").pop() : "null";
+      let filename3 = localUri[2] ? localUri[2].split("/").pop() : "null";
+
       let reporte = {
         fecha: date,
         direccion: direc,
         descripcion: descrip,
         ubicacion: location.latitude + "," + location.longitude,
         evidencia: filename,
+        evidencia2: filename2,
+        evidencia3: filename3,
         estatus: "Revisión",
         razon: selected,
         idreportadorfk: userInfo.idpersonafk.idpersona,
@@ -108,7 +119,20 @@ const ReporteForm = ({ navigation, route }) => {
 
       saveReporte(reporte)
         .then(() => {
-          uploadImage(localUri, "reportes").then(setShowAlertReporte(true));
+          if (route.params?.video === true) {
+            uploadImage(localUri, "reportes");
+          } else {
+            uploadImage(localUri[0], "reportes")
+              .then(() => {
+                if (filename2 !== "null") uploadImage(localUri[1], "reportes");
+              })
+              .then(() => {
+                if (filename3 !== "null") uploadImage(localUri[2], "reportes");
+              })
+              .then(() => {
+                setShowAlertReporte(true);
+              });
+          }
         })
         .catch((error) => {
           alert(error);
@@ -122,119 +146,139 @@ const ReporteForm = ({ navigation, route }) => {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <View style={{ flex: 1, backgroundColor: "#1E262E" }}>
       <View style={styles.title}>
         <Text style={styles.text}>
           Ingrese los datos para que pueda ser generado su reporte
         </Text>
       </View>
-      <View style={styles.container}>
-        <TouchableOpacity onPress={() => navigation.navigate("Camara")}>
-          {route.params?.video === true ? (
-            <Video
-              source={{ uri: route.params.uri }}
-              useNativeControls
-              style={styles.imagen}
+      <ScrollView style={{ flex: 1 }} automaticallyAdjustKeyboardInsets>
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : undefined}
+          style={{ flex: 1, backgroundColor: "black" }}
+        >
+          <View style={styles.container}>
+            <TouchableOpacity onPress={() => navigation.navigate("Camara")}>
+              {route.params?.video === true ? (
+                <Video
+                  source={{ uri: route.params.uri }}
+                  useNativeControls
+                  style={styles.imagen}
+                />
+              ) : route.params?.uri ? (
+                <Image
+                  source={{ uri: route.params.uri[0] }}
+                  style={styles.imagen}
+                />
+              ) : (
+                <Image
+                  source={require("../assets/camera.png")}
+                  style={styles.imagen}
+                />
+              )}
+            </TouchableOpacity>
+            {inputsValidate ? (
+              <Text style={styles.warningText}>Rellene todos los campos</Text>
+            ) : (
+              <></>
+            )}
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "space-between",
+                paddingHorizontal: 25,
+              }}
+            >
+              <TextInput
+                placeholder="Direccion"
+                placeholderTextColor={"#ffffff"}
+                style={styles.input}
+                value={direc}
+                onChangeText={(text) => {
+                  setDirec(text);
+                }}
+              ></TextInput>
+              <ButtonCamera
+                icon="location"
+                onPress={() => setmapVisible(true)}
+              />
+            </View>
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "space-between",
+                paddingHorizontal: 25,
+              }}
+            >
+              <TextInput
+                placeholder="Url de la imagen"
+                placeholderTextColor={"#ffffff"}
+                style={{
+                  width: "90%",
+                  fontSize: 14,
+                  marginBottom: 10,
+                  borderWidth: 1,
+                  borderColor: "gray",
+                  height: 35,
+                  color: "#ffffff",
+                  padding: 5,
+                  textalign: "center",
+                  borderRadius: 5,
+                }}
+                value={
+                  route.params?.video === true
+                    ? route.params.uri
+                    : route.params?.uri[0]
+                }
+                editable={false}
+              />
+            </View>
+            <SelectList
+              setSelected={(val) => setSelected(val)}
+              data={infracciones}
+              save="value"
+              placeholder="Tipo de infraccion"
+              inputStyles={{ color: "white", width: "72%" }}
+              boxStyles={{ marginBottom: 10, height: 50, color: "white" }}
+              dropdownStyles={{ width: 300, marginBottom: 15, height: 150 }}
+              dropdownTextStyles={{ color: "white" }}
+              search={false}
+              arrowicon={
+                <Ionicons
+                  name="chevron-down-outline"
+                  color={"white"}
+                  size={16}
+                />
+              }
             />
-          ) : route.params?.uri ? (
-            <Image source={{ uri: route.params.uri }} style={styles.imagen} />
-          ) : (
-            <Image
-              source={require("../assets/camera.png")}
-              style={styles.imagen}
+            <TextInput
+              placeholder="Ingrese una pequeña descripcion"
+              placeholderTextColor={"#ffffff"}
+              style={styles.inputArea}
+              value={descrip}
+              onChangeText={(text) => {
+                setDescripcion(text);
+              }}
             />
-          )}
-        </TouchableOpacity>
-        {inputsValidate ? (
-          <Text style={styles.warningText}>Rellene todos los campos</Text>
-        ) : (
-          <></>
-        )}
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "space-between",
-            paddingHorizontal: 25,
-          }}
-        >
-          <TextInput
-            placeholder="Direccion"
-            placeholderTextColor={"#ffffff"}
-            style={styles.input}
-            value={direc}
-            onChangeText={(text) => {
-              setDirec(text);
-            }}
-          ></TextInput>
-          <ButtonCamera icon="location" onPress={() => setmapVisible(true)} />
-        </View>
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "space-between",
-            paddingHorizontal: 25,
-          }}
-        >
-          <TextInput
-            placeholder="Url de la imagen"
-            placeholderTextColor={"#ffffff"}
-            style={{
-              width: "90%",
-              fontSize: 14,
-              marginBottom: 10,
-              borderWidth: 1,
-              borderColor: "gray",
-              height: 35,
-              color: "#ffffff",
-              padding: 5,
-              textalign: "center",
-              borderRadius: 5,
-            }}
-            value={route.params?.uri}
-            editable={false}
-          />
-        </View>
-        <SelectList
-          setSelected={(val) => setSelected(val)}
-          data={infracciones}
-          save="value"
-          placeholder="Tipo de infraccion"
-          inputStyles={{ color: "white", width: "72%" }}
-          boxStyles={{ marginBottom: 10, height: 50, color: "white" }}
-          dropdownStyles={{ width: 300, marginBottom: 15, height: 150 }}
-          dropdownTextStyles={{ color: "white" }}
-          search={false}
-          arrowicon={
-            <Ionicons name="chevron-down-outline" color={"white"} size={16} />
-          }
-        />
-        <TextInput
-          placeholder="Ingrese una pequeña descripcion"
-          placeholderTextColor={"#ffffff"}
-          style={styles.inputArea}
-          value={descrip}
-          onChangeText={(text) => {
-            setDescripcion(text);
-          }}
-        />
-        <TouchableOpacity
-          style={styles.buttonSave}
-          onPress={() => {
-            setshowAlert(true);
-          }}
-        >
-          <Text style={styles.buttonText}>Enviar Reporte</Text>
-        </TouchableOpacity>
-      </View>
-      <Modal isVisible={mapVisible} setVisible={setmapVisible}>
-        <View>
-          <MapView
-            style={styles.map}
-            initialRegion={newRegion}
-            showsUserLocation
-            onRegionChange={(region) => setLocation(region)}
-          >
-            {/* <Marker
+            <TouchableOpacity
+              style={styles.buttonSave}
+              onPress={() => {
+                setshowAlert(true);
+              }}
+            >
+              <Text style={styles.buttonText}>Enviar Reporte</Text>
+            </TouchableOpacity>
+          </View>
+
+          <Modal isVisible={mapVisible} setVisible={setmapVisible}>
+            <View>
+              <MapView
+                style={styles.map}
+                initialRegion={newRegion}
+                showsUserLocation
+                onRegionChange={(region) => setLocation(region)}
+              >
+                {/* <Marker
               coordinate={{
                 latitude: newRegion.latitude,
                 longitude: newRegion.longitude,
@@ -242,115 +286,117 @@ const ReporteForm = ({ navigation, route }) => {
               draggable={true}
               pinColor={"green"}
             /> */}
-          </MapView>
-          <View style={styles.viewMap}>
-            <Button
-              title={"Guardar"}
-              containerStyle={styles.containerSaveMapBtn}
-              buttonStyle={styles.saveMapBtn}
-              onPress={confirmLocation}
-            />
-            <Button
-              title={"Cancelar"}
-              containerStyle={styles.containerCancelMapBtn}
-              buttonStyle={styles.cancelMapBtn}
-              onPress={() => setmapVisible(false)}
-            />
-          </View>
-        </View>
-      </Modal>
-      <AwesomeAlert
-        show={showAlert}
-        showProgress={false}
-        title="Confirmacion"
-        message="¿Esta seguro de enviar esta informacion para su reporte?"
-        closeOnTouchOutside={true}
-        closeOnHardwareBackPress={false}
-        showCancelButton={true}
-        showConfirmButton={true}
-        cancelText="No, cancelar"
-        confirmText="Si, estoy de acuerdo"
-        confirmButtonColor="#105293"
-        cancelButtonColor="red"
-        contentContainerStyle={{ backgroundColor: "#1E262E" }}
-        contentStyle={{ backgroundColor: "#1E262E" }}
-        titleStyle={{ color: "white", textAlign: "center" }}
-        messageStyle={{ color: "white", textAlign: "center" }}
-        onCancelPressed={() => {
-          setshowAlert(false);
-        }}
-        onConfirmPressed={() => {
-          setshowAlert(false);
-          enviarDatos();
-        }}
-      />
-      <AwesomeAlert
-        show={showAlertUbicacion}
-        showProgress={false}
-        title="Alerta"
-        message="Se registro la ubicacion"
-        closeOnTouchOutside={true}
-        closeOnHardwareBackPress={false}
-        showConfirmButton={true}
-        confirmText="Si, estoy de acuerdo"
-        confirmButtonColor="#105293"
-        contentContainerStyle={{ backgroundColor: "#1E262E" }}
-        contentStyle={{ backgroundColor: "#1E262E" }}
-        titleStyle={{ color: "white", textAlign: "center" }}
-        messageStyle={{ color: "white", textAlign: "center" }}
-        onConfirmPressed={() => {
-          setshowAlertUbicacion(false);
-        }}
-      />
-      <AwesomeAlert
-        show={showAlertImagen}
-        showProgress={false}
-        title="Alerta"
-        message="Necesita tomar una evidencia"
-        closeOnTouchOutside={true}
-        closeOnHardwareBackPress={false}
-        showConfirmButton={true}
-        confirmText="Si, estoy de acuerdo"
-        confirmButtonColor="#105293"
-        contentContainerStyle={{ backgroundColor: "#1E262E" }}
-        contentStyle={{ backgroundColor: "#1E262E" }}
-        titleStyle={{ color: "white", textAlign: "center" }}
-        messageStyle={{ color: "white", textAlign: "center" }}
-        onConfirmPressed={() => {
-          setshowAlertImagen(false);
-        }}
-      />
-      <AwesomeAlert
-        show={showAlertReporte}
-        showProgress={false}
-        title="Alerta"
-        message="Se genero su reporte"
-        closeOnTouchOutside={true}
-        closeOnHardwareBackPress={false}
-        showConfirmButton={true}
-        confirmText="Si, estoy de acuerdo"
-        confirmButtonColor="#105293"
-        contentContainerStyle={{ backgroundColor: "#1E262E" }}
-        contentStyle={{ backgroundColor: "#1E262E" }}
-        titleStyle={{ color: "white", textAlign: "center" }}
-        messageStyle={{ color: "white", textAlign: "center" }}
-        onConfirmPressed={() => {
-          setShowAlertReporte(false);
-        }}
-        onDismiss={() => {
-          navigation.navigate("Reportes");
-        }}
-      />
-    </SafeAreaView>
+              </MapView>
+              <View style={styles.viewMap}>
+                <Button
+                  title={"Guardar"}
+                  containerStyle={styles.containerSaveMapBtn}
+                  buttonStyle={styles.saveMapBtn}
+                  onPress={confirmLocation}
+                />
+                <Button
+                  title={"Cancelar"}
+                  containerStyle={styles.containerCancelMapBtn}
+                  buttonStyle={styles.cancelMapBtn}
+                  onPress={() => setmapVisible(false)}
+                />
+              </View>
+            </View>
+          </Modal>
+          <AwesomeAlert
+            show={showAlert}
+            showProgress={false}
+            title="Confirmacion"
+            message="¿Esta seguro de enviar esta informacion para su reporte?"
+            closeOnTouchOutside={true}
+            closeOnHardwareBackPress={false}
+            showCancelButton={true}
+            showConfirmButton={true}
+            cancelText="No, cancelar"
+            confirmText="Si, estoy de acuerdo"
+            confirmButtonColor="#105293"
+            cancelButtonColor="red"
+            contentContainerStyle={{ backgroundColor: "#1E262E" }}
+            contentStyle={{ backgroundColor: "#1E262E" }}
+            titleStyle={{ color: "white", textAlign: "center" }}
+            messageStyle={{ color: "white", textAlign: "center" }}
+            onCancelPressed={() => {
+              setshowAlert(false);
+            }}
+            onConfirmPressed={() => {
+              setshowAlert(false);
+              enviarDatos();
+            }}
+          />
+          <AwesomeAlert
+            show={showAlertUbicacion}
+            showProgress={false}
+            title="Alerta"
+            message="Se registro la ubicacion"
+            closeOnTouchOutside={true}
+            closeOnHardwareBackPress={false}
+            showConfirmButton={true}
+            confirmText="Si, estoy de acuerdo"
+            confirmButtonColor="#105293"
+            contentContainerStyle={{ backgroundColor: "#1E262E" }}
+            contentStyle={{ backgroundColor: "#1E262E" }}
+            titleStyle={{ color: "white", textAlign: "center" }}
+            messageStyle={{ color: "white", textAlign: "center" }}
+            onConfirmPressed={() => {
+              setshowAlertUbicacion(false);
+            }}
+          />
+          <AwesomeAlert
+            show={showAlertImagen}
+            showProgress={false}
+            title="Alerta"
+            message="Necesita tomar una evidencia"
+            closeOnTouchOutside={true}
+            closeOnHardwareBackPress={false}
+            showConfirmButton={true}
+            confirmText="Si, estoy de acuerdo"
+            confirmButtonColor="#105293"
+            contentContainerStyle={{ backgroundColor: "#1E262E" }}
+            contentStyle={{ backgroundColor: "#1E262E" }}
+            titleStyle={{ color: "white", textAlign: "center" }}
+            messageStyle={{ color: "white", textAlign: "center" }}
+            onConfirmPressed={() => {
+              setshowAlertImagen(false);
+            }}
+          />
+          <AwesomeAlert
+            show={showAlertReporte}
+            showProgress={false}
+            title="Alerta"
+            message="Se genero su reporte"
+            closeOnTouchOutside={true}
+            closeOnHardwareBackPress={false}
+            showConfirmButton={true}
+            confirmText="Si, estoy de acuerdo"
+            confirmButtonColor="#105293"
+            contentContainerStyle={{ backgroundColor: "#1E262E" }}
+            contentStyle={{ backgroundColor: "#1E262E" }}
+            titleStyle={{ color: "white", textAlign: "center" }}
+            messageStyle={{ color: "white", textAlign: "center" }}
+            onConfirmPressed={() => {
+              setShowAlertReporte(false);
+            }}
+            onDismiss={() => {
+              navigation.navigate("Reportes");
+            }}
+          />
+        </KeyboardAvoidingView>
+      </ScrollView>
+    </View>
   );
 };
 
 const styles = new StyleSheet.create({
   container: {
-    paddingBottom: 20,
     flex: 1,
     alignItems: "center",
     backgroundColor: "#1E262E",
+    paddingTop: 20,
   },
   title: {
     backgroundColor: "#1E262E",
@@ -393,7 +439,7 @@ const styles = new StyleSheet.create({
   },
   imagen: {
     width: 200,
-    height: hp("25"),
+    height: hp("20"),
   },
   buttonSave: {
     paddingTop: 10,

@@ -4,12 +4,18 @@ import Constants from "expo-constants";
 import { Camera } from "expo-camera";
 import * as MediaLibrary from "expo-media-library";
 import ButtonCamera from "./ButtonCamera";
-import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from "react-native-responsive-screen";
 import { Video } from "expo-av";
+import { CountdownCircleTimer } from "react-native-countdown-circle-timer";
 
 export default function Camara({ navigation, route }) {
+  const [isPlaying, setIsPlaying] = useState(false);
   const [hasCameraPermission, setHasCameraPermission] = useState(null);
   const [hasMicrophonePermission, setHasMicrophonePermission] = useState(null);
+  const [imagenes, setImagenes] = useState([]);
   const [image, setImage] = useState(null);
   const [video, setVideo] = useState(null);
   const [type, setType] = useState(Camera.Constants.Type.back);
@@ -40,6 +46,7 @@ export default function Camara({ navigation, route }) {
 
   const takeVideo = async () => {
     setIsRecording(true);
+    setIsPlaying(true);
     let options = {
       quality: "720p",
       maxDuration: 60,
@@ -53,7 +60,7 @@ export default function Camara({ navigation, route }) {
 
   const stopVideo = () => {
     setIsRecording(false);
-    cameraRef.current.stopRecording()
+    cameraRef.current.stopRecording();
   };
 
   const saveVideo = async () => {
@@ -73,10 +80,32 @@ export default function Camara({ navigation, route }) {
 
   const savePicture = async () => {
     if (image) {
+      imagenes.push(image);
+      setImage(null);
+      if (imagenes.length === 3) {
+        alert("Tomaste el maximo de fotos permitidas");
+        try {
+          navigation.navigate({
+            name: "ReporteForm",
+            params: { uri: imagenes, video: false },
+            merge: true,
+          });
+          setImage(null);
+        } catch (error) {
+          alert(error);
+        }
+      }
+    }
+  };
+
+  const savePictureExit = async () => {
+    if (image) {
+      imagenes.push(image);
+      setImage(null);
       try {
         navigation.navigate({
           name: "ReporteForm",
-          params: { uri: image },
+          params: { uri: imagenes, video: false },
           merge: true,
         });
         setImage(null);
@@ -92,7 +121,7 @@ export default function Camara({ navigation, route }) {
 
   return (
     <View style={styles.container}>
-      {!image&&!video ? (
+      {!image && !video ? (
         <Camera
           style={styles.camera}
           type={type}
@@ -139,28 +168,52 @@ export default function Camara({ navigation, route }) {
       )}
 
       <View style={styles.controls}>
-        {image||video ? (
-          <View
-            style={{
-              flexDirection: "row",
-              justifyContent: "space-between",
-              paddingHorizontal: 50,
-            }}
-          >
-            <ButtonCamera
-              title="Tomar de nuevo"
-              onPress={() => {
-                setImage(null);
-                setVideo(null);
+        {image || video ? (
+          <>
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "space-between",
+                paddingHorizontal: 50,
               }}
-              icon="retweet"
-            />
-            <ButtonCamera
-              title="Guardar"
-              onPress={image ? savePicture : saveVideo}
-              icon="check"
-            />
-          </View>
+            >
+              <ButtonCamera
+                title="Tomar de nuevo"
+                onPress={() => {
+                  setImage(null);
+                  imagenes.pop();
+                  setVideo(null);
+                }}
+                icon="retweet"
+              />
+              <ButtonCamera
+                title="Guardar"
+                onPress={image ? savePicture : saveVideo}
+                icon="check"
+              />
+            </View>
+            {!video ? (
+              <>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "center",
+                  }}
+                >
+                  <ButtonCamera
+                    title="Guardar y salir"
+                    onPress={savePictureExit}
+                    icon="check"
+                  />
+                </View>
+                <Text style={{ color: "white", textAlign: "right" }}>
+                  Foto {imagenes.length} de 3 disponibles
+                </Text>
+              </>
+            ) : (
+              <></>
+            )}
+          </>
         ) : (
           <View
             style={{
@@ -183,12 +236,35 @@ export default function Camara({ navigation, route }) {
                 />
               </>
             ) : (
-              <View style={{marginLeft:wp("30")}}>
-              <ButtonCamera
-                title="Detener"
-                onPress={stopVideo}
-                icon="controller-record"
-              />
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  paddingHorizontal: 50,
+                }}
+              >
+                <ButtonCamera
+                  title="Detener"
+                  onPress={stopVideo}
+                  icon="controller-record"
+                />
+                <View style={{marginLeft:"20%"}}>
+                  <CountdownCircleTimer
+                    isPlaying={isPlaying}
+                    duration={60}
+                    size={70}
+                    colors={["#21AE08", "#A6AE08", "#B46B09", "#B42509"]}
+                    colorsTime={[60, 45, 30,0]}
+                    onComplete={() => ({ shouldRepeat: false, delay: 2 })}
+                    updateInterval={1}
+                  >
+                    {({ remainingTime, color }) => (
+                      <Text style={{ color, fontSize: 20 }}>
+                        {remainingTime}
+                      </Text>
+                    )}
+                  </CountdownCircleTimer>
+                </View>
               </View>
             )}
           </View>
@@ -207,7 +283,7 @@ const styles = StyleSheet.create({
     padding: 8,
   },
   controls: {
-    flex: 0.5,
+    flex: 1,
   },
   text: {
     fontWeight: "bold",

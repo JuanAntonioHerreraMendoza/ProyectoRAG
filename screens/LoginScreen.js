@@ -58,6 +58,7 @@ const LoginScreen = () => {
 
   //Envio de informacion
   const handleSubmmit = async (user) => {
+    user.usuario = user.usuario.trim();
     setinputsValidate(false);
     if (validarInputs(user)) {
       return setinputsValidate(true);
@@ -74,7 +75,7 @@ const LoginScreen = () => {
       setAccesToken(response.authentication.accessToken);
       fetchUserGInfo();
     }
-  }, [response,accesToken]);
+  }, [response, accesToken]);
 
   const fetchUserGInfo = async () => {
     try {
@@ -90,8 +91,7 @@ const LoginScreen = () => {
       if (u === false) {
         setshowAlert(true);
       }
-    } catch (error) {
-    }
+    } catch (error) {}
   };
 
   return (

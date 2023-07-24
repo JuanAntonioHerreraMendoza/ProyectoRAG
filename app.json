@@ -28,6 +28,7 @@
         "foregroundImage": "./assets/imageApp.png",
         "backgroundColor": "#FFFFFF"
       },
+      "softwareKeyboardLayoutMode":"pan",
       "permissions": [
         "LOCATION",
         "ACCESS_COARSE_LOCATION",
