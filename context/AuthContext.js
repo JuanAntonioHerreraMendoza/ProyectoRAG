@@ -55,23 +55,21 @@ export const AuthProvider = ({ children }) => {
         registerForPushNotificationsAsync().then((token) =>
           existeToken(token).then((res) => {
             if (!res) {
-              guardarToken(token, userInfo.usuario);
+              guardarToken(token, userInfo.usuario).then(setIsLoading(false));
             }
           })
         );
-        setIsLoading(false);
       }
     } else {
       setUserInfo(userInfo);
       AsyncStorage.setItem("userInfo", JSON.stringify(userInfo));
-      registerForPushNotificationsAsync().then((token) =>
+      registerForPushNotificationsAsync().then((token) => {
         existeToken(token).then((res) => {
           if (!res) {
-            guardarToken(token, userInfo.usuario);
+            guardarToken(token, userInfo.usuario).then(setIsLoading(false));
           }
-        })
-      );
-      setIsLoading(false);
+        });
+      });
     }
   };
 
@@ -109,11 +107,10 @@ export const AuthProvider = ({ children }) => {
         registerForPushNotificationsAsync().then((token) =>
           existeToken(token).then((res) => {
             if (!res) {
-              guardarToken(token, userInfo.usuario);
+              guardarToken(token, userInfo.usuario).then(setIsLoading(false));
             }
           })
         );
-        setIsLoading(false);
       }
     } else {
       setUserInfo(userInfo);
@@ -121,11 +118,10 @@ export const AuthProvider = ({ children }) => {
       registerForPushNotificationsAsync().then((token) =>
         existeToken(token).then((res) => {
           if (!res) {
-            guardarToken(token, userInfo.usuario);
+            guardarToken(token, userInfo.usuario).then(setIsLoading(false));
           }
         })
       );
-      setIsLoading(false);
     }
   };
 

@@ -87,13 +87,14 @@ export const getUsuario = async (id) => {
 };
 
 export const guardarToken = async (token, correo) => {
+  let obj = { token: token, correo: correo };
   const res = await fetch(`${API}tokens`, {
     method: "POST",
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
     },
-    body: { token: token, correo: correo },
+    body: JSON.stringify(obj),
   });
   return res;
 };
@@ -109,20 +110,17 @@ export const existeToken = async (token) => {
       },
     }
   );
-  return res;
+  return res.json();
 };
 
 export const existeCurp = async (curp) => {
-  const res = await fetch(
-    `${API}personal/existecurp?curp=${curp}`,
-    {
-      method: "GET",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-    }
-  );
+  const res = await fetch(`${API}personal/existecurp?curp=${curp}`, {
+    method: "GET",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+  });
   return res;
 };
 
@@ -141,15 +139,12 @@ export const existeNumCuenta = async (cuenta) => {
 };
 
 export const existeUsuario = async (usuario) => {
-  const res = await fetch(
-    `${API}usuarios/existeUsuario?correo=${usuario}`,
-    {
-      method: "GET",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-    }
-  );
+  const res = await fetch(`${API}usuarios/existeUsuario?correo=${usuario}`, {
+    method: "GET",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+  });
   return res;
 };
