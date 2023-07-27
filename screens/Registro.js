@@ -32,11 +32,13 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
+import Spinner from "react-native-loading-spinner-overlay";
 
 const Registro = () => {
   //Funcion para navegar
   const navigation = useNavigation();
   //Variables
+  const [isLoading, setIsLoading] = useState(false);
   const [modalTerm, setModalTerm] = useState(true);
   const [showAlert, setshowAlert] = useState(false);
   const [showAlert2, setshowAlert2] = useState(false);
@@ -118,6 +120,7 @@ const Registro = () => {
   };
 
   const handleSubmmit = async (persona, tipousuario) => {
+    setIsLoading(true);
     setCurpExiste(false);
     setCuentaExiste(false);
     setemailValidate(false);
@@ -129,6 +132,7 @@ const Registro = () => {
     persona.usuario = persona.correo;
 
     if (image === null) {
+      setIsLoading(false);
       return setimageValidate(true);
     }
     persona.imagen1 = image[0].uri.split("/").pop();
@@ -139,6 +143,7 @@ const Registro = () => {
     }
 
     if (validarInputs(persona)) {
+      setIsLoading(false);
       return setinputsValidate(true);
     }
 
@@ -150,25 +155,31 @@ const Registro = () => {
     );
 
     if (alertaDatosBancarios !== null) {
+      setIsLoading(false);
       setMessage(alertaDatosBancarios);
       return setshowAlert(true);
     }
     if (validarCurp()) {
+      setIsLoading(false);
       return setCurpValidate(true);
     }
 
     if (existenciaCurp(persona.curp)) {
+      setIsLoading(false);
       return setCurpExiste(true);
     }
 
     if (existenciaNumCuenta(persona.numcuenta)) {
+      setIsLoading(false);
       return setCuentaExiste(true);
     }
     if (existeCorreo(persona.correo)) {
+      setIsLoading(false);
       return setUsuarioExiste(true);
     }
 
     if (!validarEmail(persona.usuario)) {
+      setIsLoading(false);
       setemailValidate(true);
       return;
     }
@@ -177,6 +188,7 @@ const Registro = () => {
     if (checkPass) {
       setMessageE(checkPass);
       setpassValidate(true);
+      setIsLoading(false);
       return;
     }
 
@@ -188,12 +200,14 @@ const Registro = () => {
     await saveUsuario(persona)
       .then(() => {
         uploadImagesReg(image);
+        setIsLoading(false);
         setMessage(
           "Se ha registrado su petición de registro, se le notificará cuando su usuario sea aceptado o rechazado."
         );
         setshowAlert2(true);
       })
       .catch((error) => {
+        setIsLoading(false);
         setMessage("Ha sucedido un error.Inténtelo de nuevo mas tarde.");
         return setshowAlert(true);
       });
@@ -221,6 +235,7 @@ const Registro = () => {
       bounces={false}
     >
       <StatusBar />
+      <Spinner visible={isLoading} />
       <View style={styles.container}>
         <Text style={styles.title}>Registro de usuario</Text>
         <Text style={styles.subs}>

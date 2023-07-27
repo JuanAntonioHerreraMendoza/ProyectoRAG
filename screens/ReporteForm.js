@@ -27,9 +27,11 @@ import {
 import { KeyboardAvoidingView } from "react-native";
 import { Platform } from "react-native";
 import { ScrollView } from "react-native";
+import Spinner from "react-native-loading-spinner-overlay";
 
 const ReporteForm = ({ navigation, route }) => {
   const date = new Date();
+  const [isLoading, setIsLoading] = useState(false);
   const [infracciones, setInfracciones] = useState([]);
   const [showAlert, setshowAlert] = useState(false);
   const [selected, setSelected] = useState([]);
@@ -88,12 +90,15 @@ const ReporteForm = ({ navigation, route }) => {
   };
 
   const enviarDatos = async () => {
+    setIsLoading(true)
     setinputsValidate(false);
     if (validarInputs()) {
+      setIsLoading(false)
       return setinputsValidate(true);
     }
     let localUri = route.params?.uri;
     if (localUri === undefined) {
+      setIsLoading(false)
       return setshowAlertImagen(true);
     } else {
       let filename =
@@ -130,12 +135,14 @@ const ReporteForm = ({ navigation, route }) => {
                 if (filename3 !== "null") uploadImage(localUri[2], "reportes");
               })
               .then(() => {
+                setIsLoading(false)
                 setShowAlertReporte(true);
               });
           }
         })
         .catch((error) => {
-          alert(error);
+          setIsLoading(false)
+          return alert(error);
         });
 
       setNewRegion(null);
@@ -147,6 +154,7 @@ const ReporteForm = ({ navigation, route }) => {
 
   return (
     <View style={{ flex: 1, backgroundColor: "#1E262E" }}>
+      <Spinner visible={isLoading} />
       <View style={styles.title}>
         <Text style={styles.text}>
           Ingrese los datos para que pueda ser generado su reporte
