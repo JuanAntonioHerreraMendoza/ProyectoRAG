@@ -36,7 +36,7 @@ export default function Camara({ navigation, route }) {
   const takePicture = async () => {
     if (cameraRef) {
       try {
-        const data = await cameraRef.current.takePictureAsync();
+        const data = await cameraRef.current.takePictureAsync({skipProcessing: true});
         setImage(data.uri);
       } catch (error) {
         alert(error);
@@ -127,6 +127,7 @@ export default function Camara({ navigation, route }) {
           type={type}
           ref={cameraRef}
           flashMode={flash}
+          useCamera2Api
         >
           <View
             style={{
@@ -134,7 +135,7 @@ export default function Camara({ navigation, route }) {
               justifyContent: "space-between",
               paddingHorizontal: 30,
             }}
-          >
+          >{!isRecording?<>
             <ButtonCamera
               title=""
               icon="cross"
@@ -152,7 +153,7 @@ export default function Camara({ navigation, route }) {
               }
               icon="flash"
               color={flash === Camera.Constants.FlashMode.off ? "gray" : "#fff"}
-            />
+            /></>:<></>}
           </View>
         </Camera>
       ) : video ? (
@@ -229,11 +230,15 @@ export default function Camara({ navigation, route }) {
                   onPress={takePicture}
                   icon="camera"
                 />
-                <ButtonCamera
-                  title="Capturar Video"
-                  onPress={takeVideo}
-                  icon="controller-record"
-                />
+                {imagenes.length >= 1 ? (
+                  <></>
+                ) : (
+                  <ButtonCamera
+                    title="Capturar Video"
+                    onPress={takeVideo}
+                    icon="controller-record"
+                  />
+                )}
               </>
             ) : (
               <View
@@ -248,13 +253,13 @@ export default function Camara({ navigation, route }) {
                   onPress={stopVideo}
                   icon="controller-record"
                 />
-                <View style={{marginLeft:"20%"}}>
+                <View style={{ marginLeft: "20%" }}>
                   <CountdownCircleTimer
                     isPlaying={isPlaying}
                     duration={60}
                     size={70}
                     colors={["#21AE08", "#A6AE08", "#B46B09", "#B42509"]}
-                    colorsTime={[60, 45, 30,0]}
+                    colorsTime={[60, 45, 30, 0]}
                     onComplete={() => ({ shouldRepeat: false, delay: 2 })}
                     updateInterval={1}
                   >

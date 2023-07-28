@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   SafeAreaView,
 } from "react-native";
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useState, useContext, useRef } from "react";
 import ButtonCamera from "../components/ButtonCamera";
 import { Modal } from "../components/Modal";
 import { getCurrentLocation } from "../functions/locationMap";
@@ -28,9 +28,12 @@ import { KeyboardAvoidingView } from "react-native";
 import { Platform } from "react-native";
 import { ScrollView } from "react-native";
 import Spinner from "react-native-loading-spinner-overlay";
+import Carousel from "react-native-snap-carousel";
+import { useIsFocused } from "@react-navigation/native";
 
 const ReporteForm = ({ navigation, route }) => {
   const date = new Date();
+  const ref = useRef();
   const [isLoading, setIsLoading] = useState(false);
   const [infracciones, setInfracciones] = useState([]);
   const [showAlert, setshowAlert] = useState(false);
@@ -44,8 +47,26 @@ const ReporteForm = ({ navigation, route }) => {
   const [mapVisible, setmapVisible] = useState(false);
   const [location, setLocation] = useState("");
   const [newRegion, setNewRegion] = useState("");
+  const [data, setData] = useState({
+    activeIndex: 0,
+    carouselItems: [],
+  });
+  const isFocused = useIsFocused();
 
   const { userInfo } = useContext(AuthContext);
+
+  const renderItem = ({ item, index }) => {
+    return (
+      <View style={{ alignItems: "center" }}>
+        <Image
+          source={{
+            uri: item,
+          }}
+          style={styles.imagen}
+        />
+      </View>
+    );
+  };
 
   const getInfraccionesInfo = async () => {
     const res = await getInfracciones();
@@ -76,9 +97,8 @@ const ReporteForm = ({ navigation, route }) => {
   }, []);
 
   useEffect(() => {
-    if (route.params?.uri) {
-    }
-  }, [route.params?.uri]);
+    data.carouselItems = route.params?.uri;
+  }, [isFocused]);
 
   const validarInputs = () => {
     if (direc === "" || descrip === "" || location == "") return true;
@@ -90,15 +110,15 @@ const ReporteForm = ({ navigation, route }) => {
   };
 
   const enviarDatos = async () => {
-    setIsLoading(true)
+    setIsLoading(true);
     setinputsValidate(false);
     if (validarInputs()) {
-      setIsLoading(false)
+      setIsLoading(false);
       return setinputsValidate(true);
     }
     let localUri = route.params?.uri;
     if (localUri === undefined) {
-      setIsLoading(false)
+      setIsLoading(false);
       return setshowAlertImagen(true);
     } else {
       let filename =
@@ -135,13 +155,13 @@ const ReporteForm = ({ navigation, route }) => {
                 if (filename3 !== "null") uploadImage(localUri[2], "reportes");
               })
               .then(() => {
-                setIsLoading(false)
+                setIsLoading(false);
                 setShowAlertReporte(true);
               });
           }
         })
         .catch((error) => {
-          setIsLoading(false)
+          setIsLoading(false);
           return alert(error);
         });
 
@@ -174,10 +194,18 @@ const ReporteForm = ({ navigation, route }) => {
                   style={styles.imagen}
                 />
               ) : route.params?.uri ? (
-                <Image
-                  source={{ uri: route.params.uri[0] }}
-                  style={styles.imagen}
-                />
+                <View style={styles.container2}>
+                  <Carousel
+                    layout={"tinder"}
+                    ref={ref}
+                    autoplay
+                    loop
+                    data={route.params?.uri}
+                    sliderWidth={200}
+                    itemWidth={200}
+                    renderItem={renderItem}
+                  />
+                </View>
               ) : (
                 <Image
                   source={require("../assets/camera.png")}
@@ -406,6 +434,14 @@ const styles = new StyleSheet.create({
     backgroundColor: "#1E262E",
     paddingTop: 20,
   },
+  container2: {
+    width: "100%",
+    borderColor: "#818E9C",
+    borderWidth: 2,
+    alignItems: "center",
+    paddingBottom: 5,
+    borderRadius: 10,
+  },
   title: {
     backgroundColor: "#1E262E",
   },
@@ -447,7 +483,7 @@ const styles = new StyleSheet.create({
   },
   imagen: {
     width: 200,
-    height: hp("20"),
+    height: hp("25"),
   },
   buttonSave: {
     paddingTop: 10,
