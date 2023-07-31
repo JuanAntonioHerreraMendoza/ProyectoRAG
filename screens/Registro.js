@@ -97,22 +97,19 @@ const Registro = () => {
     }
   };
 
-  const existenciaCurp = (curp) => {
-    existeCurp(curp).then((res) => {
-      if (res) return true;
-    });
+  const existenciaCurp = async (curp) => {
+    let res = await existeCurp(curp);
+    if (res) return true;
   };
 
-  const existenciaNumCuenta = (cuenta) => {
-    existeNumCuenta(cuenta).then((res) => {
-      if (res) return true;
-    });
+  const existenciaNumCuenta = async (cuenta) => {
+    let res = await existeNumCuenta(cuenta);
+    if (res) return true;
   };
 
-  const existeCorreo = (usuario) => {
-    existeUsuario(usuario).then((res) => {
-      if (res) return true;
-    });
+  const existeCorreo = async (usuario) => {
+    let res = await existeUsuario(usuario);
+    if (res) return true;
   };
 
   const handleChangeP = (name, value) => {
@@ -123,6 +120,7 @@ const Registro = () => {
     setIsLoading(true);
     setCurpExiste(false);
     setCuentaExiste(false);
+    setUsuarioExiste(false);
     setemailValidate(false);
     setCurpValidate(false);
     setpassValidate(false);
@@ -147,6 +145,26 @@ const Registro = () => {
       return setinputsValidate(true);
     }
 
+    let curpexis = await existenciaCurp(persona.curp);
+    if (curpexis) {
+      setIsLoading(false);
+      setCurpExiste(true);
+      return;
+    }
+
+    let cuenta = await existenciaNumCuenta(persona.numcuenta);
+
+    if (cuenta) {
+      setIsLoading(false);
+      return setCuentaExiste(true);
+    }
+
+    let correousuario = await existeCorreo(persona.usuario);
+    if (correousuario) {
+      setIsLoading(false);
+      return setUsuarioExiste(true);
+    }
+
     let alertaDatosBancarios = validarDatosNumRegistro(
       persona.telefono,
       persona.numcuenta,
@@ -162,20 +180,6 @@ const Registro = () => {
     if (validarCurp()) {
       setIsLoading(false);
       return setCurpValidate(true);
-    }
-
-    if (existenciaCurp(persona.curp)) {
-      setIsLoading(false);
-      return setCurpExiste(true);
-    }
-
-    if (existenciaNumCuenta(persona.numcuenta)) {
-      setIsLoading(false);
-      return setCuentaExiste(true);
-    }
-    if (existeCorreo(persona.correo)) {
-      setIsLoading(false);
-      return setUsuarioExiste(true);
     }
 
     if (!validarEmail(persona.usuario)) {
@@ -419,7 +423,7 @@ const Registro = () => {
             <></>
           )}
           {usuarioExiste ? (
-            <Text style={styles.warningText}>Este úsuario ya existe</Text>
+            <Text style={styles.warningText}>Este usuario ya existe</Text>
           ) : (
             <></>
           )}

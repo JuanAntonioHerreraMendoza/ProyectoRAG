@@ -121,7 +121,7 @@ export const existeCurp = async (curp) => {
       "Content-Type": "application/json",
     },
   });
-  return res;
+  return res.json();
 };
 
 export const existeNumCuenta = async (cuenta) => {
@@ -135,7 +135,7 @@ export const existeNumCuenta = async (cuenta) => {
       },
     }
   );
-  return res;
+  return res.json();
 };
 
 export const existeUsuario = async (usuario) => {
@@ -146,5 +146,5 @@ export const existeUsuario = async (usuario) => {
       "Content-Type": "application/json",
     },
   });
-  return res;
+  return res.json();
 };

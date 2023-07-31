@@ -24,6 +24,7 @@
     },
     "android": {
       "package": "com.supervisionsuci.supervisionsuci",
+      "android.config.googleMaps.apiKey":"AIzaSyBlT4C2ksPGRICyPsJq3EMOLLwMn_9WQ5g",
       "adaptiveIcon": {
         "foregroundImage": "./assets/imageApp.png",
         "backgroundColor": "#FFFFFF"

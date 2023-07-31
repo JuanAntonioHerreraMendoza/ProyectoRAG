@@ -36,7 +36,9 @@ export default function Camara({ navigation, route }) {
   const takePicture = async () => {
     if (cameraRef) {
       try {
-        const data = await cameraRef.current.takePictureAsync({skipProcessing: true});
+        const data = await cameraRef.current.takePictureAsync({
+          skipProcessing: true,
+        });
         setImage(data.uri);
       } catch (error) {
         alert(error);
@@ -82,8 +84,6 @@ export default function Camara({ navigation, route }) {
     if (image) {
       imagenes.push(image);
       setImage(null);
-      if (imagenes.length === 3) {
-        alert("Tomaste el maximo de fotos permitidas");
         try {
           navigation.navigate({
             name: "ReporteForm",
@@ -93,24 +93,6 @@ export default function Camara({ navigation, route }) {
           setImage(null);
         } catch (error) {
           alert(error);
-        }
-      }
-    }
-  };
-
-  const savePictureExit = async () => {
-    if (image) {
-      imagenes.push(image);
-      setImage(null);
-      try {
-        navigation.navigate({
-          name: "ReporteForm",
-          params: { uri: imagenes, video: false },
-          merge: true,
-        });
-        setImage(null);
-      } catch (error) {
-        alert(error);
       }
     }
   };
@@ -127,7 +109,6 @@ export default function Camara({ navigation, route }) {
           type={type}
           ref={cameraRef}
           flashMode={flash}
-          useCamera2Api
         >
           <View
             style={{
@@ -135,7 +116,7 @@ export default function Camara({ navigation, route }) {
               justifyContent: "space-between",
               paddingHorizontal: 30,
             }}
-          >{!isRecording?<>
+          >
             <ButtonCamera
               title=""
               icon="cross"
@@ -153,7 +134,7 @@ export default function Camara({ navigation, route }) {
               }
               icon="flash"
               color={flash === Camera.Constants.FlashMode.off ? "gray" : "#fff"}
-            /></>:<></>}
+            />
           </View>
         </Camera>
       ) : video ? (
@@ -193,27 +174,6 @@ export default function Camara({ navigation, route }) {
                 icon="check"
               />
             </View>
-            {!video ? (
-              <>
-                <View
-                  style={{
-                    flexDirection: "row",
-                    justifyContent: "center",
-                  }}
-                >
-                  <ButtonCamera
-                    title="Guardar y salir"
-                    onPress={savePictureExit}
-                    icon="check"
-                  />
-                </View>
-                <Text style={{ color: "white", textAlign: "right" }}>
-                  Foto {imagenes.length} de 3 disponibles
-                </Text>
-              </>
-            ) : (
-              <></>
-            )}
           </>
         ) : (
           <View

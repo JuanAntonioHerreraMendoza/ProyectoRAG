@@ -28,15 +28,17 @@ import { KeyboardAvoidingView } from "react-native";
 import { Platform } from "react-native";
 import { ScrollView } from "react-native";
 import Spinner from "react-native-loading-spinner-overlay";
-import Carousel from "react-native-snap-carousel";
 import { useIsFocused } from "@react-navigation/native";
+import * as ImagePicker from "expo-image-picker";
 
 const ReporteForm = ({ navigation, route }) => {
   const date = new Date();
   const ref = useRef();
   const [isLoading, setIsLoading] = useState(false);
   const [infracciones, setInfracciones] = useState([]);
+  const [masFotos, setmasFotos] = useState(false);
   const [showAlert, setshowAlert] = useState(false);
+  const [showAlertfotos, setshowAlertFotos] = useState(false);
   const [selected, setSelected] = useState([]);
   const [showAlertUbicacion, setshowAlertUbicacion] = useState(false);
   const [showAlertImagen, setshowAlertImagen] = useState(false);
@@ -55,17 +57,26 @@ const ReporteForm = ({ navigation, route }) => {
 
   const { userInfo } = useContext(AuthContext);
 
-  const renderItem = ({ item, index }) => {
-    return (
-      <View style={{ alignItems: "center" }}>
-        <Image
-          source={{
-            uri: item,
-          }}
-          style={styles.imagen}
-        />
-      </View>
-    );
+  const pickImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      aspect: [4, 3],
+      quality: 0.5,
+      allowsMultipleSelection: true,
+      selectionLimit: 2,
+    });
+
+    if (!result.canceled) {
+      if (route.params?.uri.length === 2) {
+        route.params?.uri.pop();
+      } else if (route.params?.uri.length === 3) {
+        route.params?.uri.pop();
+        route.params?.uri.pop();
+      }
+      for (let index = 0; index < result.assets.length; index++) {
+        route.params?.uri.push(result.assets[index].uri);
+      }
+    }
   };
 
   const getInfraccionesInfo = async () => {
@@ -97,8 +108,11 @@ const ReporteForm = ({ navigation, route }) => {
   }, []);
 
   useEffect(() => {
-    data.carouselItems = route.params?.uri;
-  }, [isFocused]);
+    if (route.params?.uri.length === 1) {
+      setshowAlertFotos(true);
+      setmasFotos(true);
+    }
+  }, [route.params?.uri]);
 
   const validarInputs = () => {
     if (direc === "" || descrip === "" || location == "") return true;
@@ -194,18 +208,10 @@ const ReporteForm = ({ navigation, route }) => {
                   style={styles.imagen}
                 />
               ) : route.params?.uri ? (
-                <View style={styles.container2}>
-                  <Carousel
-                    layout={"tinder"}
-                    ref={ref}
-                    autoplay
-                    loop
-                    data={route.params?.uri}
-                    sliderWidth={200}
-                    itemWidth={200}
-                    renderItem={renderItem}
-                  />
-                </View>
+                <Image
+                  source={{ uri: route.params.uri[0] }}
+                  style={styles.imagen}
+                />
               ) : (
                 <Image
                   source={require("../assets/camera.png")}
@@ -213,6 +219,19 @@ const ReporteForm = ({ navigation, route }) => {
                 />
               )}
             </TouchableOpacity>
+            {masFotos ? (
+              <TouchableOpacity
+                style={styles.buttonSave}
+                onPress={() => {
+                  pickImage(true);
+                }}
+              >
+                <Text style={styles.buttonText}>Añadir Evidencias</Text>
+              </TouchableOpacity>
+            ) : (
+              <></>
+            )}
+
             {inputsValidate ? (
               <Text style={styles.warningText}>Rellene todos los campos</Text>
             ) : (
@@ -313,6 +332,7 @@ const ReporteForm = ({ navigation, route }) => {
                 initialRegion={newRegion}
                 showsUserLocation
                 onRegionChange={(region) => setLocation(region)}
+                
               >
                 {/* <Marker
               coordinate={{
@@ -362,6 +382,26 @@ const ReporteForm = ({ navigation, route }) => {
             onConfirmPressed={() => {
               setshowAlert(false);
               enviarDatos();
+            }}
+          />
+          <AwesomeAlert
+            show={showAlertfotos}
+            showProgress={false}
+            title="Mensajes"
+            message="Puede añadir dos fotos mas presionando el boton de añadir evidencias"
+            closeOnTouchOutside={true}
+            closeOnHardwareBackPress={false}
+            showConfirmButton={true}
+            cancelText="No, cancelar"
+            confirmText="Si, estoy de acuerdo"
+            confirmButtonColor="#105293"
+            cancelButtonColor="red"
+            contentContainerStyle={{ backgroundColor: "#1E262E" }}
+            contentStyle={{ backgroundColor: "#1E262E" }}
+            titleStyle={{ color: "white", textAlign: "center" }}
+            messageStyle={{ color: "white", textAlign: "center" }}
+            onConfirmPressed={() => {
+              setshowAlertFotos(false);
             }}
           />
           <AwesomeAlert
