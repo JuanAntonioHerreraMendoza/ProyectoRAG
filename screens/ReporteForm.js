@@ -72,6 +72,15 @@ const ReporteForm = ({ navigation, route }) => {
       } else if (route.params?.uri.length === 3) {
         route.params?.uri.pop();
         route.params?.uri.pop();
+      } else if (route.params?.uri.length === 4) {
+        route.params?.uri.pop();
+        route.params?.uri.pop();
+        route.params?.uri.pop();
+      } else if (route.params?.uri.length === 5) {
+        route.params?.uri.pop();
+        route.params?.uri.pop();
+        route.params?.uri.pop();
+        route.params?.uri.pop();
       }
       for (let index = 0; index < result.assets.length; index++) {
         route.params?.uri.push(result.assets[index].uri);
@@ -95,12 +104,12 @@ const ReporteForm = ({ navigation, route }) => {
           setLocation(response.location);
           setDirec(
             response.direccion[0].city +
-              "," +
-              response.direccion[0].street +
-              "," +
-              response.direccion[0].subregion +
-              "," +
-              response.direccion[0].postalCode
+            "," +
+            response.direccion[0].street +
+            "," +
+            response.direccion[0].subregion +
+            "," +
+            response.direccion[0].postalCode
           );
         }
       })
@@ -124,15 +133,12 @@ const ReporteForm = ({ navigation, route }) => {
   };
 
   const enviarDatos = async () => {
-    setIsLoading(true);
     setinputsValidate(false);
     if (validarInputs()) {
-      setIsLoading(false);
       return setinputsValidate(true);
     }
     let localUri = route.params?.uri;
     if (localUri === undefined) {
-      setIsLoading(false);
       return setshowAlertImagen(true);
     } else {
       let filename =
@@ -155,11 +161,14 @@ const ReporteForm = ({ navigation, route }) => {
         idreportadorfk: userInfo.idpersonafk.idpersona,
         tipousuariofk: userInfo.tipousuariofk.idtipousuario,
       };
-
+      setIsLoading(true);
       saveReporte(reporte)
         .then(() => {
           if (route.params?.video === true) {
-            uploadImage(localUri, "reportes");
+            uploadImage(localUri, "reportes").then(() => {
+              setIsLoading(false)
+              setShowAlertReporte(true);
+            });
           } else {
             uploadImage(localUri[0], "reportes")
               .then(() => {
@@ -219,6 +228,24 @@ const ReporteForm = ({ navigation, route }) => {
                 />
               )}
             </TouchableOpacity>
+            <View>
+              {route.params?.uri[1] ? <Image
+                source={{ uri: route.params?.uri[1] }}
+                style={styles.imagen}
+              /> : <></>}
+              {route.params?.uri[2] ? <Image
+                source={{ uri: route.params?.uri[2] }}
+                style={styles.imagen}
+              /> : <></>}
+              {route.params?.uri[3] ? <Image
+                source={{ uri: route.params?.uri[3] }}
+                style={styles.imagen}
+              /> : <></>}
+              {route.params?.uri[4] ? <Image
+                source={{ uri: route.params?.uri[4] }}
+                style={styles.imagen}
+              /> : <></>}
+            </View>
             {masFotos ? (
               <TouchableOpacity
                 style={styles.buttonSave}
@@ -332,7 +359,7 @@ const ReporteForm = ({ navigation, route }) => {
                 initialRegion={newRegion}
                 showsUserLocation
                 onRegionChange={(region) => setLocation(region)}
-                
+
               >
                 {/* <Marker
               coordinate={{

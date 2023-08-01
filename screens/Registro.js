@@ -117,7 +117,6 @@ const Registro = () => {
   };
 
   const handleSubmmit = async (persona, tipousuario) => {
-    setIsLoading(true);
     setCurpExiste(false);
     setCuentaExiste(false);
     setUsuarioExiste(false);
@@ -130,7 +129,6 @@ const Registro = () => {
     persona.usuario = persona.correo;
 
     if (image === null) {
-      setIsLoading(false);
       return setimageValidate(true);
     }
     persona.imagen1 = image[0].uri.split("/").pop();
@@ -141,13 +139,11 @@ const Registro = () => {
     }
 
     if (validarInputs(persona)) {
-      setIsLoading(false);
       return setinputsValidate(true);
     }
 
     let curpexis = await existenciaCurp(persona.curp);
     if (curpexis) {
-      setIsLoading(false);
       setCurpExiste(true);
       return;
     }
@@ -155,13 +151,11 @@ const Registro = () => {
     let cuenta = await existenciaNumCuenta(persona.numcuenta);
 
     if (cuenta) {
-      setIsLoading(false);
       return setCuentaExiste(true);
     }
 
     let correousuario = await existeCorreo(persona.usuario);
     if (correousuario) {
-      setIsLoading(false);
       return setUsuarioExiste(true);
     }
 
@@ -173,17 +167,14 @@ const Registro = () => {
     );
 
     if (alertaDatosBancarios !== null) {
-      setIsLoading(false);
       setMessage(alertaDatosBancarios);
       return setshowAlert(true);
     }
     if (validarCurp()) {
-      setIsLoading(false);
       return setCurpValidate(true);
     }
 
     if (!validarEmail(persona.usuario)) {
-      setIsLoading(false);
       setemailValidate(true);
       return;
     }
@@ -192,7 +183,6 @@ const Registro = () => {
     if (checkPass) {
       setMessageE(checkPass);
       setpassValidate(true);
-      setIsLoading(false);
       return;
     }
 
@@ -203,11 +193,13 @@ const Registro = () => {
     persona.tipousuariofk = tipousuario;
     await saveUsuario(persona)
       .then(() => {
+        setIsLoading(true);
         uploadImagesReg(image);
         setIsLoading(false);
         setMessage(
           "Se ha registrado su petición de registro, se le notificará cuando su usuario sea aceptado o rechazado."
         );
+        setIsLoading(false)
         setshowAlert2(true);
       })
       .catch((error) => {
