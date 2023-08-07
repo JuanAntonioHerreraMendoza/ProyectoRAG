@@ -76,10 +76,9 @@ const Settings = () => {
     setConductor(data);
   };
 
-  const existenciaNumCuenta = (cuenta) => {
-    existeNumCuenta(cuenta).then((res) => {
-      if (res) return true;
-    });
+  const existenciaNumCuenta = async (cuenta) => {
+    let res = await existeNumCuenta(cuenta);
+    if (res) return true;
   };
 
   const pickImage = async () => {
@@ -269,6 +268,7 @@ const Settings = () => {
             <Text style={styles.warningText}>{messageE}</Text>
             <TextInput
               placeholder="Nuevo número de cuenta"
+              maxLength={20}
               placeholderTextColor={"white"}
               style={styles.input}
               onChangeText={(text) => {
@@ -278,6 +278,7 @@ const Settings = () => {
             />
             <TextInput
               placeholder="Clave interbancaria"
+              maxLength={18}
               placeholderTextColor={"white"}
               style={styles.input}
               onChangeText={(text) => {
@@ -307,13 +308,14 @@ const Settings = () => {
               title={"Guardar"}
               containerStyle={styles.containerSaveMapBtn}
               buttonStyle={styles.saveMapBtn}
-              onPress={() => {
+              onPress={async () => {
                 let aux = validarDatosNumRegistro(
                   userInfo.idpersonafk.telefono,
                   persona.numcuenta,
                   persona.claveInterB,
                   userInfo.idpersonafk.edad
                 );
+                let res = await existenciaNumCuenta(persona.numcuenta);
                 if (
                   persona.numcuenta === "" ||
                   persona.claveInterB === "" ||
@@ -323,7 +325,7 @@ const Settings = () => {
                   setMessageE("Rellene el campo");
                 } else if (aux !== null) {
                   setMessageE(aux);
-                } else if (existenciaNumCuenta(persona.numcuenta)) {
+                } else if (res) {
                   setMessageE("Ya existe el numero de cuenta");
                 } else {
                   setNumCModalVisible(false);

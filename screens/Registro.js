@@ -55,7 +55,7 @@ const Registro = () => {
   const [checked, setChecked] = useState(0);
   const [checkedTerms, setCheckedTerms] = useState(false);
   const [messageE, setMessageE] = useState("");
-  const [image, setImage] = useState(null);
+  const [image, setImage] = useState([]);
 
   const [persona, setPersona] = useState({
     nombres: "",
@@ -128,11 +128,11 @@ const Registro = () => {
 
     persona.usuario = persona.correo;
 
-    if (image === null) {
+    if (image.length === 0) {
       return setimageValidate(true);
     }
-    persona.imagen1 = image[0].uri.split("/").pop();
-    persona.imagen2 = image[1].uri.split("/").pop();
+    persona.imagen1 = image[0] ? image[0].uri.split("/").pop() : "null";
+    persona.imagen2 = image[1] ? image[1].uri.split("/").pop() : "null";
 
     if (checked === 0) {
       persona.datoconductor = "null";
@@ -199,7 +199,7 @@ const Registro = () => {
         setMessage(
           "Se ha registrado su petición de registro, se le notificará cuando su usuario sea aceptado o rechazado."
         );
-        setIsLoading(false)
+        setIsLoading(false);
         setshowAlert2(true);
       })
       .catch((error) => {
@@ -235,7 +235,8 @@ const Registro = () => {
       <View style={styles.container}>
         <Text style={styles.title}>Registro de usuario</Text>
         <Text style={styles.subs}>
-          Rellene los campos a continuación para realizar su registro
+          Rellene los campos a continuación asi como anexe dos fotos de su INE
+          para realizar su registro
         </Text>
         <View style={{ flexDirection: "row", width: "80%" }}>
           <CheckBox
@@ -272,9 +273,15 @@ const Registro = () => {
             <TouchableOpacity onPress={pickImage} style={styles.buttonImg}>
               <Text style={styles.buttonText}>Seleccionar imagen...</Text>
             </TouchableOpacity>
-            {image && (
+            {image[0]?.uri && (
               <Image
-                source={{ uri: image[0].uri }}
+                source={{ uri: image[0]?.uri }}
+                style={{ width: 200, height: 200 }}
+              />
+            )}
+            {image[1]?.uri && (
+              <Image
+                source={{ uri: image[1]?.uri }}
                 style={{ width: 200, height: 200 }}
               />
             )}
